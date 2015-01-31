@@ -4,6 +4,12 @@ REPORT zreview.
 CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha',       "#EC NOTEXT
            gc_newline TYPE abap_char1 VALUE cl_abap_char_utilities=>newline.
 
+DEFINE _raise.
+  raise exception type lcx_exception
+    exporting
+      iv_text = &1.                                         "#EC NOTEXT
+END-OF-DEFINITION.
+
 START-OF-SELECTION.
   PERFORM run.
 
@@ -35,6 +41,32 @@ CLASS lcx_exception IMPLEMENTATION.
   ENDMETHOD.                    "CONSTRUCTOR
 
 ENDCLASS.                    "lcx_exception IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_actions DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_actions DEFINITION FINAL.
+
+  PUBLIC SECTION.
+    CLASS-METHODS new
+      RAISING lcx_exception.
+
+ENDCLASS.                    "lcl_actions DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_actions IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_actions IMPLEMENTATION.
+
+  METHOD new.
+    BREAK-POINT.
+  ENDMETHOD.                    "new
+
+ENDCLASS.                    "lcl_actions IMPLEMENTATION
 
 *----------------------------------------------------------------------*
 *       CLASS lcl_gui DEFINITION
@@ -86,6 +118,7 @@ CLASS lcl_gui IMPLEMENTATION.
     rv_html = rv_html &&
       '<h1>abapOpenReview</h1>' && gc_newline &&
       '<br><br>'                && gc_newline &&
+      '<a href="sapevent:new">New review</a><br><br>' &&
       '<h2>My Stuff</h2>'       && gc_newline &&
       '<br><br>'                && gc_newline &&
       '<h2>All Reviews</h2>'    && gc_newline.
@@ -239,7 +272,21 @@ CLASS lcl_gui IMPLEMENTATION.
   ENDMETHOD.                    "run
 
   METHOD on_event.
-    BREAK-POINT.
+
+    DATA: lx_exception  TYPE REF TO lcx_exception.
+
+
+    TRY.
+        CASE action.
+          WHEN 'new'.
+            BREAK-POINT.
+          WHEN OTHERS.
+            _raise 'Unknown action'.
+        ENDCASE.
+      CATCH lcx_exception INTO lx_exception.
+        MESSAGE lx_exception->mv_text TYPE 'S' DISPLAY LIKE 'E'.
+    ENDTRY.
+
   ENDMETHOD.                    "on_event
 
 ENDCLASS.                    "lcl_gui IMPLEMENTATION
