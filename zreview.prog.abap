@@ -86,6 +86,11 @@ CLASS lcl_gui DEFINITION FINAL.
   PRIVATE SECTION.
     CLASS-DATA go_html_viewer TYPE REF TO cl_gui_html_viewer.
 
+    CLASS-METHODS getdata
+      IMPORTING iv_field TYPE string
+                iv_getdata TYPE clike
+      RETURNING value(rv_value) TYPE string.
+
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
 
@@ -102,6 +107,9 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS render_css
       RETURNING value(rv_html) TYPE string.
 
+    CLASS-METHODS render_transports
+      RETURNING value(rv_html) TYPE string.
+
 ENDCLASS.                    "lcl_gui DEFINITION
 
 *----------------------------------------------------------------------*
@@ -111,6 +119,10 @@ ENDCLASS.                    "lcl_gui DEFINITION
 *----------------------------------------------------------------------*
 CLASS lcl_gui IMPLEMENTATION.
 
+  METHOD getdata.
+    BREAK-POINT.
+  ENDMETHOD.                    "getdata
+
   METHOD render.
 
     rv_html = render_header( ).
@@ -118,8 +130,8 @@ CLASS lcl_gui IMPLEMENTATION.
     rv_html = rv_html &&
       '<h1>abapOpenReview</h1>' && gc_newline &&
       '<br><br>'                && gc_newline &&
-      '<a href="sapevent:new">New review</a><br><br>' &&
       '<h2>My Stuff</h2>'       && gc_newline &&
+      render_transports( )      && gc_newline &&
       '<br><br>'                && gc_newline &&
       '<h2>All Reviews</h2>'    && gc_newline.
 
@@ -127,6 +139,28 @@ CLASS lcl_gui IMPLEMENTATION.
               render_footer( ).
 
   ENDMETHOD.                    "render
+
+  METHOD render_transports.
+
+    DATA: lt_list TYPE zcl_aor_transport=>ty_transport_tt.
+
+    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
+
+
+    lt_list = zcl_aor_transport=>list( ).
+
+    rv_html = '<table border="1">' && gc_newline.
+    LOOP AT lt_list ASSIGNING <ls_list>.
+      rv_html = rv_html &&
+        '<tr>' &&
+        '<td>' && <ls_list>-trkorr && '</td>' &&
+        '<td>' && <ls_list>-as4text && '</td>' &&
+        '<td><a href="sapevent:new?trkorr=' && <ls_list>-trkorr && '">Start</a></td>' &&
+        '</tr>'.
+    ENDLOOP.
+    rv_html = rv_html && '</table>'.
+
+  ENDMETHOD.                    "render_transports
 
   METHOD render_footer.
 
@@ -273,13 +307,16 @@ CLASS lcl_gui IMPLEMENTATION.
 
   METHOD on_event.
 
-    DATA: lx_exception  TYPE REF TO lcx_exception.
+    DATA: lv_trkorr    TYPE trkorr,
+          lx_exception TYPE REF TO lcx_exception.
 
 
     TRY.
         CASE action.
           WHEN 'new'.
-            BREAK-POINT.
+            lv_trkorr = getdata( iv_field   = 'trkorr'
+                                 iv_getdata = getdata ).
+            zcl_aor_review=>new( lv_trkorr ).
           WHEN OTHERS.
             _raise 'Unknown action'.
         ENDCASE.
