@@ -43,32 +43,6 @@ CLASS lcx_exception IMPLEMENTATION.
 ENDCLASS.                    "lcx_exception IMPLEMENTATION
 
 *----------------------------------------------------------------------*
-*       CLASS lcl_actions DEFINITION
-*----------------------------------------------------------------------*
-*
-*----------------------------------------------------------------------*
-CLASS lcl_actions DEFINITION FINAL.
-
-  PUBLIC SECTION.
-    CLASS-METHODS new
-      RAISING lcx_exception.
-
-ENDCLASS.                    "lcl_actions DEFINITION
-
-*----------------------------------------------------------------------*
-*       CLASS lcl_actions IMPLEMENTATION
-*----------------------------------------------------------------------*
-*
-*----------------------------------------------------------------------*
-CLASS lcl_actions IMPLEMENTATION.
-
-  METHOD new.
-    BREAK-POINT.
-  ENDMETHOD.                    "new
-
-ENDCLASS.                    "lcl_actions IMPLEMENTATION
-
-*----------------------------------------------------------------------*
 *       CLASS lcl_gui DEFINITION
 *----------------------------------------------------------------------*
 *
@@ -120,7 +94,23 @@ ENDCLASS.                    "lcl_gui DEFINITION
 CLASS lcl_gui IMPLEMENTATION.
 
   METHOD getdata.
-    BREAK-POINT.
+
+    DATA: lt_fields TYPE TABLE OF string,
+          lv_string LIKE LINE OF lt_fields,
+          lv_field  TYPE string,
+          lv_value  TYPE string.
+
+
+    SPLIT iv_getdata AT '&' INTO TABLE lt_fields.
+
+    LOOP AT lt_fields INTO lv_string.
+      SPLIT lv_string AT '=' INTO lv_field lv_value.
+      IF lv_field = iv_field.
+        rv_value = lv_value.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
   ENDMETHOD.                    "getdata
 
   METHOD render.
@@ -147,7 +137,7 @@ CLASS lcl_gui IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
 
-    lt_list = zcl_aor_transport=>list( ).
+    lt_list = zcl_aor_transport=>LIST_OPEN( ).
 
     rv_html = '<table border="1">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
@@ -317,6 +307,7 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_trkorr = getdata( iv_field   = 'trkorr'
                                  iv_getdata = getdata ).
             zcl_aor_review=>new( lv_trkorr ).
+            view( render( ) ).
           WHEN OTHERS.
             _raise 'Unknown action'.
         ENDCASE.

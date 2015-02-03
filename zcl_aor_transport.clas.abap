@@ -15,7 +15,9 @@ public section.
   types:
     TY_TRANSPORT_tt type standard table of ty_transport with default key .
 
-  class-methods LIST
+  class-methods LIST_OPEN
+    importing
+      !IT_TRKORR type TRRNGTRKOR_TAB optional
     returning
       value(RT_DATA) type ZCL_AOR_TRANSPORT=>TY_TRANSPORT_TT .
 protected section.
@@ -31,7 +33,9 @@ ENDCLASS.
 CLASS ZCL_AOR_TRANSPORT IMPLEMENTATION.
 
 
-METHOD list.
+METHOD list_open.
+
+  DATA: lv_index LIKE sy-tabix.
 
   FIELD-SYMBOLS: <ls_data> LIKE LINE OF rt_data.
 
@@ -40,9 +44,18 @@ METHOD list.
     WHERE as4user = sy-uname
     AND trstatus = 'D'
     AND trfunction = 'K'
-    AND strkorr = ''.
+    AND strkorr = ''
+    AND trkorr IN it_trkorr ##too_many_itab_fields.
 
   LOOP AT rt_data ASSIGNING <ls_data>.
+    lv_index = sy-tabix.
+
+    SELECT COUNT(*) FROM zaor_review WHERE trkorr = <ls_data>-trkorr.
+    IF sy-subrc = 0.
+      DELETE rt_data INDEX lv_index.
+      CONTINUE. " current loop
+    ENDIF.
+
     SELECT SINGLE as4text
       FROM e07t
       INTO <ls_data>-as4text
