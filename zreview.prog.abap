@@ -43,6 +43,48 @@ CLASS lcx_exception IMPLEMENTATION.
 ENDCLASS.                    "lcx_exception IMPLEMENTATION
 
 *----------------------------------------------------------------------*
+*       CLASS lcl_time DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_time DEFINITION.
+
+  PUBLIC SECTION.
+    CLASS-METHODS: format
+      IMPORTING iv_timestamp TYPE timestamp
+      RETURNING value(rv_text) TYPE string.
+
+ENDCLASS.                    "lcl_time DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_time IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_time IMPLEMENTATION.
+
+  METHOD format.
+
+    DATA: lv_time  LIKE sy-uzeit,
+          lv_text  TYPE c LENGTH 15,
+          lv_date  LIKE sy-datum,
+          lv_ctime TYPE c LENGTH 8,
+          lv_cdate TYPE C LENGTH 10.
+
+
+    lv_text = iv_timestamp.
+    lv_date = lv_text.
+    lv_time = lv_text+8.
+
+    WRITE lv_date TO lv_cdate.
+    WRITE lv_time TO lv_ctime.
+    CONCATENATE lv_cdate lv_ctime INTO rv_text SEPARATED BY space.
+
+  ENDMETHOD.                    "format
+
+ENDCLASS.                    "lcl_time IMPLEMENTATION
+
+*----------------------------------------------------------------------*
 *       CLASS lcl_gui DEFINITION
 *----------------------------------------------------------------------*
 *
@@ -101,6 +143,10 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-DATA: gv_trkorr TYPE trkorr.
 
     CLASS-METHODS add_comment
+      IMPORTING iv_topic TYPE zaor_comment-topic OPTIONAL
+      RETURNING value(rv_html) TYPE string.
+
+    CLASS-METHODS comments
       RETURNING value(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
@@ -121,12 +167,42 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = rv_html &&
       '<h1>Review&nbsp;' && iv_trkorr && '</h1>'     && gc_newline &&
       '&nbsp;<a href="javascript:goBack()">Back</a>' && gc_newline &&
-      '<br><br>'                                     && gc_newline &&
-      add_comment( ).
+      '<br><br>todo, list objects in transport<br>'  && gc_newline &&
+      'todo, code inspector results<br><br>'         && gc_newline &&
+      comments( )                                    && gc_newline &&
+      add_comment( ) && gc_newline &&
+      '<a href="sapevent:close&trkorr=' && iv_trkorr && '">Close review </a>'.
 
     rv_html = rv_html && lcl_gui=>render_footer( ).
 
   ENDMETHOD.                    "render
+
+  METHOD comments.
+
+    DATA: lt_list TYPE zcl_aor_review=>ty_comment_tt.
+
+    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
+
+
+    lt_list = zcl_aor_review=>comment_list( gv_trkorr ).
+
+    rv_html = '<table border="1">' && gc_newline.
+    LOOP AT lt_list ASSIGNING <ls_list>.
+      AT NEW topic.
+        rv_html = rv_html && '<tr>' && '<td>'.
+      ENDAT.
+      rv_html = rv_html &&
+        <ls_list>-bname && '&nbsp;' &&
+        lcl_time=>format( <ls_list>-timestamp ) && ':&nbsp;' &&
+        <ls_list>-text &&
+        '<br><br>'.
+      AT END OF topic.
+        rv_html = rv_html && add_comment( <ls_list>-topic ) && '</td>' && '</tr>'.
+      ENDAT.
+    ENDLOOP.
+    rv_html = rv_html && '</table>'.
+
+  ENDMETHOD.                    "comments
 
   METHOD add_comment.
 
@@ -135,6 +211,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html =
       '<form method="post" action="sapevent:add_comment">' && gc_newline &&
       '<input type="hidden" name="trkorr" value="' && gv_trkorr && '">' &&
+      '<input type="hidden" name="topic" value="' && iv_topic && '">' &&
       '<textarea name="comment"></textarea><br>'           && gc_newline &&
       '<input type="submit" value="Add">'                  && gc_newline &&
       '</form>'                                            && gc_newline.
@@ -305,7 +382,7 @@ CLASS lcl_gui IMPLEMENTATION.
   METHOD render_css.
 
     rv_html = '<style type="text/css">' && gc_newline &&
-          'body {'                      && gc_newline &&    "#EC NOTEXT
+          'body, textarea {'            && gc_newline &&    "#EC NOTEXT
           '  font-family: verdana;'     && gc_newline &&    "#EC NOTEXT
           '}'                           && gc_newline &&
           'a:link {'                    && gc_newline &&    "#EC NOTEXT
@@ -409,7 +486,8 @@ CLASS lcl_gui IMPLEMENTATION.
   METHOD on_event.
 
     DATA: lv_trkorr    TYPE trkorr,
-          lv_comment   TYPE string,
+          lv_topic     TYPE zaor_comment-topic,
+          lv_text      TYPE string,
           lx_exception TYPE REF TO lcx_exception.
 
 
@@ -427,10 +505,13 @@ CLASS lcl_gui IMPLEMENTATION.
           WHEN 'add_comment'.
             lv_trkorr = postdata( iv_field    = 'trkorr'
                                   it_postdata = postdata ).
-            lv_comment = postdata( iv_field    = 'comment'
-                                   it_postdata = postdata ).
-* todo
-            BREAK-POINT.
+            lv_topic = postdata( iv_field    = 'topic'
+                                 it_postdata = postdata ).
+            lv_text = postdata( iv_field    = 'comment'
+                                it_postdata = postdata ).
+            zcl_aor_review=>comment_add( iv_trkorr = lv_trkorr
+                                         iv_topic  = lv_topic
+                                         iv_text   = lv_text ).
             view( lcl_gui_review=>render( lv_trkorr ) ).
           WHEN OTHERS.
             _raise 'Unknown action'.
