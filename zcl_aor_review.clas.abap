@@ -49,7 +49,11 @@ METHOD comment_add.
   DATA: ls_comment TYPE zaor_comment.
 
 
-* todo: validate that review is still open
+  zcl_aor_transport=>validate_open( iv_trkorr ).
+
+  IF iv_text IS INITIAL.
+    RETURN.
+  ENDIF.
 
 
   IF iv_topic IS INITIAL.
@@ -96,15 +100,10 @@ ENDMETHOD.
 
 METHOD new.
 
-  DATA: ls_review TYPE zaor_review,
-        lt_open TYPE zcl_aor_transport=>ty_transport_tt.
+  DATA: ls_review TYPE zaor_review.
 
 
-* validate input
-  lt_open = zcl_aor_transport=>list_open( lcl_range=>trkorr( iv_trkorr ) ).
-  IF lines( lt_open ) <> 1.
-    BREAK-POINT.
-  ENDIF.
+  zcl_aor_transport=>validate_open( iv_trkorr ).
 
   CLEAR ls_review.
   ls_review-trkorr = iv_trkorr.

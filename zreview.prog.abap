@@ -69,7 +69,7 @@ CLASS lcl_time IMPLEMENTATION.
           lv_text  TYPE c LENGTH 15,
           lv_date  LIKE sy-datum,
           lv_ctime TYPE c LENGTH 8,
-          lv_cdate TYPE C LENGTH 10.
+          lv_cdate TYPE c LENGTH 10.
 
 
     lv_text = iv_timestamp.
@@ -149,6 +149,12 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS comments
       RETURNING value(rv_html) TYPE string.
 
+    CLASS-METHODS objects
+      RETURNING value(rv_html) TYPE string.
+
+    CLASS-METHODS code_inspector
+      RETURNING value(rv_html) TYPE string.
+
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
 *----------------------------------------------------------------------*
@@ -165,17 +171,32 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = lcl_gui=>render_header( ).
 
     rv_html = rv_html &&
-      '<h1>Review&nbsp;' && iv_trkorr && '</h1>'     && gc_newline &&
-      '&nbsp;<a href="javascript:goBack()">Back</a>' && gc_newline &&
-      '<br><br>todo, list objects in transport<br>'  && gc_newline &&
-      'todo, code inspector results<br><br>'         && gc_newline &&
-      comments( )                                    && gc_newline &&
-      add_comment( ) && gc_newline &&
+      '<h1>Review&nbsp;' && iv_trkorr && '</h1>' && gc_newline &&
+      '&nbsp;<a href="sapevent:back">Back</a>'   && gc_newline &&
+      '<br><br>'                                 && gc_newline &&
+      objects( )                                 && gc_newline &&
+      '<br>'                                     && gc_newline &&
+      code_inspector( )                          && gc_newline &&
+      '<br><br>'                                 && gc_newline &&
+      comments( )                                && gc_newline &&
+      add_comment( )                             && gc_newline &&
       '<a href="sapevent:close&trkorr=' && iv_trkorr && '">Close review </a>'.
 
     rv_html = rv_html && lcl_gui=>render_footer( ).
 
   ENDMETHOD.                    "render
+
+  METHOD code_inspector.
+
+    rv_html = '<h2>Code Inspector</h2><br><br>todo<br>'.
+
+  ENDMETHOD.                    "code_inspector
+
+  METHOD objects.
+
+    rv_html = '<h2>Objects</h2><br><br>todo<br>'.
+
+  ENDMETHOD.                    "objects
 
   METHOD comments.
 
@@ -186,14 +207,16 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     lt_list = zcl_aor_review=>comment_list( gv_trkorr ).
 
-    rv_html = '<table border="1">' && gc_newline.
+    rv_html = '<h2>Comments</h2><br>' &&
+      '<table border="1">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
       AT NEW topic.
         rv_html = rv_html && '<tr>' && '<td>'.
       ENDAT.
       rv_html = rv_html &&
+        '<u>' &&
         <ls_list>-bname && '&nbsp;' &&
-        lcl_time=>format( <ls_list>-timestamp ) && ':&nbsp;' &&
+        lcl_time=>format( <ls_list>-timestamp ) && '</u>:&nbsp;' &&
         <ls_list>-text &&
         '<br><br>'.
       AT END OF topic.
@@ -206,13 +229,13 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD add_comment.
 
-* if you are a developer for the transport, it should not be possible to add root comment
+* if you are a developer for the transport, it should not be possible to add root comment?
 
     rv_html =
-      '<form method="post" action="sapevent:add_comment">' && gc_newline &&
-      '<input type="hidden" name="trkorr" value="' && gv_trkorr && '">' &&
-      '<input type="hidden" name="topic" value="' && iv_topic && '">' &&
-      '<textarea name="comment"></textarea><br>'           && gc_newline &&
+      '<form method="post" action="sapevent:add_comment">' && gc_newline && gc_newline &&
+      '<input type="hidden" name="trkorr" value="' && gv_trkorr && '">' && gc_newline &&
+      '<input type="hidden" name="topic" value="' && iv_topic && '">' && gc_newline &&
+      '<textarea name="comment" cols="60" rows="3"></textarea><br>'   && gc_newline &&
       '<input type="submit" value="Add">'                  && gc_newline &&
       '</form>'                                            && gc_newline.
 
@@ -513,6 +536,8 @@ CLASS lcl_gui IMPLEMENTATION.
                                          iv_topic  = lv_topic
                                          iv_text   = lv_text ).
             view( lcl_gui_review=>render( lv_trkorr ) ).
+          WHEN 'back'.
+            view( lcl_gui_start=>render( ) ).
           WHEN OTHERS.
             _raise 'Unknown action'.
         ENDCASE.
