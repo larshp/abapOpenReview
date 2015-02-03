@@ -7,13 +7,22 @@ public section.
 *"* public components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
 
+  types:
+    TY_REVIEW_TT type table of zaor_review with default key .
+
   constants C_STATUS_OPEN type CHAR1 value 'O'. "#EC NOTEXT
   constants C_STATUS_CLOSED type CHAR1 value 'C'. "#EC NOTEXT
 
   class-methods NEW
     importing
       !IV_TRKORR type TRKORR .
-  class-methods LIST .
+  class-methods LIST
+    returning
+      value(RT_DATA) type TY_REVIEW_TT .
+  class-methods ADD_COMMENT
+    importing
+      !IV_TRKORR type TRKORR
+      !IV_TEXT type STRING .
 protected section.
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
@@ -27,9 +36,28 @@ ENDCLASS.
 CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
 
+METHOD add_comment.
+
+  DATA: ls_comment TYPE zaor_comment.
+
+
+* todo: validate that review is still open
+
+  ls_comment-trkorr = iv_trkorr.
+  ls_comment-topic  = 'todo'.
+  ls_comment-id     = ''.
+  ls_comment-text   = iv_text.
+  ls_comment-bname  = sy-uname.
+
+  INSERT zaor_comment FROM ls_comment.
+
+
+ENDMETHOD.
+
+
 METHOD list.
 
-* todo
+  SELECT * FROM zaor_review INTO TABLE rt_data.
 
 ENDMETHOD.
 

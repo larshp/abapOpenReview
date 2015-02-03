@@ -1,5 +1,5 @@
 REPORT zreview.
-* todo license
+* todo license?
 
 CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha',       "#EC NOTEXT
            gc_newline TYPE abap_char1 VALUE cl_abap_char_utilities=>newline.
@@ -53,6 +53,12 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS run
       RAISING lcx_exception.
 
+    CLASS-METHODS render_header
+      RETURNING value(rv_html) TYPE string.
+
+    CLASS-METHODS render_footer
+      RETURNING value(rv_html) TYPE string.
+
     CLASS-METHODS on_event
       FOR EVENT sapevent OF cl_gui_html_viewer
       IMPORTING action frame getdata postdata query_table.  "#EC NEEDED
@@ -65,26 +71,169 @@ CLASS lcl_gui DEFINITION FINAL.
                 iv_getdata TYPE clike
       RETURNING value(rv_value) TYPE string.
 
+    CLASS-METHODS postdata
+      IMPORTING iv_field TYPE string
+                it_postdata TYPE cnht_post_data_tab
+      RETURNING value(rv_value) TYPE string.
+
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
-
-    CLASS-METHODS render
-      RETURNING value(rv_html) TYPE string
-      RAISING   lcx_exception.
-
-    CLASS-METHODS render_header
-      RETURNING value(rv_html) TYPE string.
-
-    CLASS-METHODS render_footer
-      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS render_css
       RETURNING value(rv_html) TYPE string.
 
+ENDCLASS.                    "lcl_gui DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_gui_start DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_gui_review DEFINITION FINAL.
+
+  PUBLIC SECTION.
+    CLASS-METHODS render
+      IMPORTING iv_trkorr TYPE trkorr
+      RETURNING value(rv_html) TYPE string
+      RAISING   lcx_exception.
+
+  PRIVATE SECTION.
+    CLASS-DATA: gv_trkorr TYPE trkorr.
+
+    CLASS-METHODS add_comment
+      RETURNING value(rv_html) TYPE string.
+
+ENDCLASS.                    "lcl_gui_start DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_gui_review IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_gui_review IMPLEMENTATION.
+
+  METHOD render.
+
+    gv_trkorr = iv_trkorr.
+
+    rv_html = lcl_gui=>render_header( ).
+
+    rv_html = rv_html &&
+      '<h1>Review&nbsp;' && iv_trkorr && '</h1>'     && gc_newline &&
+      '&nbsp;<a href="javascript:goBack()">Back</a>' && gc_newline &&
+      '<br><br>'                                     && gc_newline &&
+      add_comment( ).
+
+    rv_html = rv_html && lcl_gui=>render_footer( ).
+
+  ENDMETHOD.                    "render
+
+  METHOD add_comment.
+
+* if you are a developer for the transport, it should not be possible to add root comment
+
+    rv_html =
+      '<form method="post" action="sapevent:add_comment">' && gc_newline &&
+      '<input type="hidden" name="trkorr" value="' && gv_trkorr && '">' &&
+      '<textarea name="comment"></textarea><br>'           && gc_newline &&
+      '<input type="submit" value="Add">'                  && gc_newline &&
+      '</form>'                                            && gc_newline.
+
+  ENDMETHOD.                    "new_comment
+
+ENDCLASS.                    "lcl_gui_review IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_gui_review DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_gui_start DEFINITION FINAL.
+
+  PUBLIC SECTION.
+    CLASS-METHODS render
+      RETURNING value(rv_html) TYPE string
+      RAISING   lcx_exception.
+
+  PRIVATE SECTION.
     CLASS-METHODS render_transports
       RETURNING value(rv_html) TYPE string.
 
-ENDCLASS.                    "lcl_gui DEFINITION
+    CLASS-METHODS render_reviews
+      RETURNING value(rv_html) TYPE string.
+
+ENDCLASS.                    "lcl_gui_review DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_gui_review IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_gui_start IMPLEMENTATION.
+
+  METHOD render.
+
+    rv_html = lcl_gui=>render_header( ).
+
+    rv_html = rv_html &&
+      '<h1>abapOpenReview</h1>' && gc_newline &&
+      '<br><br>'                && gc_newline &&
+      '<h2>My Stuff</h2>'       && gc_newline &&
+      render_transports( )      && gc_newline &&
+      '<br><br>'                && gc_newline &&
+      '<h2>All Reviews</h2>'    && gc_newline &&
+      render_reviews( )         && gc_newline.
+
+    rv_html = rv_html &&
+              lcl_gui=>render_footer( ).
+
+  ENDMETHOD.                    "render
+
+  METHOD render_reviews.
+
+    DATA: lt_list TYPE zcl_aor_review=>ty_review_tt.
+
+    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
+
+
+    lt_list = zcl_aor_review=>list( ).
+
+    rv_html = '<table border="1">' && gc_newline.
+    LOOP AT lt_list ASSIGNING <ls_list>.
+      rv_html = rv_html &&
+        '<tr>' &&
+        '<td>' && <ls_list>-trkorr && '</td>' &&
+        '<td>' && <ls_list>-status && '</td>' &&
+        '<td><a href="sapevent:show?trkorr=' && <ls_list>-trkorr && '">Show</a></td>' &&
+        '</tr>'.
+    ENDLOOP.
+    rv_html = rv_html && '</table>'.
+
+  ENDMETHOD.                    "render_reviews
+
+  METHOD render_transports.
+
+    DATA: lt_list TYPE zcl_aor_transport=>ty_transport_tt.
+
+    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
+
+
+    lt_list = zcl_aor_transport=>list_open( ).
+
+    rv_html = '<table border="1">' && gc_newline.
+    LOOP AT lt_list ASSIGNING <ls_list>.
+      rv_html = rv_html &&
+        '<tr>' &&
+        '<td>' && <ls_list>-trkorr && '</td>' &&
+        '<td>' && <ls_list>-as4text && '</td>' &&
+        '<td><a href="sapevent:new?trkorr=' && <ls_list>-trkorr && '">Start</a></td>' &&
+        '</tr>'.
+    ENDLOOP.
+    rv_html = rv_html && '</table>'.
+
+  ENDMETHOD.                    "render_transports
+
+ENDCLASS.                    "lcl_gui_review
 
 *----------------------------------------------------------------------*
 *       CLASS lcl_gui IMPLEMENTATION
@@ -92,6 +241,18 @@ ENDCLASS.                    "lcl_gui DEFINITION
 *
 *----------------------------------------------------------------------*
 CLASS lcl_gui IMPLEMENTATION.
+
+  METHOD postdata.
+
+    DATA: lv_string TYPE string.
+
+
+    CONCATENATE LINES OF it_postdata INTO lv_string.
+
+    rv_value = getdata( iv_field   = iv_field
+                        iv_getdata = lv_string ).
+
+  ENDMETHOD.                    "postdata
 
   METHOD getdata.
 
@@ -113,45 +274,6 @@ CLASS lcl_gui IMPLEMENTATION.
 
   ENDMETHOD.                    "getdata
 
-  METHOD render.
-
-    rv_html = render_header( ).
-
-    rv_html = rv_html &&
-      '<h1>abapOpenReview</h1>' && gc_newline &&
-      '<br><br>'                && gc_newline &&
-      '<h2>My Stuff</h2>'       && gc_newline &&
-      render_transports( )      && gc_newline &&
-      '<br><br>'                && gc_newline &&
-      '<h2>All Reviews</h2>'    && gc_newline.
-
-    rv_html = rv_html &&
-              render_footer( ).
-
-  ENDMETHOD.                    "render
-
-  METHOD render_transports.
-
-    DATA: lt_list TYPE zcl_aor_transport=>ty_transport_tt.
-
-    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
-
-
-    lt_list = zcl_aor_transport=>LIST_OPEN( ).
-
-    rv_html = '<table border="1">' && gc_newline.
-    LOOP AT lt_list ASSIGNING <ls_list>.
-      rv_html = rv_html &&
-        '<tr>' &&
-        '<td>' && <ls_list>-trkorr && '</td>' &&
-        '<td>' && <ls_list>-as4text && '</td>' &&
-        '<td><a href="sapevent:new?trkorr=' && <ls_list>-trkorr && '">Start</a></td>' &&
-        '</tr>'.
-    ENDLOOP.
-    rv_html = rv_html && '</table>'.
-
-  ENDMETHOD.                    "render_transports
-
   METHOD render_footer.
 
     rv_html = rv_html &&
@@ -165,28 +287,17 @@ CLASS lcl_gui IMPLEMENTATION.
 
   METHOD render_header.
 
-    rv_html = '<html>'
-          && gc_newline &&
-          '<head>'
-          && gc_newline &&
-          '<title>abapGit</title>'
-          && gc_newline &&
-          render_css( )
-          && gc_newline &&
-          '<meta http-equiv="content-type" content="text/html; charset=utf-8">'
-          && gc_newline &&
-          '<script>'
-          && gc_newline &&
-          'function goBack() {'
-          && gc_newline &&
-          '  window.history.back();'
-          && gc_newline &&
-          '}'
-          && gc_newline &&
-          '</script>'
-          && gc_newline &&
-          '</head>'
-          && gc_newline &&
+    rv_html = '<html>'                                && gc_newline &&
+          '<head>'                                    && gc_newline &&
+          '<title>abapGit</title>'                    && gc_newline &&
+          render_css( )                               && gc_newline &&
+          '<meta content="text/html; charset=utf-8">' && gc_newline &&
+          '<script>'                                  && gc_newline &&
+          'function goBack() {'                       && gc_newline &&
+          '  window.history.back();'                  && gc_newline &&
+          '}'                                         && gc_newline &&
+          '</script>'                                 && gc_newline &&
+          '</head>'                                   && gc_newline &&
           '<body>'.                                         "#EC NOTEXT
 
   ENDMETHOD.                    "render_header
@@ -291,13 +402,14 @@ CLASS lcl_gui IMPLEMENTATION.
 
     SET HANDLER lcl_gui=>on_event FOR go_html_viewer.
 
-    view( render( ) ).
+    view( lcl_gui_start=>render( ) ).
 
   ENDMETHOD.                    "run
 
   METHOD on_event.
 
     DATA: lv_trkorr    TYPE trkorr,
+          lv_comment   TYPE string,
           lx_exception TYPE REF TO lcx_exception.
 
 
@@ -307,7 +419,19 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_trkorr = getdata( iv_field   = 'trkorr'
                                  iv_getdata = getdata ).
             zcl_aor_review=>new( lv_trkorr ).
-            view( render( ) ).
+            view( lcl_gui_start=>render( ) ).
+          WHEN 'show'.
+            lv_trkorr = getdata( iv_field   = 'trkorr'
+                                 iv_getdata = getdata ).
+            view( lcl_gui_review=>render( lv_trkorr ) ).
+          WHEN 'add_comment'.
+            lv_trkorr = postdata( iv_field    = 'trkorr'
+                                  it_postdata = postdata ).
+            lv_comment = postdata( iv_field    = 'comment'
+                                   it_postdata = postdata ).
+* todo
+            BREAK-POINT.
+            view( lcl_gui_review=>render( lv_trkorr ) ).
           WHEN OTHERS.
             _raise 'Unknown action'.
         ENDCASE.
@@ -328,7 +452,7 @@ FORM run.
 
   DATA: lx_exception TYPE REF TO lcx_exception.
 
-* todo, check client settings? must be development client
+* todo, check client settings? must be development client?
 
   TRY.
       lcl_gui=>run( ).
