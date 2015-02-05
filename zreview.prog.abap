@@ -457,6 +457,8 @@ CLASS lcl_gui IMPLEMENTATION.
 
   METHOD view.
 
+    CONSTANTS: lc_length TYPE i VALUE 200.
+
     DATA: lt_data TYPE TABLE OF text200,
           lv_html TYPE string,
           lv_url  TYPE text200.
@@ -465,12 +467,12 @@ CLASS lcl_gui IMPLEMENTATION.
     lv_html = iv_html.
 
     WHILE strlen( lv_html ) > 0.
-      IF strlen( lv_html ) < 200.
+      IF strlen( lv_html ) < lc_length.
         APPEND lv_html TO lt_data.
         CLEAR lv_html.
       ELSE.
-        APPEND lv_html(200) TO lt_data.
-        lv_html = lv_html+200.
+        APPEND lv_html(lc_length) TO lt_data.
+        lv_html = lv_html+lc_length.
       ENDIF.
     ENDWHILE.
 
