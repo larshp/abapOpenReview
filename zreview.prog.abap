@@ -51,8 +51,8 @@ CLASS lcl_time DEFINITION.
 
   PUBLIC SECTION.
     CLASS-METHODS: format
-      IMPORTING iv_timestamp TYPE timestamp
-      RETURNING value(rv_text) TYPE string.
+      IMPORTING iv_timestamp   TYPE timestamp
+      RETURNING VALUE(rv_text) TYPE string.
 
 ENDCLASS.                    "lcl_time DEFINITION
 
@@ -96,33 +96,33 @@ CLASS lcl_gui DEFINITION FINAL.
       RAISING lcx_exception.
 
     CLASS-METHODS render_header
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_footer
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS on_event
-      FOR EVENT sapevent OF cl_gui_html_viewer
+                  FOR EVENT sapevent OF cl_gui_html_viewer
       IMPORTING action frame getdata postdata query_table.  "#EC NEEDED
 
   PRIVATE SECTION.
     CLASS-DATA go_html_viewer TYPE REF TO cl_gui_html_viewer.
 
     CLASS-METHODS getdata
-      IMPORTING iv_field TYPE string
-                iv_getdata TYPE clike
-      RETURNING value(rv_value) TYPE string.
+      IMPORTING iv_field        TYPE string
+                iv_getdata      TYPE clike
+      RETURNING VALUE(rv_value) TYPE string.
 
     CLASS-METHODS postdata
-      IMPORTING iv_field TYPE string
-                it_postdata TYPE cnht_post_data_tab
-      RETURNING value(rv_value) TYPE string.
+      IMPORTING iv_field        TYPE string
+                it_postdata     TYPE cnht_post_data_tab
+      RETURNING VALUE(rv_value) TYPE string.
 
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
 
     CLASS-METHODS render_css
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui DEFINITION
 
@@ -135,25 +135,25 @@ CLASS lcl_gui_review DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
-      IMPORTING iv_trkorr TYPE trkorr
-      RETURNING value(rv_html) TYPE string
+      IMPORTING iv_trkorr      TYPE trkorr
+      RETURNING VALUE(rv_html) TYPE string
       RAISING   lcx_exception.
 
   PRIVATE SECTION.
     CLASS-DATA: gv_trkorr TYPE trkorr.
 
     CLASS-METHODS add_comment
-      IMPORTING iv_topic TYPE zaor_comment-topic OPTIONAL
-      RETURNING value(rv_html) TYPE string.
+      IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS comments
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS objects
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS code_inspector
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
@@ -188,7 +188,22 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD code_inspector.
 
+    DATA: lt_results TYPE scit_alvlist.
+
+    FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
+
+
     rv_html = '<h2>Code Inspector</h2><br><br>todo<br>'.
+
+    lt_results = zcl_aor_review=>ci_results( gv_trkorr ).
+
+    LOOP AT lt_results ASSIGNING <ls_result>.
+* todo
+*<ls_result>-OBJTYPE
+*<ls_result>-OBJNAME
+*<ls_result>-KIND
+*<ls_result>-TEXT
+    ENDLOOP.
 
   ENDMETHOD.                    "code_inspector
 
@@ -252,15 +267,15 @@ CLASS lcl_gui_start DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
-      RETURNING value(rv_html) TYPE string
+      RETURNING VALUE(rv_html) TYPE string
       RAISING   lcx_exception.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_reviews
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_review DEFINITION
 
