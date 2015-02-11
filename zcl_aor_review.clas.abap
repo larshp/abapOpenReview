@@ -32,6 +32,10 @@ public section.
     returning
       value(RT_DATA) type TY_COMMENT_TT .
 protected section.
+
+  class-methods RUN_CODE_INSPECTOR
+    importing
+      !IV_TRKORR type TRKORR .
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
 private section.
@@ -105,10 +109,103 @@ METHOD new.
 
   zcl_aor_transport=>validate_open( iv_trkorr ).
 
+  run_code_inspector( iv_trkorr ).
+
   CLEAR ls_review.
   ls_review-trkorr = iv_trkorr.
   ls_review-status = c_status_open.
   INSERT zaor_review FROM ls_review.
+  IF sy-subrc <> 0.
+    BREAK-POINT.
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD run_code_inspector.
+
+  DATA: lv_date    TYPE sci_deldat,
+        lv_name    TYPE sci_insp,
+        lv_text    TYPE sci_text,
+        lo_ci      TYPE REF TO cl_ci_inspection,
+        lo_objects TYPE REF TO cl_ci_objectset,
+        lo_variant TYPE REF TO cl_ci_checkvariant.
+
+
+* todo integration with ATC/local defaults?
+  cl_ci_checkvariant=>get_ref(
+    EXPORTING
+      p_user            = sy-uname
+      p_name            = 'DEFAULT'
+    RECEIVING
+      p_ref             = lo_variant
+    EXCEPTIONS
+      chkv_not_exists   = 1
+      missing_parameter = 2
+      OTHERS            = 3 ).
+  IF sy-subrc <> 0.
+    BREAK-POINT.
+  ENDIF.
+
+  cl_ci_objectset=>get_ref(
+    EXPORTING
+      p_type                    = cl_ci_objectset=>c_0kor
+      p_korr                    = iv_trkorr
+    RECEIVING
+      p_ref                     = lo_objects
+    EXCEPTIONS
+      missing_parameter         = 1
+      objs_not_exists           = 2
+      invalid_request           = 3
+      object_not_exists         = 4
+      object_may_not_be_checked = 5
+      no_main_program           = 6
+      OTHERS                    = 7 ).
+  IF sy-subrc <> 0.
+    BREAK-POINT.
+  ENDIF.
+
+  lv_name = iv_trkorr.
+  cl_ci_inspection=>create(
+    EXPORTING
+      p_user           = ''
+      p_name           = lv_name
+    RECEIVING
+      p_ref            = lo_ci
+    EXCEPTIONS
+      locked           = 1
+      error_in_enqueue = 2
+      not_authorized   = 3
+      OTHERS           = 4 ).
+  IF sy-subrc <> 0.
+* todo
+    BREAK-POINT.
+  ENDIF.
+
+  lv_date = sy-datum + 100.
+  CONCATENATE 'Review' iv_trkorr INTO lv_text SEPARATED BY space.
+
+  lo_ci->set( EXPORTING
+                p_chkv    = lo_variant
+                p_objs    = lo_objects
+                p_text    = lv_text
+                p_deldate = lv_date ).
+
+  lo_ci->save( EXCEPTIONS
+                 missing_information = 1
+                 insp_no_name        = 2
+                 not_enqueued        = 3
+                 OTHERS              = 4 ).
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+    BREAK-POINT.
+  ENDIF.
+
+  lo_ci->run( EXPORTING
+                p_howtorun            = 'D'
+              EXCEPTIONS
+                invalid_check_version = 1
+                OTHERS                = 2 ).
   IF sy-subrc <> 0.
     BREAK-POINT.
   ENDIF.
