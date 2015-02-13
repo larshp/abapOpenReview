@@ -78,12 +78,12 @@ METHOD ci_results.
     IMPORTING
       p_list = rt_results ).
 
-  BREAK-POINT.
+  DELETE rt_results WHERE objtype = 'STAT'.
 
 ENDMETHOD.
 
 
-METHOD CI_RUN.
+METHOD ci_run.
 
   DATA: lv_date    TYPE sci_deldat,
         lv_name    TYPE sci_insp,
@@ -96,7 +96,7 @@ METHOD CI_RUN.
 * todo integration with ATC/local defaults?
   cl_ci_checkvariant=>get_ref(
     EXPORTING
-      p_user            = sy-uname
+      p_user            = ''
       p_name            = 'DEFAULT'
     RECEIVING
       p_ref             = lo_variant

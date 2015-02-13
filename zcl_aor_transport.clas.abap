@@ -55,8 +55,18 @@ ENDMETHOD.
 
 METHOD list_objects.
 
+  DATA: lt_e070 TYPE TABLE OF e070.
+
+
+  SELECT * FROM e070 INTO TABLE lt_e070
+    WHERE strkorr = iv_trkorr.
+  IF lines( lt_e070 ) = 0.
+    RETURN.
+  ENDIF.
+
   SELECT * FROM e071 INTO TABLE rt_data
-    WHERE trkorr = iv_trkorr.
+    FOR ALL ENTRIES IN lt_e070
+    WHERE trkorr = lt_e070-trkorr.
 
 ENDMETHOD.
 

@@ -43,6 +43,31 @@ CLASS lcx_exception IMPLEMENTATION.
 ENDCLASS.                    "lcx_exception IMPLEMENTATION
 
 *----------------------------------------------------------------------*
+*       CLASS lcl_navigate DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_navigate DEFINITION.
+
+  PUBLIC SECTION.
+    CLASS-METHODS navigate.
+
+ENDCLASS.                    "lcl_navigate DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_navigate IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_navigate IMPLEMENTATION.
+
+  METHOD navigate.
+    BREAK-POINT.
+  ENDMETHOD.                    "navigate
+
+ENDCLASS.                    "lcl_navigate IMPLEMENTATION
+
+*----------------------------------------------------------------------*
 *       CLASS lcl_time DEFINITION
 *----------------------------------------------------------------------*
 *
@@ -52,7 +77,7 @@ CLASS lcl_time DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS: format
       IMPORTING iv_timestamp   TYPE timestamp
-      RETURNING VALUE(rv_text) TYPE string.
+      RETURNING value(rv_text) TYPE string.
 
 ENDCLASS.                    "lcl_time DEFINITION
 
@@ -96,10 +121,10 @@ CLASS lcl_gui DEFINITION FINAL.
       RAISING lcx_exception.
 
     CLASS-METHODS render_header
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS render_footer
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS on_event
                   FOR EVENT sapevent OF cl_gui_html_viewer
@@ -111,18 +136,18 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS getdata
       IMPORTING iv_field        TYPE string
                 iv_getdata      TYPE clike
-      RETURNING VALUE(rv_value) TYPE string.
+      RETURNING value(rv_value) TYPE string.
 
     CLASS-METHODS postdata
       IMPORTING iv_field        TYPE string
                 it_postdata     TYPE cnht_post_data_tab
-      RETURNING VALUE(rv_value) TYPE string.
+      RETURNING value(rv_value) TYPE string.
 
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
 
     CLASS-METHODS render_css
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui DEFINITION
 
@@ -136,7 +161,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       IMPORTING iv_trkorr      TYPE trkorr
-      RETURNING VALUE(rv_html) TYPE string
+      RETURNING value(rv_html) TYPE string
       RAISING   lcx_exception.
 
   PRIVATE SECTION.
@@ -144,16 +169,16 @@ CLASS lcl_gui_review DEFINITION FINAL.
 
     CLASS-METHODS add_comment
       IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS comments
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS objects
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS code_inspector
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
@@ -193,23 +218,48 @@ CLASS lcl_gui_review IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
 
 
-    rv_html = '<h2>Code Inspector</h2><br><br>todo<br>'.
+    rv_html = '<h2>Code Inspector</h2><br><br>' && gc_newline.
 
     lt_results = zcl_aor_review=>ci_results( gv_trkorr ).
 
+    rv_html = rv_html && '<table border="1">' && gc_newline.
     LOOP AT lt_results ASSIGNING <ls_result>.
-* todo
-*<ls_result>-OBJTYPE
-*<ls_result>-OBJNAME
-*<ls_result>-KIND
-*<ls_result>-TEXT
+      rv_html = rv_html &&
+        '<tr>' && gc_newline &&
+        '<td>' && <ls_result>-objtype && '</td>' && gc_newline &&
+        '<td>' && <ls_result>-objname && '</td>' && gc_newline &&
+        '<td>' && <ls_result>-kind && '</td>' && gc_newline &&
+        '<td>' && <ls_result>-text && '</td>' && gc_newline &&
+        '</tr>' && gc_newline.
     ENDLOOP.
+    rv_html = rv_html && '</table>' && gc_newline.
 
   ENDMETHOD.                    "code_inspector
 
   METHOD objects.
 
-    rv_html = '<h2>Objects</h2><br><br>todo<br>'.
+    DATA: lt_objects TYPE e071_t.
+
+    FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects.
+
+
+    rv_html = '<h2>Objects</h2><br><br>' && gc_newline.
+
+    lt_objects = zcl_aor_transport=>list_objects( gv_trkorr ).
+
+    rv_html = rv_html && '<table border="1">' && gc_newline.
+    LOOP AT lt_objects ASSIGNING <ls_object>.
+      rv_html = rv_html &&
+        '<tr>' && gc_newline &&
+        '<td>' && <ls_object>-object && '</td>' && gc_newline &&
+        '<td>' &&
+        '<a href="sapevent:navigate">' &&
+        <ls_object>-obj_name &&
+        '</a>' &&
+        '</td>' && gc_newline &&
+        '</tr>' && gc_newline.
+    ENDLOOP.
+    rv_html = rv_html && '</table>' && gc_newline.
 
   ENDMETHOD.                    "objects
 
@@ -267,15 +317,15 @@ CLASS lcl_gui_start DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
-      RETURNING VALUE(rv_html) TYPE string
+      RETURNING value(rv_html) TYPE string
       RAISING   lcx_exception.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS render_reviews
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_review DEFINITION
 
@@ -555,6 +605,8 @@ CLASS lcl_gui IMPLEMENTATION.
             view( lcl_gui_review=>render( lv_trkorr ) ).
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
+          WHEN 'navigate'.
+            lcl_navigate=>navigate( ).
           WHEN OTHERS.
             _raise 'Unknown action'.
         ENDCASE.
