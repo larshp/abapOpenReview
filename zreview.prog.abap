@@ -174,6 +174,10 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS comments
       RETURNING value(rv_html) TYPE string.
 
+    CLASS-METHODS close_review
+      IMPORTING iv_trkorr      TYPE trkorr
+      RETURNING value(rv_html) TYPE string.
+
     CLASS-METHODS objects
       RETURNING value(rv_html) TYPE string.
 
@@ -205,7 +209,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<br><br>'                                 && gc_newline &&
       comments( )                                && gc_newline &&
       add_comment( )                             && gc_newline &&
-      '<a href="sapevent:close&trkorr=' && iv_trkorr && '">Close review </a>'.
+      close_review( iv_trkorr ).
 
     rv_html = rv_html && lcl_gui=>render_footer( ).
 
@@ -217,12 +221,11 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
 
-
     rv_html = '<h2>Code Inspector</h2><br><br>' && gc_newline.
 
     lt_results = zcl_aor_review=>ci_results( gv_trkorr ).
 
-    rv_html = rv_html && '<table border="1">' && gc_newline.
+    rv_html = rv_html && '<table border="0">' && gc_newline.
     LOOP AT lt_results ASSIGNING <ls_result>.
       rv_html = rv_html &&
         '<tr>' && gc_newline &&
@@ -247,7 +250,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     lt_objects = zcl_aor_transport=>list_objects( gv_trkorr ).
 
-    rv_html = rv_html && '<table border="1">' && gc_newline.
+    rv_html = rv_html && '<table border="0">' && gc_newline.
     LOOP AT lt_objects ASSIGNING <ls_object>.
       rv_html = rv_html &&
         '<tr>' && gc_newline &&
@@ -273,7 +276,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     lt_list = zcl_aor_review=>comment_list( gv_trkorr ).
 
     rv_html = '<h2>Comments</h2><br>' &&
-      '<table border="1">' && gc_newline.
+      '<table border="0">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
       AT NEW topic.
         rv_html = rv_html && '<tr>' && '<td>'.
@@ -305,6 +308,16 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '</form>'                                            && gc_newline.
 
   ENDMETHOD.                    "new_comment
+
+  METHOD close_review.
+
+      rv_html =
+        '<form method="post" action="sapevent:close">' && gc_newline && gc_newline &&
+        '<input type="hidden" name="trkorr" value="' && iv_trkorr && '">' && gc_newline &&
+        '<input type="submit" value="Close review">'         && gc_newline &&
+        '</form>'                                            && gc_newline.
+
+  ENDMETHOD.                    "close_review
 
 ENDCLASS.                    "lcl_gui_review IMPLEMENTATION
 
@@ -363,7 +376,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
     lt_list = zcl_aor_review=>list( ).
 
-    rv_html = '<table border="1">' && gc_newline.
+    rv_html = '<table border="0">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
       rv_html = rv_html &&
         '<tr>' &&
@@ -385,7 +398,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
     lt_list = zcl_aor_transport=>list_open( ).
 
-    rv_html = '<table border="1">' && gc_newline.
+    rv_html = '<table border="0">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
       rv_html = rv_html &&
         '<tr>' &&
@@ -516,7 +529,14 @@ CLASS lcl_gui IMPLEMENTATION.
           'pre {'                       && gc_newline &&
           '  display: inline;'          && gc_newline &&
           '}'                           && gc_newline &&
-          '</style>'                    && gc_newline.
+          'table {'                     && gc_newline &&
+          '  border-top: 1px solid #0A0A0A;'    && gc_newline &&
+          '  border-bottom: 1px solid #0A0A0A;' && gc_newline &&
+          '}'                                   && gc_newline &&
+          'html {'                              && gc_newline &&
+          '  background-color: #E4EEF9;'        && gc_newline &&
+          '}'                                   && gc_newline &&
+          '</style>'                            && gc_newline.
 
   ENDMETHOD.                    "render_css
 
@@ -604,6 +624,12 @@ CLASS lcl_gui IMPLEMENTATION.
                                          iv_text   = lv_text ).
             view( lcl_gui_review=>render( lv_trkorr ) ).
           WHEN 'back'.
+            view( lcl_gui_start=>render( ) ).
+          WHEN 'close'.
+            lv_trkorr = postdata( iv_field    = 'trkorr'
+                                  it_postdata = postdata ).
+            CONCATENATE 'Close button pushed' lv_trkorr INTO lv_text SEPARATED BY space.
+            MESSAGE lv_text TYPE 'I'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'navigate'.
             lcl_navigate=>navigate( ).
