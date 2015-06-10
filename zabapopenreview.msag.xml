@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v0.2-alpha">
+ <T100A>
+  <ARBGB>ZABAPOPENREVIEW</ARBGB>
+  <MASTERLANG></MASTERLANG>
+  <APPLCLASS></APPLCLASS>
+  <RESPUSER></RESPUSER>
+  <LASTUSER></LASTUSER>
+  <LDATE>00000000</LDATE>
+  <LTIME>000000</LTIME>
+  <STEXT>abapOpenReview</STEXT>
+ </T100A>
+ <T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>000</MSGNR>
+   <TEXT>Some comments still pending</TEXT>
+  </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>001</MSGNR>
+   <TEXT>Review closed</TEXT>
+  </T100>
+ </T100>
+</abapGit>
