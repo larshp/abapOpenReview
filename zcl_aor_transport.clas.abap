@@ -4,10 +4,10 @@ class ZCL_AOR_TRANSPORT definition
   create public .
 
 public section.
-*"* public components of class ZCL_AOR_TRANSPORT
-*"* do not include other source files here!!!
 
   types:
+*"* public components of class ZCL_AOR_TRANSPORT
+*"* do not include other source files here!!!
     begin of TY_TRANSPORT .
   include type e070.
   types: as4text type e07t-as4text,
@@ -15,6 +15,11 @@ public section.
   types:
     TY_TRANSPORT_tt type standard table of ty_transport with default key .
 
+  class-methods GET_DESCRIPTION
+    importing
+      !IV_TRKORR type TRKORR
+    returning
+      value(RV_TEXT) type AS4TEXT .
   class-methods LIST_DEVELOPERS
     importing
       !IV_TRKORR type TRKORR .
@@ -44,6 +49,22 @@ ENDCLASS.
 CLASS ZCL_AOR_TRANSPORT IMPLEMENTATION.
 
 
+METHOD get_description.
+
+  SELECT SINGLE as4text INTO rv_text
+    FROM e07t
+    WHERE trkorr = iv_trkorr
+    AND langu = sy-langu.
+  IF sy-subrc <> 0.
+    SELECT SINGLE as4text INTO rv_text
+      FROM e07t
+      WHERE trkorr = iv_trkorr
+      AND langu = 'E'.                                    "#EC CI_SUBRC
+  ENDIF.
+
+ENDMETHOD.
+
+
 METHOD list_developers.
 
 * select * from e070 where strkorr = iv_trkorr.
@@ -59,14 +80,14 @@ METHOD list_objects.
 
 
   SELECT * FROM e070 INTO TABLE lt_e070
-    WHERE strkorr = iv_trkorr.
+    WHERE strkorr = iv_trkorr.                            "#EC CI_SUBRC
   IF lines( lt_e070 ) = 0.
     RETURN.
   ENDIF.
 
   SELECT * FROM e071 INTO TABLE rt_data
     FOR ALL ENTRIES IN lt_e070
-    WHERE trkorr = lt_e070-trkorr.
+    WHERE trkorr = lt_e070-trkorr.                        "#EC CI_SUBRC
 
 ENDMETHOD.
 
@@ -83,7 +104,7 @@ METHOD list_open.
     AND trstatus = 'D'
     AND trfunction = 'K'
     AND strkorr = ''
-    AND trkorr IN it_trkorr ##too_many_itab_fields.
+    AND trkorr IN it_trkorr ##too_many_itab_fields.       "#EC CI_SUBRC
 
   LOOP AT rt_data ASSIGNING <ls_data>.
     lv_index = sy-tabix.
@@ -104,7 +125,7 @@ METHOD list_open.
         FROM e07t
         INTO <ls_data>-as4text
         WHERE trkorr = <ls_data>-trkorr
-        AND langu = 'E'.
+        AND langu = 'E'.                                  "#EC CI_SUBRC
     ENDIF.
   ENDLOOP.
 
@@ -120,7 +141,7 @@ METHOD validate_open.
     INTO ls_e070
     WHERE trstatus = 'D'
     AND trfunction = 'K'
-    AND strkorr = ''.
+    AND strkorr = '' ##WARN_OK.
   IF sy-subrc <> 0.
     BREAK-POINT.
   ENDIF.
