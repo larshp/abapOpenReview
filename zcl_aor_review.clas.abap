@@ -12,6 +12,8 @@ public section.
   types:
     TY_comment_TT type standard table of zaor_comment with default key .
 
+  methods PDF .
+  methods DELETE .
   methods GET_DESCRIPTION
     returning
       value(RV_TEXT) type AS4TEXT .
@@ -340,6 +342,22 @@ METHOD constructor.
 ENDMETHOD.
 
 
+METHOD delete.
+
+  DATA: lv_delete TYPE sap_bool.
+
+
+  BREAK-POINT.
+  IF lv_delete = abap_false.
+    RETURN.
+  ENDIF.
+
+  DELETE FROM zaor_review WHERE trkorr = mv_trkorr.
+  DELETE FROM zaor_comment WHERE trkorr = mv_trkorr.
+
+ENDMETHOD.
+
+
 METHOD get_description.
 
   rv_text = zcl_aor_transport=>get_description( mv_trkorr ).
@@ -389,6 +407,13 @@ METHOD open.
     EXPORTING
       iv_trkorr = iv_trkorr.
   ro_review->ci_run( ).
+
+ENDMETHOD.
+
+
+METHOD pdf.
+
+  BREAK-POINT.
 
 ENDMETHOD.
 ENDCLASS.

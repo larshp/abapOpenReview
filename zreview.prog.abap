@@ -447,6 +447,8 @@ CLASS lcl_gui_start IMPLEMENTATION.
         '<td>' && lo_review->get_description( ) && '</td>' &&
         '<td>' && status_description( <ls_list>-status ) && '</td>' &&
         '<td><a href="sapevent:show?trkorr=' && <ls_list>-trkorr && '">Show</a></td>' &&
+        '<td><a href="sapevent:pdf?trkorr=' && <ls_list>-trkorr && '">PDF</a></td>' &&
+        '<td><a href="sapevent:delete?trkorr=' && <ls_list>-trkorr && '">Delete</a></td>' &&
         '</tr>'.
     ENDLOOP.
     rv_html = rv_html && '</table>'.
@@ -662,22 +664,31 @@ CLASS lcl_gui IMPLEMENTATION.
           lx_error     TYPE REF TO zcx_aor_error.
 
 
+    lv_trkorr = getdata( iv_field   = 'trkorr'
+                         iv_getdata = getdata ).
+
     TRY.
         CASE action.
           WHEN 'new'.
-            lv_trkorr = getdata( iv_field   = 'trkorr'
-                                 iv_getdata = getdata ).
             zcl_aor_review=>open( lv_trkorr ).
             view( lcl_gui_start=>render( ) ).
           WHEN 'show'.
-            lv_trkorr = getdata( iv_field   = 'trkorr'
-                                 iv_getdata = getdata ).
-
             CREATE OBJECT go_review
               EXPORTING
                 iv_trkorr = lv_trkorr.
-
             view( lcl_gui_review=>render( ) ).
+          WHEN 'delete'.
+            CREATE OBJECT go_review
+              EXPORTING
+                iv_trkorr = lv_trkorr.
+            go_review->delete( ).
+            CLEAR go_review.
+            view( lcl_gui_start=>render( ) ).
+          WHEN 'pdf'.
+            CREATE OBJECT go_review
+              EXPORTING
+                iv_trkorr = lv_trkorr.
+            go_review->pdf( ).
           WHEN 'add_comment'.
             lv_topic = postdata( iv_field    = 'topic'
                                  it_postdata = postdata ).
