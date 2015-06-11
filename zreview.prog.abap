@@ -6,43 +6,8 @@ CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha',       "#EC NOTEXT
 
 DATA: go_review TYPE REF TO zcl_aor_review.
 
-DEFINE _raise.
-  raise exception type lcx_exception
-    exporting
-      iv_text = &1.                                         "#EC NOTEXT
-END-OF-DEFINITION.
-
 START-OF-SELECTION.
   PERFORM run.
-
-*----------------------------------------------------------------------*
-*       CLASS CX_LOCAL_EXCEPTION DEFINITION
-*----------------------------------------------------------------------*
-*
-*----------------------------------------------------------------------*
-CLASS lcx_exception DEFINITION INHERITING FROM cx_static_check FINAL.
-
-  PUBLIC SECTION.
-    DATA mv_text TYPE string.
-
-    METHODS constructor
-      IMPORTING iv_text TYPE string.
-
-ENDCLASS.                    "CX_LOCAL_EXCEPTION DEFINITION
-
-*----------------------------------------------------------------------*
-*       CLASS CX_LOCAL_EXCEPTION IMPLEMENTATION
-*----------------------------------------------------------------------*
-*
-*----------------------------------------------------------------------*
-CLASS lcx_exception IMPLEMENTATION.
-
-  METHOD constructor.
-    super->constructor( ).
-    mv_text = iv_text.
-  ENDMETHOD.                    "CONSTRUCTOR
-
-ENDCLASS.                    "lcx_exception IMPLEMENTATION
 
 *----------------------------------------------------------------------*
 *       CLASS lcl_navigate DEFINITION
@@ -120,7 +85,7 @@ CLASS lcl_gui DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS run
-      RAISING lcx_exception.
+      RAISING zcx_aor_error.
 
     CLASS-METHODS render_header
       RETURNING VALUE(rv_html) TYPE string.
@@ -163,7 +128,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       RETURNING VALUE(rv_html) TYPE string
-      RAISING   lcx_exception.
+      RAISING   zcx_aor_error.
 
   PRIVATE SECTION.
     CLASS-METHODS add_comment
@@ -196,13 +161,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD render.
 
-    DATA: lv_trkorr TYPE trkorr.
-
-
-    lv_trkorr = go_review->get_trkorr( ).
-
     rv_html = lcl_gui=>render_header( ) &&
-      '<h1>' && lv_trkorr && '&nbsp;-&nbsp;' &&
+      '<h1>' && go_review->header( )-review_id && '&nbsp;-&nbsp;' &&
       go_review->get_description( ) && '</h1><br>' && gc_newline &&
       shortcuts( )                           && gc_newline &&
       '<br><br>'                             && gc_newline &&
@@ -373,14 +333,15 @@ CLASS lcl_gui_start DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       RETURNING VALUE(rv_html) TYPE string
-      RAISING   lcx_exception.
+      RAISING zcx_aor_error.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
       RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_reviews
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string
+      RAISING   zcx_aor_error.
 
     CLASS-METHODS status_description
       IMPORTING iv_status             TYPE zaor_status
@@ -434,21 +395,21 @@ CLASS lcl_gui_start IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
 
-    lt_list = zcl_aor_review=>list( ).
+    lt_list = zcl_aor_service=>list( ).
 
     rv_html = '<table border="0">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
       CREATE OBJECT lo_review
         EXPORTING
-          iv_trkorr = <ls_list>-trkorr.
+          iv_review_id = <ls_list>-review_id.
       rv_html = rv_html &&
         '<tr>' &&
-        '<td>' && lo_review->get_trkorr( ) && '</td>' &&
+        '<td>' && <ls_list>-review_id && '</td>' &&
         '<td>' && lo_review->get_description( ) && '</td>' &&
         '<td>' && status_description( <ls_list>-status ) && '</td>' &&
-        '<td><a href="sapevent:show?trkorr=' && <ls_list>-trkorr && '">Show</a></td>' &&
-        '<td><a href="sapevent:pdf?trkorr=' && <ls_list>-trkorr && '">PDF</a></td>' &&
-        '<td><a href="sapevent:delete?trkorr=' && <ls_list>-trkorr && '">Delete</a></td>' &&
+        '<td><a href="sapevent:show?review_id=' && <ls_list>-review_id && '">Show</a></td>' &&
+        '<td><a href="sapevent:pdf?review_id=' && <ls_list>-review_id && '">PDF</a></td>' &&
+        '<td><a href="sapevent:delete?review_id=' && <ls_list>-review_id && '">Delete</a></td>' &&
         '</tr>'.
     ENDLOOP.
     rv_html = rv_html && '</table>'.
@@ -657,37 +618,40 @@ CLASS lcl_gui IMPLEMENTATION.
 
   METHOD on_event.
 
-    DATA: lv_trkorr    TYPE trkorr,
+    DATA: lv_review_id TYPE zaor_review_id,
           lv_topic     TYPE zaor_comment-topic,
           lv_text      TYPE string,
-          lx_exception TYPE REF TO lcx_exception,
+          lv_trkorr    TYPE trkorr,
           lx_error     TYPE REF TO zcx_aor_error.
 
 
-    lv_trkorr = getdata( iv_field   = 'trkorr'
+    lv_review_id = getdata( iv_field   = 'review_id'
                          iv_getdata = getdata ).
 
     TRY.
         CASE action.
           WHEN 'new'.
-            zcl_aor_review=>open( lv_trkorr ).
+            lv_trkorr = getdata( iv_field   = 'trkorr'
+                                 iv_getdata = getdata ).
+            zcl_aor_service=>open( iv_trkorr = lv_trkorr
+                                   iv_base   = zif_aor_constants=>c_base-object ).
             view( lcl_gui_start=>render( ) ).
           WHEN 'show'.
             CREATE OBJECT go_review
               EXPORTING
-                iv_trkorr = lv_trkorr.
+                iv_review_id = lv_review_id.
             view( lcl_gui_review=>render( ) ).
           WHEN 'delete'.
             CREATE OBJECT go_review
               EXPORTING
-                iv_trkorr = lv_trkorr.
+                iv_review_id = lv_review_id.
             go_review->delete( ).
             CLEAR go_review.
             view( lcl_gui_start=>render( ) ).
           WHEN 'pdf'.
             CREATE OBJECT go_review
               EXPORTING
-                iv_trkorr = lv_trkorr.
+                iv_review_id = lv_review_id.
             go_review->pdf( ).
           WHEN 'add_comment'.
             lv_topic = postdata( iv_field    = 'topic'
@@ -713,12 +677,12 @@ CLASS lcl_gui IMPLEMENTATION.
             go_review->ci_run( ).
             view( lcl_gui_review=>render( ) ).
           WHEN OTHERS.
-            _raise 'Unknown action'.
+            RAISE EXCEPTION TYPE zcx_aor_error
+              EXPORTING
+                textid = zcx_aor_error=>unknown_action.
         ENDCASE.
       CATCH zcx_aor_error INTO lx_error.
         MESSAGE lx_error TYPE 'S' DISPLAY LIKE 'E'.
-      CATCH lcx_exception INTO lx_exception.
-        MESSAGE lx_exception->mv_text TYPE 'S' DISPLAY LIKE 'E'.
     ENDTRY.
 
   ENDMETHOD.                    "on_event
@@ -732,13 +696,13 @@ ENDCLASS.                    "lcl_gui IMPLEMENTATION
 *----------------------------------------------------------------------*
 FORM run.
 
-  DATA: lx_exception TYPE REF TO lcx_exception.
+  DATA: lx_error TYPE REF TO zcx_aor_error.
 
 
   TRY.
       lcl_gui=>run( ).
-    CATCH lcx_exception INTO lx_exception.
-      MESSAGE lx_exception->mv_text TYPE 'E'.
+    CATCH zcx_aor_error INTO lx_error.
+      MESSAGE lx_error TYPE 'E'.
   ENDTRY.
 
   WRITE: / '.'.     " required

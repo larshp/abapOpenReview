@@ -27,16 +27,6 @@ public section.
     exporting
       !ES_HEADER type SCIINS_INF
       !ET_RESULTS type SCIT_ALVLIST .
-  class-methods OPEN
-    importing
-      !IV_TRKORR type TRKORR
-    returning
-      value(RO_REVIEW) type ref to ZCL_AOR_REVIEW
-    raising
-      ZCX_AOR_ERROR .
-  class-methods LIST
-    returning
-      value(RT_DATA) type TY_REVIEW_TT .
   methods COMMENT_ADD
     importing
       !IV_TEXT type STRING
@@ -53,19 +43,21 @@ public section.
       value(RT_DATA) type TY_COMMENT_TT .
   methods CONSTRUCTOR
     importing
-      !IV_TRKORR type TRKORR .
+      !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
+    raising
+      ZCX_AOR_ERROR .
   methods CI_RUN
     raising
       ZCX_AOR_ERROR .
-  methods GET_TRKORR
+  methods HEADER
     returning
-      value(RV_TRKORR) type TRKORR .
+      value(RS_HEADER) type ZAOR_REVIEW .
 protected section.
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
 private section.
 
-  data MV_TRKORR type ZAOR_REVIEW-TRKORR .
+  data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
 
   methods CHECK_OPEN
     raising
@@ -111,10 +103,10 @@ METHOD check_open.
 
   SELECT SINGLE status
     FROM zaor_review INTO lv_status
-    WHERE trkorr = mv_trkorr.                             "#EC CI_SUBRC
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
-  IF lv_status = zif_aor_constants=>c_status_closed.
+  IF lv_status = zif_aor_constants=>c_status-closed.
     RAISE EXCEPTION TYPE zcx_aor_error
       EXPORTING
         textid = zcx_aor_error=>review_closed.
@@ -129,7 +121,12 @@ METHOD ci_results.
         lo_ci   TYPE REF TO cl_ci_inspection.
 
 
-  lv_name = mv_trkorr.
+  lv_name = mv_review_id.
+
+  IF header( )-base <> zif_aor_constants=>c_base-transport.
+* todo
+    RETURN.
+  ENDIF.
 
   cl_ci_inspection=>get_ref(
     EXPORTING
@@ -167,6 +164,11 @@ METHOD ci_run.
 
   check_open( ).
 
+  IF header( )-base <> zif_aor_constants=>c_base-transport.
+* todo
+    RETURN.
+  ENDIF.
+
 * todo integration with ATC/local defaults?
   cl_ci_checkvariant=>get_ref(
     EXPORTING
@@ -185,7 +187,7 @@ METHOD ci_run.
   cl_ci_objectset=>get_ref(
     EXPORTING
       p_type                    = cl_ci_objectset=>c_0kor
-      p_korr                    = mv_trkorr
+      p_korr                    = mv_review_id       " todo
     RECEIVING
       p_ref                     = lo_objects
     EXCEPTIONS
@@ -200,7 +202,7 @@ METHOD ci_run.
     BREAK-POINT.
   ENDIF.
 
-  lv_name = mv_trkorr.
+  lv_name = mv_review_id.
   cl_ci_inspection=>create(
     EXPORTING
       p_user           = ''
@@ -218,7 +220,7 @@ METHOD ci_run.
   ENDIF.
 
   lv_date = sy-datum + 100.
-  CONCATENATE 'Review' mv_trkorr
+  CONCATENATE 'Review' mv_review_id
     INTO lv_text SEPARATED BY space ##NO_TEXT.
 
   lo_ci->set( EXPORTING
@@ -254,8 +256,8 @@ METHOD close.
   check_comments_closed( ).
 
   UPDATE zaor_review
-    SET status = zif_aor_constants=>c_status_closed
-    WHERE trkorr = mv_trkorr.                             "#EC CI_SUBRC
+    SET status = zif_aor_constants=>c_status-closed
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
 ENDMETHOD.
@@ -282,7 +284,7 @@ METHOD comment_add.
     ls_comment-topic = iv_topic.
   ENDIF.
 
-  ls_comment-trkorr = mv_trkorr.
+  ls_comment-review_id = mv_review_id.
   ls_comment-text   = iv_text.
   ls_comment-bname  = sy-uname.
   GET TIME STAMP FIELD ls_comment-timestamp.
@@ -305,7 +307,7 @@ METHOD comment_close.
   check_open( ).
 
   ls_comment-topic  = iv_topic.
-  ls_comment-trkorr = mv_trkorr.
+  ls_comment-review_id = mv_review_id.
   ls_comment-text   = 'Ok, closed' ##NO_TEXT.
   ls_comment-bname  = sy-uname.
   ls_comment-closed = abap_true.
@@ -320,7 +322,7 @@ ENDMETHOD.
 METHOD comment_list.
 
   SELECT * FROM zaor_comment INTO TABLE rt_data
-    WHERE trkorr = mv_trkorr
+    WHERE review_id = mv_review_id
     ORDER BY topic ASCENDING timestamp ASCENDING.         "#EC CI_SUBRC
 
 ENDMETHOD.
@@ -328,85 +330,54 @@ ENDMETHOD.
 
 METHOD constructor.
 
-  DATA: ls_data TYPE zaor_review.
-
-
-  SELECT SINGLE * FROM zaor_review INTO ls_data
-    WHERE trkorr = iv_trkorr.
+  SELECT SINGLE review_id FROM zaor_review
+    INTO mv_review_id
+    WHERE review_id = iv_review_id.
   IF sy-subrc <> 0.
-    BREAK-POINT.
+    RAISE EXCEPTION TYPE zcx_aor_error
+      EXPORTING
+        textid = zcx_aor_error=>not_found.
   ENDIF.
-
-  mv_trkorr = iv_trkorr.
 
 ENDMETHOD.
 
 
 METHOD delete.
 
-  DATA: lv_delete TYPE sap_bool.
-
-
-  BREAK-POINT.
-  IF lv_delete = abap_false.
-    RETURN.
-  ENDIF.
-
-  DELETE FROM zaor_review WHERE trkorr = mv_trkorr.
-  DELETE FROM zaor_comment WHERE trkorr = mv_trkorr.
+  DELETE FROM zaor_review WHERE review_id = mv_review_id.
+  DELETE FROM zaor_review_obj WHERE review_id = mv_review_id.
+  DELETE FROM zaor_comment WHERE review_id = mv_review_id.
 
 ENDMETHOD.
 
 
 METHOD get_description.
 
-  rv_text = zcl_aor_transport=>get_description( mv_trkorr ).
+  rv_text = zcl_aor_transport=>get_description( mv_review_id ).
 
 ENDMETHOD.
 
 
-METHOD get_trkorr.
+METHOD header.
 
-  rv_trkorr = mv_trkorr.
-
-ENDMETHOD.
-
-
-METHOD list.
-
-  SELECT * FROM zaor_review
-    INTO TABLE rt_data
-    ORDER BY trkorr.                      "#EC CI_NOWHERE "#EC CI_SUBRC
+  SELECT SINGLE * FROM zaor_review
+    INTO rs_header
+    WHERE review_id = mv_review_id.
 
 ENDMETHOD.
 
 
 METHOD objects_list.
 
-  rt_data = zcl_aor_transport=>list_objects( mv_trkorr ).
-
-ENDMETHOD.
-
-
-METHOD open.
-
-  DATA: ls_review TYPE zaor_review.
-
-
-  zcl_aor_transport=>validate_open( iv_trkorr ).
-
-  CLEAR ls_review.
-  ls_review-trkorr = iv_trkorr.
-  ls_review-status = zif_aor_constants=>c_status_open.
-  INSERT zaor_review FROM ls_review.
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
-
-  CREATE OBJECT ro_review
-    EXPORTING
-      iv_trkorr = iv_trkorr.
-  ro_review->ci_run( ).
+  CASE header( )-base.
+    WHEN zif_aor_constants=>c_base-transport.
+      rt_data = zcl_aor_transport=>list_objects( mv_review_id ).
+    WHEN OTHERS.
+      SELECT * FROM zaor_review_obj
+        INTO CORRESPONDING FIELDS OF TABLE rt_data
+        WHERE review_id = mv_review_id.
+      ASSERT sy-subrc = 0.
+  ENDCASE.
 
 ENDMETHOD.
 

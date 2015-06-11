@@ -35,7 +35,9 @@ public section.
       value(RT_DATA) type ZCL_AOR_TRANSPORT=>TY_TRANSPORT_TT .
   class-methods VALIDATE_OPEN
     importing
-      !IV_TRKORR type TRKORR .
+      !IV_TRKORR type TRKORR
+    raising
+      ZCX_AOR_ERROR .
 protected section.
 *"* protected components of class ZCL_AOR_TRANSPORT
 *"* do not include other source files here!!!
@@ -94,39 +96,31 @@ ENDMETHOD.
 
 METHOD list_open.
 
-  DATA: lv_index LIKE sy-tabix.
+  DATA: lv_index     LIKE sy-tabix,
+        lv_review_id TYPE zaor_review-review_id.
 
   FIELD-SYMBOLS: <ls_data> LIKE LINE OF rt_data.
 
 
   SELECT * FROM e070 INTO CORRESPONDING FIELDS OF TABLE rt_data
-    WHERE as4user = sy-uname
-    AND trstatus = 'D'
+    WHERE as4user  = sy-uname
+    AND trstatus   = 'D'
     AND trfunction = 'K'
-    AND strkorr = ''
+    AND strkorr    = ''
     AND trkorr IN it_trkorr ##too_many_itab_fields.       "#EC CI_SUBRC
 
   LOOP AT rt_data ASSIGNING <ls_data>.
     lv_index = sy-tabix.
 
-    SELECT COUNT(*) FROM zaor_review WHERE trkorr = <ls_data>-trkorr.
+    CONCATENATE <ls_data>-trkorr '%' INTO lv_review_id.
+    SELECT COUNT(*) FROM zaor_review WHERE
+      review_id LIKE lv_review_id.
     IF sy-subrc = 0.
       DELETE rt_data INDEX lv_index.
       CONTINUE. " current loop
     ENDIF.
 
-    SELECT SINGLE as4text
-      FROM e07t
-      INTO <ls_data>-as4text
-      WHERE trkorr = <ls_data>-trkorr
-      AND langu = sy-langu.
-    IF sy-subrc <> 0.
-      SELECT SINGLE as4text
-        FROM e07t
-        INTO <ls_data>-as4text
-        WHERE trkorr = <ls_data>-trkorr
-        AND langu = 'E'.                                  "#EC CI_SUBRC
-    ENDIF.
+    <ls_data>-as4text = get_description( <ls_data>-trkorr ).
   ENDLOOP.
 
 ENDMETHOD.
@@ -143,7 +137,9 @@ METHOD validate_open.
     AND trfunction = 'K'
     AND strkorr = '' ##WARN_OK.
   IF sy-subrc <> 0.
-    BREAK-POINT.
+    RAISE EXCEPTION TYPE zcx_aor_error
+      EXPORTING
+        textid = zcx_aor_error=>transport_released.
   ENDIF.
 
 ENDMETHOD.

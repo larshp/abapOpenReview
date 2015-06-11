@@ -23,5 +23,23 @@
    <MSGNR>001</MSGNR>
    <TEXT>Review closed</TEXT>
   </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>002</MSGNR>
+   <TEXT>Not found</TEXT>
+  </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>003</MSGNR>
+   <TEXT>Unknown action</TEXT>
+  </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>004</MSGNR>
+   <TEXT>Transport released</TEXT>
+  </T100>
  </T100>
 </abapGit>

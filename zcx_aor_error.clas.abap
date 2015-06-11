@@ -25,6 +25,33 @@ public section.
       attr3 type scx_attrname value '',
       attr4 type scx_attrname value '',
     end of REVIEW_CLOSED .
+  constants:
+    begin of NOT_FOUND,
+      msgid type symsgid value 'ZABAPOPENREVIEW',
+      msgno type symsgno value '002',
+      attr1 type scx_attrname value '',
+      attr2 type scx_attrname value '',
+      attr3 type scx_attrname value '',
+      attr4 type scx_attrname value '',
+    end of NOT_FOUND .
+  constants:
+    begin of UNKNOWN_ACTION,
+      msgid type symsgid value 'ZABAPOPENREVIEW',
+      msgno type symsgno value '003',
+      attr1 type scx_attrname value '',
+      attr2 type scx_attrname value '',
+      attr3 type scx_attrname value '',
+      attr4 type scx_attrname value '',
+    end of UNKNOWN_ACTION .
+  constants:
+    begin of TRANSPORT_RELEASED,
+      msgid type symsgid value 'ZABAPOPENREVIEW',
+      msgno type symsgno value '004',
+      attr1 type scx_attrname value '',
+      attr2 type scx_attrname value '',
+      attr3 type scx_attrname value '',
+      attr4 type scx_attrname value '',
+    end of TRANSPORT_RELEASED .
 
   methods CONSTRUCTOR
     importing
