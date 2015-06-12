@@ -81,7 +81,7 @@ METHOD diff.
 
   READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
   IF sy-subrc <> 0.
-    BREAK-POINT. " todo
+* todo
     RETURN.
   ENDIF.
 

@@ -333,6 +333,8 @@ METHOD delete.
   DELETE FROM zaor_comment
     WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
 
+* todo, also delete all relevant code inspector inspections and object sets?
+
 ENDMETHOD.
 
 
@@ -360,7 +362,9 @@ ENDMETHOD.
 
 METHOD objectset.
 
-  DATA: lt_objects TYPE scit_objs.
+  DATA: lt_objects TYPE scit_objs,
+        ls_e071    TYPE e071,
+        ls_tadir   TYPE tadir.
 
 
   CASE header( )-base.
@@ -408,8 +412,16 @@ METHOD objectset.
       LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
         APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
 
-        IF <ls_review>-pgmid = 'LIMU' AND <ls_review>-object = 'REPS'.
-          <ls_review>-object = 'PROG'.
+        IF <ls_review>-pgmid = 'LIMU'.
+          MOVE-CORRESPONDING <ls_review> TO ls_e071.
+          CALL FUNCTION 'TR_CHECK_TYPE'
+            EXPORTING
+              wi_e071  = ls_e071
+            IMPORTING
+              we_tadir = ls_tadir.
+
+          <ls_review>-object   = ls_tadir-object.
+          <ls_review>-obj_name = ls_tadir-obj_name.
         ENDIF.
 
         <ls_object>-objtype = <ls_review>-object.

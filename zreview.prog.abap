@@ -261,8 +261,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       LOOP AT lt_results ASSIGNING <ls_result>.
         rv_html = rv_html &&
           '<tr>' && gc_newline &&
-          '<td>' && <ls_result>-objtype && '</td>' && gc_newline &&
-          '<td>' && <ls_result>-objname && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-sobjtype && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-sobjname && '</td>' && gc_newline &&
           '<td>' && <ls_result>-kind && '</td>' && gc_newline &&
           '<td>' && <ls_result>-line && '</td>' && gc_newline &&
           '<td>' && <ls_result>-text && '</td>' && gc_newline &&
