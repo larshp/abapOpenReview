@@ -59,6 +59,9 @@ private section.
 
   data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
 
+  methods OBJECTSET
+    returning
+      value(RO_OBJECTSET) type ref to CL_CI_OBJECTSET .
   methods CHECK_OPEN
     raising
       ZCX_AOR_ERROR .
@@ -123,11 +126,6 @@ METHOD ci_results.
 
   lv_name = mv_review_id.
 
-  IF header( )-base <> zif_aor_constants=>c_base-transport.
-* todo
-    RETURN.
-  ENDIF.
-
   cl_ci_inspection=>get_ref(
     EXPORTING
       p_user          = ''
@@ -137,10 +135,13 @@ METHOD ci_results.
     EXCEPTIONS
       insp_not_exists = 1
       OTHERS          = 2 ).
-  IF sy-subrc <> 0.
+  IF sy-subrc = 1.
+    RETURN.
+  ELSEIF sy-subrc <> 0.
     BREAK-POINT.
   ENDIF.
 
+* make sure SAP note 2043027 is installed
   lo_ci->plain_list(
     IMPORTING
       p_list = et_results ).
@@ -157,6 +158,7 @@ METHOD ci_run.
   DATA: lv_date    TYPE sci_deldat,
         lv_name    TYPE sci_insp,
         lv_text    TYPE sci_text,
+        lv_variant TYPE sci_chkv,
         lo_ci      TYPE REF TO cl_ci_inspection,
         lo_objects TYPE REF TO cl_ci_objectset,
         lo_variant TYPE REF TO cl_ci_checkvariant.
@@ -164,16 +166,17 @@ METHOD ci_run.
 
   check_open( ).
 
-  IF header( )-base <> zif_aor_constants=>c_base-transport.
-* todo
-    RETURN.
-  ENDIF.
+* fetch variant from ATC
+  cl_satc_ac_config_access=>load_value(
+    EXPORTING
+      i_key = if_satc_ac_config_state_names=>c_config-ci_check_variant
+    IMPORTING
+      e_value = lv_variant ).
 
-* todo integration with ATC/local defaults?
   cl_ci_checkvariant=>get_ref(
     EXPORTING
       p_user            = ''
-      p_name            = 'DEFAULT'
+      p_name            = lv_variant
     RECEIVING
       p_ref             = lo_variant
     EXCEPTIONS
@@ -184,23 +187,7 @@ METHOD ci_run.
     BREAK-POINT.
   ENDIF.
 
-  cl_ci_objectset=>get_ref(
-    EXPORTING
-      p_type                    = cl_ci_objectset=>c_0kor
-      p_korr                    = mv_review_id       " todo
-    RECEIVING
-      p_ref                     = lo_objects
-    EXCEPTIONS
-      missing_parameter         = 1
-      objs_not_exists           = 2
-      invalid_request           = 3
-      object_not_exists         = 4
-      object_may_not_be_checked = 5
-      no_main_program           = 6
-      OTHERS                    = 7 ).
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+  lo_objects = objectset( ).
 
   lv_name = mv_review_id.
   cl_ci_inspection=>create(
@@ -353,7 +340,12 @@ ENDMETHOD.
 
 METHOD get_description.
 
-  rv_text = zcl_aor_transport=>get_description( mv_review_id ).
+  DATA: lv_trkorr TYPE trkorr.
+
+
+  lv_trkorr = mv_review_id(10).
+
+  rv_text = zcl_aor_transport=>get_description( lv_trkorr ).
 
 ENDMETHOD.
 
@@ -363,6 +355,97 @@ METHOD header.
   SELECT SINGLE * FROM zaor_review
     INTO rs_header
     WHERE review_id = mv_review_id.
+
+ENDMETHOD.
+
+
+METHOD objectset.
+
+  DATA: lt_objects TYPE scit_objs.
+
+
+  CASE header( )-base.
+    WHEN zif_aor_constants=>c_base-transport.
+      cl_ci_objectset=>get_ref(
+        EXPORTING
+          p_type                    = cl_ci_objectset=>c_0kor
+          p_korr                    = mv_review_id
+        RECEIVING
+          p_ref                     = ro_objectset
+        EXCEPTIONS
+          missing_parameter         = 1
+          objs_not_exists           = 2
+          invalid_request           = 3
+          object_not_exists         = 4
+          object_may_not_be_checked = 5
+          no_main_program           = 6
+          OTHERS                    = 7 ).
+      IF sy-subrc <> 0.
+        BREAK-POINT.
+      ENDIF.
+    WHEN zif_aor_constants=>c_base-developer
+        OR zif_aor_constants=>c_base-object.
+      cl_ci_objectset=>get_ref(
+        EXPORTING
+          p_type                    = cl_ci_objectset=>c_0obj
+          p_objsnam                 = CONV #( mv_review_id )
+        RECEIVING
+          p_ref                     = ro_objectset
+        EXCEPTIONS
+          missing_parameter         = 1
+          objs_not_exists           = 2
+          invalid_request           = 3
+          object_not_exists         = 4
+          object_may_not_be_checked = 5
+          no_main_program           = 6
+          OTHERS                    = 7 ).
+      IF sy-subrc = 0.
+        RETURN.
+      ELSEIF sy-subrc <> 2.
+        BREAK-POINT.
+      ENDIF.
+
+      LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
+        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_objects>).
+        <ls_objects>-objtype = <ls_review>-object.
+        <ls_objects>-objname = <ls_review>-obj_name.
+      ENDLOOP.
+
+      cl_ci_objectset=>save_from_list(
+        EXPORTING
+          p_user              = ''
+          p_objects           = lt_objects
+          p_name              = CONV #( mv_review_id )
+        RECEIVING
+          p_ref               = ro_objectset
+        EXCEPTIONS
+          objs_already_exists = 1
+          locked              = 2
+          error_in_enqueue    = 3
+          not_authorized      = 4
+          OTHERS              = 5 ).
+      IF sy-subrc <> 0.
+        BREAK-POINT.
+      ENDIF.
+
+*      cl_ci_objectset=>create(
+*        EXPORTING
+*          p_user              = ''
+*          p_name              = CONV #( mv_review_id )
+*        RECEIVING
+*          p_ref               = ro_objectset
+*        EXCEPTIONS
+*          objs_already_exists = 1
+*          objs_not_exists     = 2
+*          locked              = 3
+*          error_in_enqueue    = 4
+*          not_authorized      = 5
+*          OTHERS              = 6 ).
+*      IF sy-subrc <> 0.
+*        BREAK-POINT.
+*      ENDIF.
+
+  ENDCASE.
 
 ENDMETHOD.
 

@@ -204,19 +204,25 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = rv_html &&
       'Name:&nbsp;'    && ls_header-inspecname && '<br>' && gc_newline &&
       'Version:&nbsp;' && ls_header-inspecvers && '<br>' && gc_newline &&
-      'Date:&nbsp;'    && ls_header-creadate   && '<br>' && gc_newline ##NO_TEXT.
+      'Date:&nbsp;'    && ls_header-creadate   && '<br>' && gc_newline &&
+      '<br>' && gc_newline ##NO_TEXT.
 
-    rv_html = rv_html && '<table border="0">' && gc_newline.
-    LOOP AT lt_results ASSIGNING <ls_result>.
-      rv_html = rv_html &&
-        '<tr>' && gc_newline &&
-        '<td>' && <ls_result>-objtype && '</td>' && gc_newline &&
-        '<td>' && <ls_result>-objname && '</td>' && gc_newline &&
-        '<td>' && <ls_result>-kind && '</td>' && gc_newline &&
-        '<td>' && <ls_result>-text && '</td>' && gc_newline &&
-        '</tr>' && gc_newline.
-    ENDLOOP.
-    rv_html = rv_html && '</table>' && gc_newline.
+    IF NOT lt_results IS INITIAL.
+      rv_html = rv_html && '<table border="0">' && gc_newline.
+      LOOP AT lt_results ASSIGNING <ls_result>.
+        rv_html = rv_html &&
+          '<tr>' && gc_newline &&
+          '<td>' && <ls_result>-objtype && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-objname && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-kind && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-line && '</td>' && gc_newline &&
+          '<td>' && <ls_result>-text && '</td>' && gc_newline &&
+          '</tr>' && gc_newline.
+      ENDLOOP.
+      rv_html = rv_html && '</table>' && gc_newline.
+    ELSE.
+      rv_html = rv_html && 'Empty'.
+    ENDIF.
 
   ENDMETHOD.                    "code_inspector
 
@@ -333,7 +339,7 @@ CLASS lcl_gui_start DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       RETURNING VALUE(rv_html) TYPE string
-      RAISING zcx_aor_error.
+      RAISING   zcx_aor_error.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
