@@ -180,17 +180,16 @@ CLASS lcl_gui_review IMPLEMENTATION.
         <ls_object>-obj_name &&
         '<br>'.
 
-      lt_diff = zcl_aor_diff=>diff( iv_object   = <ls_object>-object
-                                    iv_obj_name = <ls_object>-obj_name ).
+      lt_diff = zcl_aor_diff=>diff( CORRESPONDING #( <ls_object> ) ).
 
       rv_html = rv_html && '<table border="0">'.
       LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
         rv_html = rv_html &&
           '<tr><td>' &&
           <ls_diff>-vrsflag &&
-          '&nbsp;</td><td><tt>' &&
+          '&nbsp;</td><td><pre>' &&
           <ls_diff>-line &&
-          '</tt></td></tr>'.
+          '</pre></td></tr>'.
       ENDLOOP.
       rv_html = rv_html && '</table>'.
 
@@ -237,13 +236,14 @@ CLASS lcl_gui_review IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
 
 
-    rv_html = '<a name="ci"></a><h2>Code Inspector</h2>&nbsp;' &&
-      '<a href="sapevent:rerun">Rerun</a><br><br>' && gc_newline.
-
     go_review->ci_results( IMPORTING es_header  = ls_header
                                      et_results = lt_results ).
+    IF ls_header IS INITIAL.
+      RETURN.
+    ENDIF.
 
-    rv_html = rv_html &&
+    rv_html = '<a name="ci"></a><h2>Code Inspector</h2>&nbsp;' &&
+      '<a href="sapevent:rerun">Rerun</a><br><br>' && gc_newline &&
       '<table>' &&
       '<tr>' &&
       '<td>Name:</td><td>' && ls_header-inspecname && '</td>' &&

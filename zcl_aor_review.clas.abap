@@ -52,6 +52,7 @@ private section.
 
   data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
 
+  methods CI_CLEANUP .
   methods OBJECTSET
     returning
       value(RO_OBJECTSET) type ref to CL_CI_OBJECTSET .
@@ -106,6 +107,45 @@ METHOD check_open.
     RAISE EXCEPTION TYPE zcx_aor_error
       EXPORTING
         textid = zcx_aor_error=>review_closed.
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD ci_cleanup.
+
+  DATA: lo_inspection TYPE REF TO cl_ci_inspection,
+        lo_objectset  TYPE REF TO cl_ci_objectset.
+
+
+  cl_ci_inspection=>get_ref(
+    EXPORTING
+      p_user          = ''
+      p_name          = CONV #( mv_review_id )
+    RECEIVING
+      p_ref           = lo_inspection
+    EXCEPTIONS
+      insp_not_exists = 1
+      OTHERS          = 2 ).
+  IF sy-subrc = 0.
+    lo_inspection->delete( p_mode = 'A' ).
+  ENDIF.
+
+  cl_ci_objectset=>get_ref(
+    EXPORTING
+      p_objsnam                 = CONV #( mv_review_id )
+    RECEIVING
+      p_ref                     = lo_objectset
+    EXCEPTIONS
+      missing_parameter         = 1
+      objs_not_exists           = 2
+      invalid_request           = 3
+      object_not_exists         = 4
+      object_may_not_be_checked = 5
+      no_main_program           = 6
+      OTHERS                    = 7 ).
+  IF sy-subrc = 0.
+    lo_objectset->delete( p_mode = 'A' ).
   ENDIF.
 
 ENDMETHOD.
@@ -181,6 +221,10 @@ METHOD ci_run.
   ENDIF.
 
   lo_objects = objectset( ).
+  IF NOT lo_objects IS BOUND.
+* no objects valid for code inspection
+    RETURN.
+  ENDIF.
 
   lv_name = mv_review_id.
   cl_ci_inspection=>create(
@@ -333,7 +377,7 @@ METHOD delete.
   DELETE FROM zaor_comment
     WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
 
-* todo, also delete all relevant code inspector inspections and object sets?
+  ci_cleanup( ).
 
 ENDMETHOD.
 
@@ -408,8 +452,13 @@ METHOD objectset.
         BREAK-POINT.
       ENDIF.
 
+* see method cl_wb_object_type=>get_tadir_from_limu
 * see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
       LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
+        IF <ls_review>-pgmid = 'R3TR' AND <ls_review>-object = 'TABU'.
+          CONTINUE.
+        ENDIF.
+
         APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
 
         IF <ls_review>-pgmid = 'LIMU'.
@@ -428,7 +477,10 @@ METHOD objectset.
         <ls_object>-objname = <ls_review>-obj_name.
       ENDLOOP.
 
-      ASSERT NOT lt_objects IS INITIAL.
+      IF lt_objects IS INITIAL.
+        RETURN.
+      ENDIF.
+
       cl_ci_objectset=>save_from_list(
         EXPORTING
           p_user              = ''

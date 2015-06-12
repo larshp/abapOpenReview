@@ -6,15 +6,11 @@ public section.
 
   class-methods DIFF
     importing
-      !IV_OBJECT type TROBJTYPE
-      !IV_OBJ_NAME type TROBJ_NAME
+      !IS_OBJECT type ZAOR_OBJECT
     returning
       value(RT_DELTA) type VXABAPT255_TAB .
 protected section.
 private section.
-
-  types:
-    TY_VRSD_OLD_TT type standard table of VRSD_OLD with default key .
 
   class-methods DELTA
     importing
@@ -22,10 +18,21 @@ private section.
       !IT_NEW type STANDARD TABLE
     returning
       value(RT_DELTA) type VXABAPT255_TAB .
+  class-methods GET_METH
+    importing
+      !IV_OBJECT_NAME type VERSOBJNAM
+      !IV_VERSNO type VERSNO
+    returning
+      value(RT_SOURCE) type ABAPTXT255_TAB .
+  class-methods GET_REPS
+    importing
+      !IV_OBJECT_NAME type VERSOBJNAM
+      !IV_VERSNO type VERSNO
+    returning
+      value(RT_SOURCE) type ABAPTXT255_TAB .
   class-methods RESOLVE
     importing
-      !IV_OBJECT type TROBJTYPE
-      !IV_OBJ_NAME type TROBJ_NAME
+      !IS_OBJECT type ZAOR_OBJECT
     returning
       value(RT_VRSO) type ZIF_AOR_TYPES=>TY_VRSO_TT .
   class-methods VERSION_LIST
@@ -33,7 +40,7 @@ private section.
       !IV_OBJECT type TROBJTYPE
       !IV_OBJ_NAME type TROBJ_NAME
     returning
-      value(RT_VERSION_LIST) type TY_VRSD_OLD_TT .
+      value(RT_VERSION_LIST) type VRSD_TAB .
 ENDCLASS.
 
 
@@ -64,25 +71,29 @@ ENDMETHOD.
 
 METHOD diff.
 
-  DATA: lt_repos_tab_new TYPE STANDARD TABLE OF abaptxt255,
-        lt_repos_tab_old TYPE STANDARD TABLE OF abaptxt255,
-        lt_version_list  TYPE ty_vrsd_old_tt,
-        ls_new           LIKE LINE OF lt_version_list,
-        ls_old           LIKE LINE OF lt_version_list,
-        lt_vrso          TYPE zif_aor_types=>ty_vrso_tt,
-        ls_vrso          LIKE LINE OF lt_vrso.
+  DATA: lt_new          TYPE STANDARD TABLE OF abaptxt255,
+        lt_old          TYPE STANDARD TABLE OF abaptxt255,
+        lt_version_list TYPE vrsd_tab,
+        ls_new          LIKE LINE OF lt_version_list,
+        ls_old          LIKE LINE OF lt_version_list,
+        lt_vrso         TYPE zif_aor_types=>ty_vrso_tt,
+        ls_vrso         LIKE LINE OF lt_vrso.
 
 
-  ASSERT NOT iv_object IS INITIAL.
-  ASSERT NOT iv_obj_name IS INITIAL.
+  ASSERT NOT is_object IS INITIAL.
 
-  lt_vrso = resolve( iv_object   = iv_object
-                     iv_obj_name = iv_obj_name ).
-
-  READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
-  IF sy-subrc <> 0.
-* todo
+  lt_vrso = resolve( is_object ).
+  IF lt_vrso IS INITIAL.
+* non versionable object
     RETURN.
+  ENDIF.
+
+  IF is_object-object = 'PROG'.
+* todo, somehow show diff for all sub objects
+    READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
+    ASSERT sy-subrc = 0.
+  ELSE.
+    ls_vrso = lt_vrso[ 1 ].
   ENDIF.
 
   lt_version_list = version_list( iv_object   = ls_vrso-objtype
@@ -91,12 +102,40 @@ METHOD diff.
   ASSERT sy-subrc = 0.
   READ TABLE lt_version_list INDEX 2 INTO ls_old.
 
-  CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
+  CASE ls_vrso-objtype.
+    WHEN 'REPS'.
+      lt_new = get_reps( iv_object_name = ls_vrso-objname
+                         iv_versno      = ls_new-versno ).
+      IF NOT ls_old IS INITIAL.
+        lt_old = get_reps( iv_object_name = ls_vrso-objname
+                           iv_versno      = ls_old-versno ).
+      ENDIF.
+    WHEN 'METH'.
+      lt_new = get_meth( iv_object_name = ls_vrso-objname
+                         iv_versno      = ls_new-versno ).
+      IF NOT ls_old IS INITIAL.
+        lt_old = get_meth( iv_object_name = ls_vrso-objname
+                           iv_versno      = ls_old-versno ).
+      ENDIF.
+    WHEN OTHERS.
+      BREAK-POINT.
+      RETURN.
+  ENDCASE.
+
+  rt_delta = delta( it_old = lt_old
+                    it_new = lt_new ).
+
+ENDMETHOD.
+
+
+METHOD get_meth.
+
+  CALL FUNCTION 'SVRS_GET_VERSION_METH_40'
     EXPORTING
-      object_name           = ls_vrso-objname
-      versno                = ls_new-versno
+      object_name           = iv_object_name
+      versno                = iv_versno
     TABLES
-      repos_tab             = lt_repos_tab_new
+      repos_tab             = rt_source
     EXCEPTIONS
       no_version            = 1
       system_failure        = 2
@@ -106,25 +145,25 @@ METHOD diff.
     BREAK-POINT.
   ENDIF.
 
-  IF NOT ls_old-versno IS INITIAL.
-    CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
-      EXPORTING
-        object_name           = ls_vrso-objname
-        versno                = ls_old-versno
-      TABLES
-        repos_tab             = lt_repos_tab_old
-      EXCEPTIONS
-        no_version            = 1
-        system_failure        = 2
-        communication_failure = 3
-        OTHERS                = 4.
-    IF sy-subrc <> 0.
-      BREAK-POINT.
-    ENDIF.
-  ENDIF.
+ENDMETHOD.
 
-  rt_delta = delta( it_old = lt_repos_tab_old
-                    it_new = lt_repos_tab_new ).
+
+METHOD get_reps.
+
+  CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
+    EXPORTING
+      object_name           = iv_object_name
+      versno                = iv_versno
+    TABLES
+      repos_tab             = rt_source
+    EXCEPTIONS
+      no_version            = 1
+      system_failure        = 2
+      communication_failure = 3
+      OTHERS                = 4.
+  IF sy-subrc <> 0.
+    BREAK-POINT.
+  ENDIF.
 
 ENDMETHOD.
 
@@ -134,8 +173,7 @@ METHOD resolve.
   DATA: ls_e071 TYPE e071.
 
 
-  ls_e071-object   = iv_object.
-  ls_e071-obj_name = iv_obj_name.
+  MOVE-CORRESPONDING is_object TO ls_e071.
 
   CALL FUNCTION 'SVRS_RESOLVE_E071_OBJ'
     EXPORTING
@@ -145,9 +183,6 @@ METHOD resolve.
     EXCEPTIONS
       not_versionable = 1
       OTHERS          = 2.
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
 
 ENDMETHOD.
 
@@ -155,8 +190,8 @@ ENDMETHOD.
 METHOD version_list.
 
   DATA: lt_lversno_list TYPE STANDARD TABLE OF vrsn,
-        lv_vobjname     TYPE vrsd_old-objname,
-        lv_vobjtype     TYPE vrsd_old-objtype.
+        lv_vobjname     TYPE vrsd-objname,
+        lv_vobjtype     TYPE vrsd-objtype.
 
 
   ASSERT NOT iv_object IS INITIAL.
@@ -165,7 +200,7 @@ METHOD version_list.
   lv_vobjname = iv_obj_name.
   lv_vobjtype = iv_object.
 
-  CALL FUNCTION 'SVRS_GET_VERSION_DIRECTORY'
+  CALL FUNCTION 'SVRS_GET_VERSION_DIRECTORY_46'
     EXPORTING
       objname      = lv_vobjname
       objtype      = lv_vobjtype
