@@ -404,12 +404,19 @@ METHOD objectset.
         BREAK-POINT.
       ENDIF.
 
+* see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
       LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
-        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_objects>).
-        <ls_objects>-objtype = <ls_review>-object.
-        <ls_objects>-objname = <ls_review>-obj_name.
+        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+
+        IF <ls_review>-pgmid = 'LIMU' AND <ls_review>-object = 'REPS'.
+          <ls_review>-object = 'PROG'.
+        ENDIF.
+
+        <ls_object>-objtype = <ls_review>-object.
+        <ls_object>-objname = <ls_review>-obj_name.
       ENDLOOP.
 
+      ASSERT NOT lt_objects IS INITIAL.
       cl_ci_objectset=>save_from_list(
         EXPORTING
           p_user              = ''
@@ -426,23 +433,6 @@ METHOD objectset.
       IF sy-subrc <> 0.
         BREAK-POINT.
       ENDIF.
-
-*      cl_ci_objectset=>create(
-*        EXPORTING
-*          p_user              = ''
-*          p_name              = CONV #( mv_review_id )
-*        RECEIVING
-*          p_ref               = ro_objectset
-*        EXCEPTIONS
-*          objs_already_exists = 1
-*          objs_not_exists     = 2
-*          locked              = 3
-*          error_in_enqueue    = 4
-*          not_authorized      = 5
-*          OTHERS              = 6 ).
-*      IF sy-subrc <> 0.
-*        BREAK-POINT.
-*      ENDIF.
 
   ENDCASE.
 
