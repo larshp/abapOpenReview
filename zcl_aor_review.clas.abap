@@ -5,13 +5,6 @@ class ZCL_AOR_REVIEW definition
 
 public section.
 
-  types:
-*"* public components of class ZCL_AOR_REVIEW
-*"* do not include other source files here!!!
-    TY_REVIEW_TT type standard table of zaor_review with default key .
-  types:
-    TY_comment_TT type standard table of zaor_comment with default key .
-
   methods PDF .
   methods DELETE .
   methods GET_DESCRIPTION
@@ -40,7 +33,7 @@ public section.
       ZCX_AOR_ERROR .
   methods COMMENT_LIST
     returning
-      value(RT_DATA) type TY_COMMENT_TT .
+      value(RT_DATA) type zif_aor_types=>TY_COMMENT_TT .
   methods CONSTRUCTOR
     importing
       !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
@@ -79,7 +72,7 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
 METHOD check_comments_closed.
 
-  DATA: lt_comments TYPE ty_comment_tt.
+  DATA: lt_comments TYPE zif_aor_types=>ty_comment_tt.
 
   FIELD-SYMBOLS: <ls_comment> LIKE LINE OF lt_comments.
 
@@ -331,9 +324,14 @@ ENDMETHOD.
 
 METHOD delete.
 
-  DELETE FROM zaor_review WHERE review_id = mv_review_id.
-  DELETE FROM zaor_review_obj WHERE review_id = mv_review_id.
-  DELETE FROM zaor_comment WHERE review_id = mv_review_id.
+  DELETE FROM zaor_review
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
+
+  DELETE FROM zaor_review_obj
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
+
+  DELETE FROM zaor_comment
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
 
 ENDMETHOD.
 
@@ -354,7 +352,8 @@ METHOD header.
 
   SELECT SINGLE * FROM zaor_review
     INTO rs_header
-    WHERE review_id = mv_review_id.
+    WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 
@@ -458,7 +457,7 @@ METHOD objects_list.
     WHEN OTHERS.
       SELECT * FROM zaor_review_obj
         INTO CORRESPONDING FIELDS OF TABLE rt_data
-        WHERE review_id = mv_review_id.
+        WHERE review_id = mv_review_id.                   "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
   ENDCASE.
 

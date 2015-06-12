@@ -7,7 +7,9 @@ public section.
   class-methods DIFF
     importing
       !IV_OBJECT type TROBJTYPE
-      !IV_OBJ_NAME type TROBJ_NAME .
+      !IV_OBJ_NAME type TROBJ_NAME
+    returning
+      value(RT_DELTA) type VXABAPT255_TAB .
 protected section.
 private section.
 
@@ -20,6 +22,12 @@ private section.
       !IT_NEW type STANDARD TABLE
     returning
       value(RT_DELTA) type VXABAPT255_TAB .
+  class-methods RESOLVE
+    importing
+      !IV_OBJECT type TROBJTYPE
+      !IV_OBJ_NAME type TROBJ_NAME
+    returning
+      value(RT_VRSO) type ZIF_AOR_TYPES=>TY_VRSO_TT .
   class-methods VERSION_LIST
     importing
       !IV_OBJECT type TROBJTYPE
@@ -61,26 +69,31 @@ METHOD diff.
         lt_version_list  TYPE ty_vrsd_old_tt,
         ls_new           LIKE LINE OF lt_version_list,
         ls_old           LIKE LINE OF lt_version_list,
-        lt_delta         TYPE STANDARD TABLE OF vxabapt255.
+        lt_vrso          TYPE zif_aor_types=>ty_vrso_tt,
+        ls_vrso          LIKE LINE OF lt_vrso.
 
 
   ASSERT NOT iv_object IS INITIAL.
   ASSERT NOT iv_obj_name IS INITIAL.
 
-  IF iv_object <> 'REPS'.
+  lt_vrso = resolve( iv_object   = iv_object
+                     iv_obj_name = iv_obj_name ).
+
+  READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
+  IF sy-subrc <> 0.
     BREAK-POINT. " todo
+    RETURN.
   ENDIF.
 
-  lt_version_list = version_list( iv_object   = iv_object
-                                  iv_obj_name = iv_obj_name ).
+  lt_version_list = version_list( iv_object   = ls_vrso-objtype
+                                  iv_obj_name = CONV #( ls_vrso-objname ) ).
   READ TABLE lt_version_list INDEX 1 INTO ls_new.
   ASSERT sy-subrc = 0.
   READ TABLE lt_version_list INDEX 2 INTO ls_old.
-  ASSERT sy-subrc = 0.
 
   CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
     EXPORTING
-      object_name           = 'ZLHVP001'
+      object_name           = ls_vrso-objname
       versno                = ls_new-versno
     TABLES
       repos_tab             = lt_repos_tab_new
@@ -93,24 +106,48 @@ METHOD diff.
     BREAK-POINT.
   ENDIF.
 
-  CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
+  IF NOT ls_old-versno IS INITIAL.
+    CALL FUNCTION 'SVRS_GET_VERSION_REPS_40'
+      EXPORTING
+        object_name           = ls_vrso-objname
+        versno                = ls_old-versno
+      TABLES
+        repos_tab             = lt_repos_tab_old
+      EXCEPTIONS
+        no_version            = 1
+        system_failure        = 2
+        communication_failure = 3
+        OTHERS                = 4.
+    IF sy-subrc <> 0.
+      BREAK-POINT.
+    ENDIF.
+  ENDIF.
+
+  rt_delta = delta( it_old = lt_repos_tab_old
+                    it_new = lt_repos_tab_new ).
+
+ENDMETHOD.
+
+
+METHOD resolve.
+
+  DATA: ls_e071 TYPE e071.
+
+
+  ls_e071-object   = iv_object.
+  ls_e071-obj_name = iv_obj_name.
+
+  CALL FUNCTION 'SVRS_RESOLVE_E071_OBJ'
     EXPORTING
-      object_name           = 'ZLHVP001'
-      versno                = ls_old-versno
+      e071_obj        = ls_e071
     TABLES
-      repos_tab             = lt_repos_tab_old
+      obj_tab         = rt_vrso
     EXCEPTIONS
-      no_version            = 1
-      system_failure        = 2
-      communication_failure = 3
-      OTHERS                = 4.
+      not_versionable = 1
+      OTHERS          = 2.
   IF sy-subrc <> 0.
     BREAK-POINT.
   ENDIF.
-
-  lt_delta = delta( it_old = lt_repos_tab_old
-                    it_new = lt_repos_tab_new ).
-  BREAK-POINT.
 
 ENDMETHOD.
 

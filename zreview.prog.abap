@@ -144,6 +144,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS objects
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS diff
+      RETURNING VALUE(rv_html) TYPE string.
+
     CLASS-METHODS code_inspector
       RETURNING VALUE(rv_html) TYPE string.
 
@@ -159,21 +162,60 @@ ENDCLASS.                    "lcl_gui_start DEFINITION
 *----------------------------------------------------------------------*
 CLASS lcl_gui_review IMPLEMENTATION.
 
+  METHOD diff.
+
+    DATA: lt_objects TYPE e071_t,
+          lt_diff    TYPE vxabapt255_tab.
+
+    FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects.
+
+
+    rv_html = '<h1>Diff</h1><br>'.
+
+    lt_objects = go_review->objects_list( ).
+    LOOP AT lt_objects ASSIGNING <ls_object>.
+      rv_html = rv_html      &&
+        <ls_object>-object   &&
+        '&nbsp;'             &&
+        <ls_object>-obj_name &&
+        '<br>'.
+
+      lt_diff = zcl_aor_diff=>diff( iv_object   = <ls_object>-object
+                                    iv_obj_name = <ls_object>-obj_name ).
+
+      rv_html = rv_html && '<table border="0">'.
+      LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+        rv_html = rv_html &&
+          '<tr><td>' &&
+          <ls_diff>-vrsflag &&
+          '&nbsp;</td><td><tt>' &&
+          <ls_diff>-line &&
+          '</tt></td></tr>'.
+      ENDLOOP.
+      rv_html = rv_html && '</table>'.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
   METHOD render.
 
     rv_html = lcl_gui=>render_header( ) &&
-      '<h1>' && go_review->header( )-review_id && '&nbsp;-&nbsp;' &&
-      go_review->get_description( ) && '</h1><br>' && gc_newline &&
-      shortcuts( )                           && gc_newline &&
-      '<br><br>'                             && gc_newline &&
-      objects( )                             && gc_newline &&
-      '<br>'                                 && gc_newline &&
-      code_inspector( )                      && gc_newline &&
-      '<br><br>'                             && gc_newline &&
-      comments( )                            && gc_newline &&
-      '<br>'                                 && gc_newline &&
-      close_review( )                        && gc_newline &&
-      shortcuts( )                           && gc_newline &&
+      '<h1>' && go_review->header( )-review_id
+      && '&nbsp;-&nbsp;' && go_review->get_description( ) &&
+      '</h1><br>'                           && gc_newline &&
+      shortcuts( )                          && gc_newline &&
+      '<br><br>'                            && gc_newline &&
+      objects( )                            && gc_newline &&
+      '<br>'                                && gc_newline &&
+      code_inspector( )                     && gc_newline &&
+      '<br><br>'                            && gc_newline &&
+      diff( )                               && gc_newline &&
+      '<br><br>'                            && gc_newline &&
+      comments( )                           && gc_newline &&
+      '<br>'                                && gc_newline &&
+      close_review( )                       && gc_newline &&
+      shortcuts( )                          && gc_newline &&
       lcl_gui=>render_footer( ).
 
   ENDMETHOD.                    "render
@@ -202,10 +244,17 @@ CLASS lcl_gui_review IMPLEMENTATION.
                                      et_results = lt_results ).
 
     rv_html = rv_html &&
-      'Name:&nbsp;'    && ls_header-inspecname && '<br>' && gc_newline &&
-      'Version:&nbsp;' && ls_header-inspecvers && '<br>' && gc_newline &&
-      'Date:&nbsp;'    && ls_header-creadate   && '<br>' && gc_newline &&
-      '<br>' && gc_newline ##NO_TEXT.
+      '<table>' &&
+      '<tr>' &&
+      '<td>Name:</td><td>' && ls_header-inspecname && '</td>' &&
+      '</tr>' && gc_newline &&
+      '<tr>' &&
+      '<td>Version:</td><td>' && ls_header-inspecvers && '</td>' &&
+      '</tr>' && gc_newline &&
+      '<tr>' &&
+      '<td>Date:</td><td>' && ls_header-creadate && '</td>' &&
+      '</tr>' && gc_newline &&
+      '</table><br>' && gc_newline ##NO_TEXT.
 
     IF NOT lt_results IS INITIAL.
       rv_html = rv_html && '<table border="0">' && gc_newline.
@@ -221,7 +270,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
       ENDLOOP.
       rv_html = rv_html && '</table>' && gc_newline.
     ELSE.
-      rv_html = rv_html && 'Empty'.
+      rv_html = rv_html && '<font color="red"><b>APPROVED</b></font>'.
     ENDIF.
 
   ENDMETHOD.                    "code_inspector
@@ -258,7 +307,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     CONSTANTS: lc_color TYPE c LENGTH 7 VALUE '#C0C0C0'.
 
     DATA: lv_color TYPE c LENGTH 7,
-          lt_list  TYPE zcl_aor_review=>ty_comment_tt.
+          lt_list  TYPE zif_aor_types=>ty_comment_tt.
 
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
@@ -395,7 +444,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
   METHOD render_reviews.
 
-    DATA: lt_list   TYPE zcl_aor_review=>ty_review_tt,
+    DATA: lt_list   TYPE zif_aor_types=>ty_review_tt,
           lo_review TYPE REF TO zcl_aor_review.
 
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
@@ -413,10 +462,13 @@ CLASS lcl_gui_start IMPLEMENTATION.
         '<td>' && <ls_list>-review_id && '</td>' &&
         '<td>' && lo_review->get_description( ) && '</td>' &&
         '<td>' && status_description( <ls_list>-status ) && '</td>' &&
-        '<td><a href="sapevent:show?review_id=' && <ls_list>-review_id && '">Show</a></td>' &&
-        '<td><a href="sapevent:pdf?review_id=' && <ls_list>-review_id && '">PDF</a></td>' &&
-        '<td><a href="sapevent:delete?review_id=' && <ls_list>-review_id && '">Delete</a></td>' &&
-        '</tr>'.
+        '<td><a href="sapevent:show?review_id=' && <ls_list>-review_id && '">' &&
+        'Show</a></td>' &&
+        '<td><a href="sapevent:pdf?review_id=' && <ls_list>-review_id && '">' &&
+        'PDF</a></td>' &&
+        '<td><a href="sapevent:delete?review_id=' && <ls_list>-review_id && '">' &&
+        'Delete</a></td>' &&
+        '</tr>' ##NO_TEXT.
     ENDLOOP.
     rv_html = rv_html && '</table>'.
 
@@ -424,7 +476,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
   METHOD render_transports.
 
-    DATA: lt_list TYPE zcl_aor_transport=>ty_transport_tt.
+    DATA: lt_list TYPE zif_aor_types=>ty_transport_tt.
 
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
@@ -632,7 +684,7 @@ CLASS lcl_gui IMPLEMENTATION.
 
 
     lv_review_id = getdata( iv_field   = 'review_id'
-                         iv_getdata = getdata ).
+                            iv_getdata = getdata ).
 
     TRY.
         CASE action.

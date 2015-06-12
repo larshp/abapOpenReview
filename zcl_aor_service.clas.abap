@@ -12,7 +12,7 @@ public section.
       ZCX_AOR_ERROR .
   class-methods LIST
     returning
-      value(RT_DATA) type ZCL_AOR_REVIEW=>TY_REVIEW_TT .
+      value(RT_DATA) type zif_aor_types=>TY_REVIEW_TT .
 protected section.
 private section.
 
@@ -72,14 +72,15 @@ METHOD create.
   ls_review-review_id = iv_review_id.
   ls_review-status    = zif_aor_constants=>c_status-open.
   ls_review-base      = iv_base.
-  INSERT zaor_review FROM ls_review.
+  INSERT zaor_review FROM ls_review.                      "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
   LOOP AT it_objects ASSIGNING <ls_object>.
     CLEAR ls_obj.
     MOVE-CORRESPONDING <ls_object> TO ls_obj.
     ls_obj-review_id = iv_review_id.
-    INSERT zaor_review_obj FROM ls_obj.
+    INSERT zaor_review_obj FROM ls_obj.                   "#EC CI_SUBRC
+    ASSERT sy-subrc = 0.
   ENDLOOP.
 
 ENDMETHOD.

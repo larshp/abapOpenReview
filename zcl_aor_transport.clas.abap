@@ -5,15 +5,8 @@ class ZCL_AOR_TRANSPORT definition
 
 public section.
 
-  types:
 *"* public components of class ZCL_AOR_TRANSPORT
 *"* do not include other source files here!!!
-    begin of TY_TRANSPORT .
-  include type e070.
-  types: as4text type e07t-as4text,
-    end of ty_transport .
-  types:
-    TY_TRANSPORT_tt type standard table of ty_transport with default key .
 
   class-methods GET_DESCRIPTION
     importing
@@ -32,7 +25,7 @@ public section.
     importing
       !IT_TRKORR type TRRNGTRKOR_TAB optional
     returning
-      value(RT_DATA) type ZCL_AOR_TRANSPORT=>TY_TRANSPORT_TT .
+      value(RT_DATA) type zif_aor_types=>TY_TRANSPORT_TT .
   class-methods VALIDATE_OPEN
     importing
       !IV_TRKORR type TRKORR
@@ -72,6 +65,7 @@ METHOD list_developers.
 * select * from e070 where strkorr = iv_trkorr.
 
 * delete adjacent duplicates
+* todo
 
 ENDMETHOD.
 
