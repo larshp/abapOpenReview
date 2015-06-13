@@ -217,25 +217,28 @@ CLASS lcl_gui_review IMPLEMENTATION.
         '<br><br>'.
 
       lt_diff = zcl_aor_diff=>diff( CORRESPONDING #( <ls_object> ) ).
-
-      rv_html = rv_html &&
-        '<table border="0">' &&
-        '<tr>' &&
-        '<td><u>New</u></td>' &&
-        '<td><u>Old</u></td>' &&
-        '<td><u>Type</u></td>' &&
-        '<td><u>Code</u></td>' &&
-        '</tr>'.
-      LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+      IF NOT lt_diff IS INITIAL.
         rv_html = rv_html &&
+          '<table border="0">' &&
           '<tr>' &&
-          '<td>' && <ls_diff>-new && '&nbsp;</td>' &&
-          '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
-          '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
-          '<td><pre>' && <ls_diff>-code && '</pre></td>' &&
+          '<td><u>New</u></td>' &&
+          '<td><u>Old</u></td>' &&
+          '<td><u>Type</u></td>' &&
+          '<td><u>Code</u></td>' &&
           '</tr>'.
-      ENDLOOP.
-      rv_html = rv_html && '</table>'.
+        LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+          <ls_diff>-code = escape( val    = <ls_diff>-code
+                                   format = cl_abap_format=>e_html_attr ).
+          rv_html = rv_html &&
+            '<tr>' &&
+            '<td>' && <ls_diff>-new && '&nbsp;</td>' &&
+            '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
+            '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
+            '<td><pre>' && <ls_diff>-code && '</pre></td>' &&
+            '</tr>'.
+        ENDLOOP.
+        rv_html = rv_html && '</table>'.
+      ENDIF.
 
     ENDLOOP.
 

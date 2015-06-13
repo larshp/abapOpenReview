@@ -25,7 +25,8 @@ private section.
     importing
       !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
       !IV_BASE type ZAOR_REVIEW-BASE
-      !IT_OBJECTS type E071_T optional .
+      !IT_OBJECTS type E071_T optional
+      !IV_RESPONSIBLE type ZAOR_REVIEW-RESPONSIBLE .
   class-methods OPEN_DEVELOPER
     importing
       !IV_TRKORR type TRKORR
@@ -68,6 +69,10 @@ METHOD create.
 
   FIELD-SYMBOLS: <ls_object> LIKE LINE OF it_objects.
 
+
+  ASSERT NOT iv_review_id IS INITIAL.
+  ASSERT NOT iv_base IS INITIAL.
+  ASSERT NOT iv_responsible IS INITIAL.
 
   ls_review-review_id = iv_review_id.
   ls_review-status    = zif_aor_constants=>c_status-open.
@@ -143,7 +148,8 @@ METHOD open_object.
 
     create( iv_review_id = lv_review_id
             iv_base      = zif_aor_constants=>c_base-object
-            it_objects   = lt_obj ).
+            it_objects   = lt_obj
+            iv_responsible = zcl_aor_transport=>get_developer( <ls_object>-trkorr ) ).
 
     ci_run( lv_review_id ).
 
@@ -154,8 +160,9 @@ ENDMETHOD.
 
 METHOD open_transport.
 
-  create( iv_review_id = iv_trkorr
-          iv_base      = zif_aor_constants=>c_base-transport ).
+  create( iv_review_id   = iv_trkorr
+          iv_base        = zif_aor_constants=>c_base-transport
+          iv_responsible = zcl_aor_transport=>get_developer( iv_trkorr ) ).
 
   ci_run( iv_trkorr ).
 

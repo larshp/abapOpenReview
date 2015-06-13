@@ -7,12 +7,16 @@ public section.
 
 *"* public components of class ZCL_AOR_TRANSPORT
 *"* do not include other source files here!!!
-
   class-methods GET_DESCRIPTION
     importing
       !IV_TRKORR type TRKORR
     returning
       value(RV_TEXT) type AS4TEXT .
+  class-methods GET_DEVELOPER
+    importing
+      !IV_TRKORR type TRKORR
+    returning
+      value(RV_USER) type E070-AS4USER .
   class-methods LIST_DEVELOPERS
     importing
       !IV_TRKORR type TRKORR .
@@ -25,7 +29,7 @@ public section.
     importing
       !IT_TRKORR type TRRNGTRKOR_TAB optional
     returning
-      value(RT_DATA) type zif_aor_types=>TY_TRANSPORT_TT .
+      value(RT_DATA) type ZIF_AOR_TYPES=>TY_TRANSPORT_TT .
   class-methods VALIDATE_OPEN
     importing
       !IV_TRKORR type TRKORR
@@ -56,6 +60,16 @@ METHOD get_description.
       WHERE trkorr = iv_trkorr
       AND langu = 'E'.                                    "#EC CI_SUBRC
   ENDIF.
+
+ENDMETHOD.
+
+
+METHOD get_developer.
+
+  SELECT SINGLE as4user FROM e070
+    INTO rv_user
+    WHERE trkorr = iv_trkorr.
+  ASSERT sy-subrc = 0 AND NOT rv_user IS INITIAL.
 
 ENDMETHOD.
 

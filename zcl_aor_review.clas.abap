@@ -425,7 +425,7 @@ METHOD objectset.
           object_not_exists         = 4
           object_may_not_be_checked = 5
           no_main_program           = 6
-          OTHERS                    = 7 ). "#EC CI_SUBRC
+          OTHERS                    = 7 ).                "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
     WHEN zif_aor_constants=>c_base-developer
         OR zif_aor_constants=>c_base-object.
@@ -452,7 +452,10 @@ METHOD objectset.
 * see method cl_wb_object_type=>get_tadir_from_limu
 * see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
       LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
-        IF <ls_review>-pgmid = 'R3TR' AND <ls_review>-object = 'TABU'.
+        IF <ls_review>-pgmid = 'R3TR'
+            AND ( <ls_review>-object = 'TABU'
+            OR <ls_review>-object = 'SBXL'
+            OR <ls_review>-object = 'SBXP' ).
           CONTINUE.
         ENDIF.
 
