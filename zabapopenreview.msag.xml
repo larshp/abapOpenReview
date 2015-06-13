@@ -47,5 +47,11 @@
    <MSGNR>005</MSGNR>
    <TEXT>Navigation not possible for object type</TEXT>
   </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>006</MSGNR>
+   <TEXT>Downloaded to &amp;1</TEXT>
+  </T100>
  </T100>
 </abapGit>

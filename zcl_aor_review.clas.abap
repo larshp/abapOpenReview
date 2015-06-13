@@ -5,7 +5,9 @@ class ZCL_AOR_REVIEW definition
 
 public section.
 
-  methods PDF .
+  methods PDF
+    returning
+      value(RV_FILE) type STRING .
   methods DELETE .
   methods GET_DESCRIPTION
     returning
@@ -33,7 +35,7 @@ public section.
       ZCX_AOR_ERROR .
   methods COMMENT_LIST
     returning
-      value(RT_DATA) type zif_aor_types=>TY_COMMENT_TT .
+      value(RT_DATA) type ZIF_AOR_TYPES=>TY_COMMENT_TT .
   methods CONSTRUCTOR
     importing
       !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
@@ -214,7 +216,7 @@ METHOD ci_run.
     EXCEPTIONS
       chkv_not_exists   = 1
       missing_parameter = 2
-      OTHERS            = 3 ).
+      OTHERS            = 3 ). "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
   lo_objects = objectset( ).
@@ -423,7 +425,7 @@ METHOD objectset.
           object_not_exists         = 4
           object_may_not_be_checked = 5
           no_main_program           = 6
-          OTHERS                    = 7 ).
+          OTHERS                    = 7 ). "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
     WHEN zif_aor_constants=>c_base-developer
         OR zif_aor_constants=>c_base-object.
@@ -515,7 +517,112 @@ ENDMETHOD.
 
 METHOD pdf.
 
-  BREAK-POINT.
+  DATA: ls_control TYPE ssfctrlop,
+        ls_info    TYPE ssfcrescl,
+        lv_size    TYPE i,
+        lt_pdf     TYPE STANDARD TABLE OF tline,
+        lv_name    TYPE rs38l_fnam.
+
+
+  CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
+    EXPORTING
+      formname           = 'ZAOR_REVIEW'
+    IMPORTING
+      fm_name            = lv_name
+    EXCEPTIONS
+      no_form            = 1
+      no_function_module = 2
+      OTHERS             = 3. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
+
+  ls_control-no_dialog = abap_true.
+  ls_control-getotf    = abap_true.
+
+  CALL FUNCTION lv_name
+    EXPORTING
+      control_parameters = ls_control
+      is_header          = header( )
+      it_objects         = objects_list( )
+      it_comments        = comment_list( )
+    IMPORTING
+      job_output_info    = ls_info
+    EXCEPTIONS
+      formatting_error   = 1
+      internal_error     = 2
+      send_error         = 3
+      user_canceled      = 4
+      OTHERS             = 5.
+  IF sy-subrc = 4.
+    RETURN.
+  ENDIF.
+  ASSERT sy-subrc = 0.
+
+  CALL FUNCTION 'CONVERT_OTF'
+    EXPORTING
+      format                = 'PDF'
+    IMPORTING
+      bin_filesize          = lv_size
+    TABLES
+      otf                   = ls_info-otfdata[]
+      lines                 = lt_pdf
+    EXCEPTIONS
+      err_max_linewidth     = 1
+      err_format            = 2
+      err_conv_not_possible = 3
+      err_bad_otf           = 4
+      OTHERS                = 5. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
+
+  cl_gui_frontend_services=>get_temp_directory(
+    CHANGING
+      temp_dir             = rv_file
+    EXCEPTIONS
+      cntl_error           = 1
+      error_no_gui         = 2
+      not_supported_by_gui = 3
+      OTHERS               = 4 ).                         "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
+
+  cl_gui_cfw=>flush( ).
+
+  CONCATENATE rv_file '\' mv_review_id '_' sy-datlo '_' sy-timlo '.pdf'
+    INTO rv_file.
+
+  cl_gui_frontend_services=>gui_download(
+    EXPORTING
+      bin_filesize              = lv_size
+      filename                  = rv_file
+      filetype                  = 'BIN'
+    CHANGING
+      data_tab                  = lt_pdf
+    EXCEPTIONS
+      file_write_error          = 1
+      no_batch                  = 2
+      gui_refuse_filetransfer   = 3
+      invalid_type              = 4
+      no_authority              = 5
+      unknown_error             = 6
+      header_not_allowed        = 7
+      separator_not_allowed     = 8
+      filesize_not_allowed      = 9
+      header_too_long           = 10
+      dp_error_create           = 11
+      dp_error_send             = 12
+      dp_error_write            = 13
+      unknown_dp_error          = 14
+      access_denied             = 15
+      dp_out_of_memory          = 16
+      disk_full                 = 17
+      dp_timeout                = 18
+      file_not_found            = 19
+      dataprovider_exception    = 20
+      control_flush_error       = 21
+      not_supported_by_gui      = 22
+      error_no_gui              = 23
+      OTHERS                    = 24 ).                   "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
+
+  MESSAGE s006(zabapopenreview) WITH rv_file.
 
 ENDMETHOD.
 ENDCLASS.
