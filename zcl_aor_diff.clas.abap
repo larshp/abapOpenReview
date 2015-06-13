@@ -8,7 +8,7 @@ public section.
     importing
       !IS_OBJECT type ZAOR_OBJECT
     returning
-      value(RT_DELTA) type VXABAPT255_TAB .
+      value(RT_DIFF) type ZIF_AOR_TYPES=>TY_DIFF_TT .
 protected section.
 private section.
 
@@ -30,6 +30,13 @@ private section.
       !IV_VERSNO type VERSNO
     returning
       value(RT_SOURCE) type ABAPTXT255_TAB .
+  class-methods RENDER
+    importing
+      !IT_OLD type ABAPTXT255_TAB
+      !IT_NEW type ABAPTXT255_TAB
+      !IT_DELTA type VXABAPT255_TAB
+    returning
+      value(RT_DIFF) type ZIF_AOR_TYPES=>TY_DIFF_TT .
   class-methods RESOLVE
     importing
       !IS_OBJECT type ZAOR_OBJECT
@@ -122,8 +129,12 @@ METHOD diff.
       RETURN.
   ENDCASE.
 
-  rt_delta = delta( it_old = lt_old
-                    it_new = lt_new ).
+  DATA(lt_delta) = delta( it_old = lt_old
+                          it_new = lt_new ).
+
+  rt_diff = render( it_old   = lt_old
+                    it_new   = lt_new
+                    it_delta = lt_delta ).
 
 ENDMETHOD.
 
@@ -140,10 +151,8 @@ METHOD get_meth.
       no_version            = 1
       system_failure        = 2
       communication_failure = 3
-      OTHERS                = 4.
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+      OTHERS                = 4. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 
@@ -160,10 +169,70 @@ METHOD get_reps.
       no_version            = 1
       system_failure        = 2
       communication_failure = 3
-      OTHERS                = 4.
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+      OTHERS                = 4. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
+
+ENDMETHOD.
+
+
+METHOD render.
+
+  DATA: lv_diff TYPE i.
+
+  FIELD-SYMBOLS: <ls_diff> LIKE LINE OF rt_diff,
+                 <ls_code> LIKE LINE OF it_old.
+
+
+  LOOP AT it_delta ASSIGNING FIELD-SYMBOL(<ls_delta>).
+
+    CASE <ls_delta>-vrsflag.
+      WHEN 'I'.
+        READ TABLE it_new INDEX <ls_delta>-number + lv_diff ASSIGNING <ls_code>.
+        ASSERT sy-subrc = 0.
+        APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
+        <ls_diff>-new   = <ls_delta>-number + lv_diff.
+        <ls_diff>-old   = <ls_delta>-number.
+        <ls_diff>-updkz = 'I'.
+        <ls_diff>-code  = <ls_code>-line.
+
+        lv_diff = lv_diff + 1.
+      WHEN 'D'.
+        READ TABLE it_old INDEX <ls_delta>-number ASSIGNING <ls_code>.
+        ASSERT sy-subrc = 0.
+        APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
+        <ls_diff>-old   = <ls_delta>-number.
+        <ls_diff>-updkz = 'D'.
+        <ls_diff>-code  = <ls_code>-line.
+
+        lv_diff = lv_diff - 1.
+      WHEN 'U'.
+        READ TABLE it_new INDEX <ls_delta>-number + lv_diff ASSIGNING <ls_code>.
+        ASSERT sy-subrc = 0.
+        APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
+        <ls_diff>-new   = <ls_delta>-number + lv_diff.
+        <ls_diff>-updkz = 'U'.
+        <ls_diff>-code  = <ls_code>-line.
+
+        READ TABLE it_old INDEX <ls_delta>-number ASSIGNING <ls_code>.
+        ASSERT sy-subrc = 0.
+        APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
+        <ls_diff>-old   = <ls_delta>-number.
+        <ls_diff>-updkz = 'U'.
+        <ls_diff>-code  = <ls_code>-line.
+    ENDCASE.
+
+  ENDLOOP.
+
+  LOOP AT rt_diff ASSIGNING <ls_diff>.
+    IF <ls_diff>-new = 0.
+      CLEAR <ls_diff>-new.
+    ENDIF.
+    IF <ls_diff>-old = 0.
+      CLEAR <ls_diff>-old.
+    ENDIF.
+  ENDLOOP.
+
+* todo, merge/rearrange sequential updated lines?
 
 ENDMETHOD.
 
@@ -182,7 +251,7 @@ METHOD resolve.
       obj_tab         = rt_vrso
     EXCEPTIONS
       not_versionable = 1
-      OTHERS          = 2.
+      OTHERS          = 2. "#EC CI_SUBRC
 
 ENDMETHOD.
 
@@ -209,10 +278,8 @@ METHOD version_list.
       version_list = rt_version_list
     EXCEPTIONS
       no_entry     = 1
-      OTHERS       = 2.
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+      OTHERS       = 2. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 ENDCLASS.

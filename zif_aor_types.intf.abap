@@ -1,15 +1,23 @@
-interface ZIF_AOR_TYPES
-  public .
+INTERFACE zif_aor_types
+  PUBLIC .
 
-  types: TY_VRSO_TT type standard table of vrso with default key.
-  types: TY_REVIEW_TT type standard table of zaor_review with default key .
-  types: TY_comment_TT type standard table of zaor_comment with default key .
-  types:
-    begin of TY_TRANSPORT .
-  include type e070.
-  types: as4text type e07t-as4text,
-    end of ty_transport .
-  types:
-    TY_TRANSPORT_tt type standard table of ty_transport with default key .
+  TYPES: ty_vrso_tt TYPE STANDARD TABLE OF vrso WITH DEFAULT KEY.
+  TYPES: ty_review_tt TYPE STANDARD TABLE OF zaor_review WITH DEFAULT KEY .
+  TYPES: ty_comment_tt TYPE STANDARD TABLE OF zaor_comment WITH DEFAULT KEY .
+  TYPES:
+    BEGIN OF ty_transport .
+          INCLUDE TYPE e070.
+  TYPES: as4text TYPE e07t-as4text,
+         END OF ty_transport .
+  TYPES:
+    ty_transport_tt TYPE STANDARD TABLE OF ty_transport WITH DEFAULT KEY .
 
-endinterface.
+  TYPES: BEGIN OF ty_diff_st,
+           new   TYPE c LENGTH 6,
+           old   TYPE c LENGTH 6,
+           updkz TYPE c LENGTH 1,
+           code  TYPE text255,
+         END OF ty_diff_st.
+  TYPES: ty_diff_tt TYPE STANDARD TABLE OF ty_diff_st WITH DEFAULT KEY.
+
+ENDINTERFACE.

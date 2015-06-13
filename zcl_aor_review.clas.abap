@@ -170,9 +170,8 @@ METHOD ci_results.
       OTHERS          = 2 ).
   IF sy-subrc = 1.
     RETURN.
-  ELSEIF sy-subrc <> 0.
-    BREAK-POINT.
   ENDIF.
+  ASSERT sy-subrc = 0.
 
 * make sure SAP note 2043027 is installed
   lo_ci->plain_list(
@@ -216,9 +215,7 @@ METHOD ci_run.
       chkv_not_exists   = 1
       missing_parameter = 2
       OTHERS            = 3 ).
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+  ASSERT sy-subrc = 0.
 
   lo_objects = objectset( ).
   IF NOT lo_objects IS BOUND.
@@ -427,9 +424,7 @@ METHOD objectset.
           object_may_not_be_checked = 5
           no_main_program           = 6
           OTHERS                    = 7 ).
-      IF sy-subrc <> 0.
-        BREAK-POINT.
-      ENDIF.
+      ASSERT sy-subrc = 0.
     WHEN zif_aor_constants=>c_base-developer
         OR zif_aor_constants=>c_base-object.
       cl_ci_objectset=>get_ref(
@@ -511,7 +506,7 @@ METHOD objects_list.
     WHEN OTHERS.
       SELECT * FROM zaor_review_obj
         INTO CORRESPONDING FIELDS OF TABLE rt_data
-        WHERE review_id = mv_review_id.                   "#EC CI_SUBRC
+        WHERE review_id = mv_review_id ##TOO_MANY_ITAB_FIELDS. "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
   ENDCASE.
 

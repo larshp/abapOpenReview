@@ -1,8 +1,25 @@
 REPORT zreview.
-* todo license?
 
-CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha',       "#EC NOTEXT
-           gc_newline TYPE abap_char1 VALUE cl_abap_char_utilities=>newline.
+* See https://github.com/larshp/abapOpenReview
+
+CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha'.       "#EC NOTEXT
+
+************************************************************************
+* abapOpenReview is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 2 of the License, or
+* (at your option) any later version.
+*
+* abapOpenReview is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+************************************************************************
+
+CONSTANTS: gc_newline TYPE abap_char1 VALUE cl_abap_char_utilities=>newline.
 
 DATA: go_review TYPE REF TO zcl_aor_review.
 
@@ -17,7 +34,9 @@ START-OF-SELECTION.
 CLASS lcl_navigate DEFINITION FINAL.
 
   PUBLIC SECTION.
-    CLASS-METHODS navigate.
+    CLASS-METHODS navigate
+      IMPORTING iv_object   TYPE e071-object
+                iv_obj_name TYPE e071-obj_name.
 
 ENDCLASS.                    "lcl_navigate DEFINITION
 
@@ -29,7 +48,24 @@ ENDCLASS.                    "lcl_navigate DEFINITION
 CLASS lcl_navigate IMPLEMENTATION.
 
   METHOD navigate.
-    BREAK-POINT.
+
+    IF iv_object = 'TABU'.
+      MESSAGE s005(zabapopenreview) DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION 'RS_TOOL_ACCESS'
+      EXPORTING
+        operation           = 'SHOW'
+        object_name         = iv_obj_name
+        object_type         = iv_object
+        in_new_window       = abap_true
+      EXCEPTIONS
+        not_executed        = 1
+        invalid_object_type = 2
+        OTHERS              = 3. "#EC CI_SUBRC
+    ASSERT sy-subrc = 0.
+
   ENDMETHOD.                    "navigate
 
 ENDCLASS.                    "lcl_navigate IMPLEMENTATION
@@ -165,12 +201,12 @@ CLASS lcl_gui_review IMPLEMENTATION.
   METHOD diff.
 
     DATA: lt_objects TYPE e071_t,
-          lt_diff    TYPE vxabapt255_tab.
+          lt_diff    TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects.
 
 
-    rv_html = '<h1>Diff</h1><br>'.
+    rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
 
     lt_objects = go_review->objects_list( ).
     LOOP AT lt_objects ASSIGNING <ls_object>.
@@ -178,18 +214,26 @@ CLASS lcl_gui_review IMPLEMENTATION.
         <ls_object>-object   &&
         '&nbsp;'             &&
         <ls_object>-obj_name &&
-        '<br>'.
+        '<br><br>'.
 
       lt_diff = zcl_aor_diff=>diff( CORRESPONDING #( <ls_object> ) ).
 
-      rv_html = rv_html && '<table border="0">'.
+      rv_html = rv_html &&
+        '<table border="0">' &&
+        '<tr>' &&
+        '<td><u>New</u></td>' &&
+        '<td><u>Old</u></td>' &&
+        '<td><u>Type</u></td>' &&
+        '<td><u>Code</u></td>' &&
+        '</tr>'.
       LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
         rv_html = rv_html &&
-          '<tr><td>' &&
-          <ls_diff>-vrsflag &&
-          '&nbsp;</td><td><pre>' &&
-          <ls_diff>-line &&
-          '</pre></td></tr>'.
+          '<tr>' &&
+          '<td>' && <ls_diff>-new && '&nbsp;</td>' &&
+          '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
+          '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
+          '<td><pre>' && <ls_diff>-code && '</pre></td>' &&
+          '</tr>'.
       ENDLOOP.
       rv_html = rv_html && '</table>'.
 
@@ -224,6 +268,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = '<a href="sapevent:back">Back</a>&nbsp;'     && gc_newline &&
       '<a href="#objects" class="grey">Objects</a>&nbsp'   && gc_newline &&
       '<a href="#ci" class="grey">Code Inspector</a>&nbsp' && gc_newline &&
+      '<a href="#diff" class="grey">Diff</a>&nbsp'         && gc_newline &&
       '<a href="#comments" class="grey">Comments</a>'.
 
   ENDMETHOD.
@@ -292,7 +337,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
         '<tr>' && gc_newline &&
         '<td>' && <ls_object>-object && '</td>' && gc_newline &&
         '<td>' &&
-        '<a href="sapevent:navigate">' &&
+        '<a href="sapevent:navigate?object=' &&
+        <ls_object>-object &&
+        '&obj_name=' &&
+        <ls_object>-obj_name && '">' &&
         <ls_object>-obj_name &&
         '</a>' &&
         '</td>' && gc_newline &&
@@ -413,14 +461,27 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
   METHOD status_description.
 
-* todo, call FM instead
+    STATICS: st_dd07v TYPE STANDARD TABLE OF dd07v.
 
-    CASE iv_status.
-      WHEN 'O'.
-        rv_description = 'Open' ##NO_TEXT.
-      WHEN 'C'.
-        rv_description = 'Closed' ##NO_TEXT.
-    ENDCASE.
+    DATA: ls_dd07v LIKE LINE OF st_dd07v.
+
+
+    IF st_dd07v IS INITIAL.
+      CALL FUNCTION 'DD_DOMVALUES_GET'
+        EXPORTING
+          domname        = 'ZAOR_STATUS'
+          text           = abap_true
+        TABLES
+          dd07v_tab      = st_dd07v
+        EXCEPTIONS
+          wrong_textflag = 1
+          OTHERS         = 2. "#EC CI_SUBRC
+      ASSERT sy-subrc = 0.
+    ENDIF.
+
+    READ TABLE st_dd07v INTO ls_dd07v WITH KEY domvalue_l = iv_status.
+    ASSERT sy-subrc = 0.
+    rv_description = ls_dd07v-ddtext.
 
   ENDMETHOD.
 
@@ -684,13 +745,13 @@ CLASS lcl_gui IMPLEMENTATION.
 
 
     lv_review_id = getdata( iv_field   = 'review_id'
-                            iv_getdata = getdata ).
+                            iv_getdata = getdata ) ##NO_TEXT.
 
     TRY.
         CASE action.
           WHEN 'new'.
             lv_trkorr = getdata( iv_field   = 'trkorr'
-                                 iv_getdata = getdata ).
+                                 iv_getdata = getdata ) ##NO_TEXT.
             zcl_aor_service=>open( iv_trkorr = lv_trkorr
                                    iv_base   = zif_aor_constants=>c_base-object ).
             view( lcl_gui_start=>render( ) ).
@@ -713,24 +774,28 @@ CLASS lcl_gui IMPLEMENTATION.
             go_review->pdf( ).
           WHEN 'add_comment'.
             lv_topic = postdata( iv_field    = 'topic'
-                                 it_postdata = postdata ).
+                                 it_postdata = postdata ) ##NO_TEXT.
             lv_text = postdata( iv_field    = 'comment'
-                                it_postdata = postdata ).
+                                it_postdata = postdata ) ##NO_TEXT.
             go_review->comment_add( iv_topic  = lv_topic
-                                    iv_text   = lv_text ).
+                                    iv_text   = lv_text ) ##NO_TEXT.
             view( lcl_gui_review=>render( ) ).
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'close'.
             lv_topic = getdata( iv_field   = 'topic'
-                                 iv_getdata = getdata ).
+                                 iv_getdata = getdata ) ##NO_TEXT.
             go_review->comment_close( lv_topic ).
             view( lcl_gui_review=>render( ) ).
           WHEN 'closereview'.
             go_review->close( ).
             view( lcl_gui_start=>render( ) ).
           WHEN 'navigate'.
-            lcl_navigate=>navigate( ).
+            lcl_navigate=>navigate(
+              iv_object = CONV #( getdata( iv_field   = 'object'
+                                           iv_getdata = getdata ) )
+              iv_obj_name = CONV #( getdata( iv_field   = 'obj_name'
+                                             iv_getdata = getdata ) ) ) ##NO_TEXT.
           WHEN 'rerun'.
             go_review->ci_run( ).
             view( lcl_gui_review=>render( ) ).
