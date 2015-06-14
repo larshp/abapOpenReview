@@ -12,7 +12,10 @@ public section.
       ZCX_AOR_ERROR .
   class-methods LIST
     returning
-      value(RT_DATA) type zif_aor_types=>TY_REVIEW_TT .
+      value(RT_DATA) type ZIF_AOR_TYPES=>TY_REVIEW_TT .
+  class-methods DELETE_ALL
+    raising
+      ZCX_AOR_ERROR .
 protected section.
 private section.
 
@@ -74,9 +77,10 @@ METHOD create.
   ASSERT NOT iv_base IS INITIAL.
   ASSERT NOT iv_responsible IS INITIAL.
 
-  ls_review-review_id = iv_review_id.
-  ls_review-status    = zif_aor_constants=>c_status-open.
-  ls_review-base      = iv_base.
+  ls_review-review_id   = iv_review_id.
+  ls_review-status      = zif_aor_constants=>c_status-open.
+  ls_review-base        = iv_base.
+  ls_review-responsible = iv_responsible.
   INSERT zaor_review FROM ls_review.                      "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
@@ -91,9 +95,24 @@ METHOD create.
 ENDMETHOD.
 
 
-METHOD list.
+METHOD delete_all.
 
-* todo, dedicated interface for type declarations?
+  DATA: lo_review TYPE REF TO zcl_aor_review.
+
+
+  DATA(lt_reviews) = zcl_aor_service=>list( ).
+
+  LOOP AT lt_reviews ASSIGNING FIELD-SYMBOL(<ls_review>).
+    CREATE OBJECT lo_review
+      EXPORTING
+        iv_review_id = <ls_review>-review_id.
+    lo_review->delete( ).
+  ENDLOOP.
+
+ENDMETHOD.
+
+
+METHOD list.
 
   SELECT * FROM zaor_review
     INTO TABLE rt_data
@@ -141,7 +160,7 @@ METHOD open_object.
   lt_objects = zcl_aor_transport=>list_objects( iv_trkorr ).
 
   LOOP AT lt_objects ASSIGNING <ls_object>.
-    CONCATENATE iv_trkorr '_' <ls_object>-as4pos INTO lv_review_id.
+    CONCATENATE <ls_object>-trkorr '_' <ls_object>-as4pos INTO lv_review_id.
 
     CLEAR lt_obj.
     APPEND <ls_object> TO lt_obj.

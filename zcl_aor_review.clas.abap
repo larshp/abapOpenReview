@@ -53,6 +53,7 @@ protected section.
 private section.
 
   data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
+  class-data GV_FOLDER type STRING .
 
   methods CI_CLEANUP .
   methods OBJECTSET
@@ -576,20 +577,25 @@ METHOD pdf.
       OTHERS                = 5. "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
-  cl_gui_frontend_services=>get_temp_directory(
-    CHANGING
-      temp_dir             = rv_file
-    EXCEPTIONS
-      cntl_error           = 1
-      error_no_gui         = 2
-      not_supported_by_gui = 3
-      OTHERS               = 4 ).                         "#EC CI_SUBRC
-  ASSERT sy-subrc = 0.
+  IF gv_folder IS INITIAL.
+    cl_gui_frontend_services=>directory_browse(
+      EXPORTING
+        window_title         = 'Select folder'
+      CHANGING
+        selected_folder      = gv_folder
+      EXCEPTIONS
+        cntl_error           = 1
+        error_no_gui         = 2
+        not_supported_by_gui = 3
+        OTHERS               = 4 ) ##NO_TEXT.
+    ASSERT sy-subrc = 0.
+    IF gv_folder IS INITIAL.
+      RETURN.
+    ENDIF.
+  ENDIF.
 
-  cl_gui_cfw=>flush( ).
-
-  CONCATENATE rv_file '\' mv_review_id '_' sy-datlo '_' sy-timlo '.pdf'
-    INTO rv_file.
+  CONCATENATE gv_folder '\' mv_review_id '_' sy-datlo '_' sy-timlo '.pdf'
+    INTO rv_file ##NO_TEXT.
 
   cl_gui_frontend_services=>gui_download(
     EXPORTING
