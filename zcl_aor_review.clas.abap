@@ -21,7 +21,8 @@ public section.
   methods CI_RESULTS
     exporting
       !ES_HEADER type SCIINS_INF
-      !ET_RESULTS type SCIT_ALVLIST .
+      !ET_RESULTS type SCIT_ALVLIST
+      !ES_CHKVINF type SCICHKV_HD .
   methods COMMENT_ADD
     importing
       !IV_TEXT type STRING
@@ -156,8 +157,9 @@ ENDMETHOD.
 
 METHOD ci_results.
 
-  DATA: lv_name TYPE sci_insp,
-        lo_ci   TYPE REF TO cl_ci_inspection.
+  DATA: lv_name   TYPE sci_insp,
+        lo_ci     TYPE REF TO cl_ci_inspection,
+        lo_checkv TYPE REF TO cl_ci_checkvariant.
 
 
   lv_name = mv_review_id.
@@ -175,6 +177,20 @@ METHOD ci_results.
     RETURN.
   ENDIF.
   ASSERT sy-subrc = 0.
+
+  cl_ci_checkvariant=>get_ref(
+    EXPORTING
+      p_user            = ''
+      p_id              = lo_ci->inspecinf-checkvid
+    RECEIVING
+      p_ref             = lo_checkv
+    EXCEPTIONS
+      chkv_not_exists   = 1
+      missing_parameter = 2
+      OTHERS            = 3 ).
+  ASSERT sy-subrc = 0.
+
+  es_chkvinf = lo_checkv->chkvinf.
 
 * make sure SAP note 2043027 is installed
   lo_ci->plain_list(
@@ -524,6 +540,7 @@ METHOD pdf.
   DATA: ls_control TYPE ssfctrlop,
         ls_info    TYPE ssfcrescl,
         lv_size    TYPE i,
+        lt_results TYPE scit_alvlist,
         lt_pdf     TYPE STANDARD TABLE OF tline,
         lv_name    TYPE rs38l_fnam.
 
@@ -542,12 +559,15 @@ METHOD pdf.
   ls_control-no_dialog = abap_true.
   ls_control-getotf    = abap_true.
 
+  ci_results( IMPORTING et_results = lt_results ).
+
   CALL FUNCTION lv_name
     EXPORTING
       control_parameters = ls_control
       is_header          = header( )
       it_objects         = objects_list( )
       it_comments        = comment_list( )
+      it_results         = lt_results
     IMPORTING
       job_output_info    = ls_info
     EXCEPTIONS

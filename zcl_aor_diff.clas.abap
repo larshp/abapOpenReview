@@ -191,7 +191,7 @@ METHOD render.
         ASSERT sy-subrc = 0.
         APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
         <ls_diff>-new   = <ls_delta>-number + lv_diff.
-        <ls_diff>-old   = <ls_delta>-number.
+*        <ls_diff>-old   = <ls_delta>-number.
         <ls_diff>-updkz = 'I'.
         <ls_diff>-code  = <ls_code>-line.
 

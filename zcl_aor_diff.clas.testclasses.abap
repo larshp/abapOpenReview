@@ -67,7 +67,7 @@ CLASS ltcl_test IMPLEMENTATION.
 * insert
     _new 'write'.
 
-    check( VALUE #( ( new = 1 old = 1 code = 'write' updkz = 'I' ) ) ).
+    check( VALUE #( ( new = 1 code = 'write' updkz = 'I' ) ) ).
 
   ENDMETHOD.
 
@@ -123,8 +123,8 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'foo'.
     _new 'bar'.
 
-    check( VALUE #( ( new = 1 old = 1 code = 'foo' updkz = 'I' )
-                    ( new = 2 old = 1 code = 'bar' updkz = 'I' ) ) ).
+    check( VALUE #( ( new = 1 code = 'foo' updkz = 'I' )
+                    ( new = 2 code = 'bar' updkz = 'I' ) ) ).
 
   ENDMETHOD.
 
@@ -138,7 +138,7 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'moo'.
     _new 'bar'.
 
-    check( VALUE #( ( new = 2 old = 2 code = 'moo' updkz = 'I' ) ) ).
+    check( VALUE #( ( new = 2 code = 'moo' updkz = 'I' ) ) ).
 
   ENDMETHOD.
 
@@ -156,7 +156,7 @@ CLASS ltcl_test IMPLEMENTATION.
     _new '3'.
     _new '4 update'.
 
-    check( VALUE #( ( new = 3 old = 3 code = 'inserted' updkz = 'I' )
+    check( VALUE #( ( new = 3         code = 'inserted' updkz = 'I' )
                     ( new = 5         code = '4 update' updkz = 'U' )
                     (         old = 4 code = '4'        updkz = 'U' )
                   ) ).

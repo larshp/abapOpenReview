@@ -279,13 +279,15 @@ CLASS lcl_gui_review IMPLEMENTATION.
   METHOD code_inspector.
 
     DATA: lt_results TYPE scit_alvlist,
+          ls_chkvinf TYPE scichkv_hd,
           ls_header  TYPE sciins_inf.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
 
 
     go_review->ci_results( IMPORTING es_header  = ls_header
-                                     et_results = lt_results ).
+                                     et_results = lt_results
+                                     es_chkvinf	= ls_chkvinf ).
     IF ls_header IS INITIAL.
       RETURN.
     ENDIF.
@@ -301,6 +303,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '</tr>' && gc_newline &&
       '<tr>' &&
       '<td>Date:</td><td>' && ls_header-creadate && '</td>' &&
+      '</tr>' && gc_newline &&
+      '<tr>' &&
+      '<td>Check Variant:</td><td>' && ls_chkvinf-checkvname && '</td>' &&
       '</tr>' && gc_newline &&
       '</table><br>' && gc_newline ##NO_TEXT.
 

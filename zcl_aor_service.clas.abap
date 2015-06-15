@@ -4,16 +4,19 @@ class ZCL_AOR_SERVICE definition
 
 public section.
 
+  class-methods DELETE_ALL
+    raising
+      ZCX_AOR_ERROR .
+  class-methods LIST
+    returning
+      value(RT_DATA) type ZIF_AOR_TYPES=>TY_REVIEW_TT .
   class-methods OPEN
     importing
       !IV_TRKORR type TRKORR
       !IV_BASE type ZAOR_BASE
     raising
       ZCX_AOR_ERROR .
-  class-methods LIST
-    returning
-      value(RT_DATA) type ZIF_AOR_TYPES=>TY_REVIEW_TT .
-  class-methods DELETE_ALL
+  class-methods PDF_ALL
     raising
       ZCX_AOR_ERROR .
 protected section.
@@ -184,6 +187,23 @@ METHOD open_transport.
           iv_responsible = zcl_aor_transport=>get_developer( iv_trkorr ) ).
 
   ci_run( iv_trkorr ).
+
+ENDMETHOD.
+
+
+METHOD pdf_all.
+
+  DATA: lo_review TYPE REF TO zcl_aor_review.
+
+
+  DATA(lt_reviews) = zcl_aor_service=>list( ).
+
+  LOOP AT lt_reviews ASSIGNING FIELD-SYMBOL(<ls_review>).
+    CREATE OBJECT lo_review
+      EXPORTING
+        iv_review_id = <ls_review>-review_id.
+    lo_review->pdf( ).
+  ENDLOOP.
 
 ENDMETHOD.
 ENDCLASS.
