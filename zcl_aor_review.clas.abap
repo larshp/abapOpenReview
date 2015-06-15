@@ -345,13 +345,13 @@ METHOD comment_close.
   DATA: ls_comment TYPE zaor_comment.
 
 
-  IF iv_topic IS INITIAL.
-    RETURN.
-  ENDIF.
-
   check_open( ).
 
-  ls_comment-topic  = iv_topic.
+  IF iv_topic IS INITIAL.
+    ls_comment-topic = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
+  ELSE.
+    ls_comment-topic = iv_topic.
+  ENDIF.
   ls_comment-review_id = mv_review_id.
   ls_comment-text   = 'Ok, closed' ##NO_TEXT.
   ls_comment-bname  = sy-uname.

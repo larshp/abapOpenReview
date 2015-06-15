@@ -174,6 +174,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS comments
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS info
+      RETURNING VALUE(rv_html) TYPE string.
+
     CLASS-METHODS close_review
       RETURNING VALUE(rv_html) TYPE string.
 
@@ -201,6 +204,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
   METHOD diff.
 
     DATA: lt_objects TYPE e071_t,
+          lv_style   TYPE string,
           lt_diff    TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects.
@@ -229,12 +233,17 @@ CLASS lcl_gui_review IMPLEMENTATION.
         LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
           <ls_diff>-code = escape( val    = <ls_diff>-code
                                    format = cl_abap_format=>e_html_attr ).
+          IF <ls_diff>-new <> ''.
+            lv_style = ' style="background:lightgreen;"'.   "#EC NOTEXT
+          ELSE.
+            lv_style = ' style="background:lightpink;"'.    "#EC NOTEXT
+          ENDIF.
           rv_html = rv_html &&
             '<tr>' &&
             '<td>' && <ls_diff>-new && '&nbsp;</td>' &&
             '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
             '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
-            '<td><pre>' && <ls_diff>-code && '</pre></td>' &&
+            '<td' && lv_style && '><pre>' && <ls_diff>-code && '</pre></td>' &&
             '</tr>'.
         ENDLOOP.
         rv_html = rv_html && '</table>'.
@@ -252,6 +261,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '</h1><br>'                           && gc_newline &&
       shortcuts( )                          && gc_newline &&
       '<br><br>'                            && gc_newline &&
+      info( )                               && gc_newline &&
+      '<br><br>'                            && gc_newline &&
       objects( )                            && gc_newline &&
       '<br>'                                && gc_newline &&
       code_inspector( )                     && gc_newline &&
@@ -265,6 +276,12 @@ CLASS lcl_gui_review IMPLEMENTATION.
       lcl_gui=>render_footer( ).
 
   ENDMETHOD.                    "render
+
+  METHOD info.
+
+    rv_html = 'Responsible:&nbsp;' && go_review->header( )-responsible && '<br>'.
+
+  ENDMETHOD.
 
   METHOD shortcuts.
 
