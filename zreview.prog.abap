@@ -785,6 +785,7 @@ CLASS lcl_gui IMPLEMENTATION.
                                  it_postdata = postdata ) ##NO_TEXT.
             lv_text = postdata( iv_field    = 'comment'
                                 it_postdata = postdata ) ##NO_TEXT.
+            lv_text = cl_http_utility=>if_http_utility~unescape_url( lv_text ).
             go_review->comment_add( iv_topic  = lv_topic
                                     iv_text   = lv_text ) ##NO_TEXT.
             view( lcl_gui_review=>render( ) ).

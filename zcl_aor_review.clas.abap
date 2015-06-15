@@ -83,6 +83,11 @@ METHOD check_comments_closed.
 
 
   lt_comments = comment_list( ).
+  IF lt_comments IS INITIAL.
+    RAISE EXCEPTION TYPE zcx_aor_error
+      EXPORTING
+        textid = zcx_aor_error=>no_comments.
+  ENDIF.
 
   LOOP AT lt_comments ASSIGNING <ls_comment> WHERE closed = abap_true.
     DELETE lt_comments WHERE topic = <ls_comment>-topic.

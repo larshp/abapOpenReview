@@ -52,6 +52,15 @@ public section.
       attr3 type scx_attrname value '',
       attr4 type scx_attrname value '',
     end of TRANSPORT_RELEASED .
+  constants:
+    begin of NO_COMMENTS,
+      msgid type symsgid value 'ZABAPOPENREVIEW',
+      msgno type symsgno value '007',
+      attr1 type scx_attrname value '',
+      attr2 type scx_attrname value '',
+      attr3 type scx_attrname value '',
+      attr4 type scx_attrname value '',
+    end of NO_COMMENTS .
 
   methods CONSTRUCTOR
     importing

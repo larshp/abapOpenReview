@@ -53,5 +53,11 @@
    <MSGNR>006</MSGNR>
    <TEXT>Downloaded to &amp;1</TEXT>
   </T100>
+  <T100>
+   <SPRSL>E</SPRSL>
+   <ARBGB>ZABAPOPENREVIEW</ARBGB>
+   <MSGNR>007</MSGNR>
+   <TEXT>No comments</TEXT>
+  </T100>
  </T100>
 </abapGit>
