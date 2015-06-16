@@ -68,7 +68,7 @@ METHOD get_developer.
 
   SELECT SINGLE as4user FROM e070
     INTO rv_user
-    WHERE trkorr = iv_trkorr.
+    WHERE trkorr = iv_trkorr.                             "#EC CI_SUBRC
   ASSERT sy-subrc = 0 AND NOT rv_user IS INITIAL.
 
 ENDMETHOD.

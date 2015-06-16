@@ -254,7 +254,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     rv_html = lcl_gui=>render_header( ) &&
       '<h1>' && go_review->header( )-review_id
-      && '&nbsp;-&nbsp;' && go_review->get_description( ) &&
+      && '&nbsp;-&nbsp;' && go_review->header( )-as4text &&
       '</h1><br>'                           && gc_newline &&
       shortcuts( )                          && gc_newline &&
       '<br><br>'                            && gc_newline &&
@@ -276,7 +276,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD info.
 
-    rv_html = 'Responsible:&nbsp;' && go_review->header( )-responsible && '<br>'.
+    rv_html = 'Responsible:&nbsp;' &&
+      go_review->header( )-responsible &&
+      '<br>' ##NO_TEXT.
 
   ENDMETHOD.
 
@@ -292,7 +294,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD code_inspector.
 
-    DATA(ls_ci) = go_review->ci_results( ).
+    DATA(ls_ci) = go_review->ci( )->results( ).
     IF ls_ci-header IS INITIAL.
       RETURN.
     ENDIF.
@@ -373,7 +375,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
 
-    lt_list = go_review->comment_list( ).
+    lt_list = go_review->comments( )->list( ).
 
     lv_color = lc_color.
 
@@ -534,7 +536,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
       rv_html = rv_html &&
         '<tr>' &&
         '<td>' && <ls_list>-review_id && '</td>' &&
-        '<td>' && lo_review->get_description( ) && '</td>' &&
+        '<td>' && lo_review->header( )-as4text && '</td>' &&
         '<td>' && status_description( <ls_list>-status ) && '</td>' &&
         '<td>' && <ls_list>-responsible && '</td>' &&
         '<td><a href="sapevent:show?review_id=' && <ls_list>-review_id && '">' &&
@@ -792,15 +794,15 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_text = postdata( iv_field    = 'comment'
                                 it_postdata = postdata ) ##NO_TEXT.
             lv_text = cl_http_utility=>if_http_utility~unescape_url( lv_text ).
-            go_review->comment_add( iv_topic  = lv_topic
-                                    iv_text   = lv_text ) ##NO_TEXT.
+            go_review->comments( )->add( iv_topic  = lv_topic
+                                         iv_text   = lv_text ) ##NO_TEXT.
             view( lcl_gui_review=>render( ) ).
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'close'.
             lv_topic = getdata( iv_field   = 'topic'
                                  iv_getdata = getdata ) ##NO_TEXT.
-            go_review->comment_close( lv_topic ).
+            go_review->comments( )->close( lv_topic ).
             view( lcl_gui_review=>render( ) ).
           WHEN 'closereview'.
             go_review->close( ).
@@ -812,7 +814,7 @@ CLASS lcl_gui IMPLEMENTATION.
               iv_obj_name = CONV #( getdata( iv_field   = 'obj_name'
                                              iv_getdata = getdata ) ) ) ##NO_TEXT.
           WHEN 'rerun'.
-            go_review->ci_run( ).
+            go_review->ci( )->run( ).
             view( lcl_gui_review=>render( ) ).
           WHEN OTHERS.
             RAISE EXCEPTION TYPE zcx_aor_error

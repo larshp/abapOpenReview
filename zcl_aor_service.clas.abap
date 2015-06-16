@@ -63,7 +63,7 @@ METHOD ci_run.
   CREATE OBJECT lo_review
     EXPORTING
       iv_review_id = iv_review_id.
-  lo_review->ci_run( ).
+  lo_review->ci( )->run( ).
 
 ENDMETHOD.
 

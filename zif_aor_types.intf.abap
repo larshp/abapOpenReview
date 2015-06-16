@@ -32,4 +32,10 @@ INTERFACE zif_aor_types
          END OF ty_diff_list_st.
   TYPES: ty_diff_list_tt TYPE STANDARD TABLE OF ty_diff_list_st WITH DEFAULT KEY.
 
+  TYPES:
+    BEGIN OF ty_header.
+          INCLUDE TYPE zaor_review.
+  TYPES: as4text TYPE e07t-as4text,
+         END OF ty_header.
+
 ENDINTERFACE.
