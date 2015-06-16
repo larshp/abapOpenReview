@@ -19,10 +19,8 @@ public section.
     returning
       value(RT_DATA) type E071_T .
   methods CI_RESULTS
-    exporting
-      !ES_HEADER type SCIINS_INF
-      !ET_RESULTS type SCIT_ALVLIST
-      !ES_CHKVINF type SCICHKV_HD .
+    returning
+      value(RS_INFO) type ZIF_AOR_TYPES=>TY_CI_ST .
   methods COMMENT_ADD
     importing
       !IV_TEXT type STRING
@@ -48,6 +46,9 @@ public section.
   methods HEADER
     returning
       value(RS_HEADER) type ZAOR_REVIEW .
+  methods DIFF
+    returning
+      value(RT_DIFF) type ZIF_AOR_TYPES=>TY_DIFF_LIST_TT .
 protected section.
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
@@ -56,8 +57,11 @@ private section.
   data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
   class-data GV_FOLDER type STRING .
 
+  methods OBJECTS_LIST_LIMU
+    returning
+      value(RT_OBJECTS) type ZAOR_OBJECT_TT .
   methods CI_CLEANUP .
-  methods OBJECTSET
+  methods CI_OBJECTSET
     returning
       value(RO_OBJECTSET) type ref to CL_CI_OBJECTSET .
   methods CHECK_OPEN
@@ -160,6 +164,106 @@ METHOD ci_cleanup.
 ENDMETHOD.
 
 
+METHOD CI_OBJECTSET.
+
+  DATA: lt_objects TYPE scit_objs,
+        ls_e071    TYPE e071,
+        ls_tadir   TYPE tadir.
+
+
+  CASE header( )-base.
+    WHEN zif_aor_constants=>c_base-transport.
+      cl_ci_objectset=>get_ref(
+        EXPORTING
+          p_type                    = cl_ci_objectset=>c_0kor
+          p_korr                    = mv_review_id
+        RECEIVING
+          p_ref                     = ro_objectset
+        EXCEPTIONS
+          missing_parameter         = 1
+          objs_not_exists           = 2
+          invalid_request           = 3
+          object_not_exists         = 4
+          object_may_not_be_checked = 5
+          no_main_program           = 6
+          OTHERS                    = 7 ).                "#EC CI_SUBRC
+      ASSERT sy-subrc = 0.
+    WHEN zif_aor_constants=>c_base-developer
+        OR zif_aor_constants=>c_base-object.
+      cl_ci_objectset=>get_ref(
+        EXPORTING
+          p_type                    = cl_ci_objectset=>c_0obj
+          p_objsnam                 = CONV #( mv_review_id )
+        RECEIVING
+          p_ref                     = ro_objectset
+        EXCEPTIONS
+          missing_parameter         = 1
+          objs_not_exists           = 2
+          invalid_request           = 3
+          object_not_exists         = 4
+          object_may_not_be_checked = 5
+          no_main_program           = 6
+          OTHERS                    = 7 ).
+      IF sy-subrc = 0.
+        RETURN.
+      ELSEIF sy-subrc <> 2.
+        BREAK-POINT.
+      ENDIF.
+
+* see method cl_wb_object_type=>get_tadir_from_limu
+* see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
+      LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
+        IF <ls_review>-pgmid = 'R3TR'
+            AND ( <ls_review>-object = 'TABU'
+            OR <ls_review>-object = 'SBXL'
+            OR <ls_review>-object = 'SBXP' ).
+          CONTINUE.
+        ENDIF.
+
+        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+
+        IF <ls_review>-pgmid = 'LIMU'.
+          MOVE-CORRESPONDING <ls_review> TO ls_e071.
+          CALL FUNCTION 'TR_CHECK_TYPE'
+            EXPORTING
+              wi_e071  = ls_e071
+            IMPORTING
+              we_tadir = ls_tadir.
+
+          <ls_review>-object   = ls_tadir-object.
+          <ls_review>-obj_name = ls_tadir-obj_name.
+        ENDIF.
+
+        <ls_object>-objtype = <ls_review>-object.
+        <ls_object>-objname = <ls_review>-obj_name.
+      ENDLOOP.
+
+      IF lt_objects IS INITIAL.
+        RETURN.
+      ENDIF.
+
+      cl_ci_objectset=>save_from_list(
+        EXPORTING
+          p_user              = ''
+          p_objects           = lt_objects
+          p_name              = CONV #( mv_review_id )
+        RECEIVING
+          p_ref               = ro_objectset
+        EXCEPTIONS
+          objs_already_exists = 1
+          locked              = 2
+          error_in_enqueue    = 3
+          not_authorized      = 4
+          OTHERS              = 5 ).
+      IF sy-subrc <> 0.
+        BREAK-POINT.
+      ENDIF.
+
+  ENDCASE.
+
+ENDMETHOD.
+
+
 METHOD ci_results.
 
   DATA: lv_name   TYPE sci_insp,
@@ -195,16 +299,16 @@ METHOD ci_results.
       OTHERS            = 3 ).
   ASSERT sy-subrc = 0.
 
-  es_chkvinf = lo_checkv->chkvinf.
+  rs_info-chkvinf = lo_checkv->chkvinf.
 
 * make sure SAP note 2043027 is installed
   lo_ci->plain_list(
     IMPORTING
-      p_list = et_results ).
+      p_list = rs_info-results ).
 
-  es_header = lo_ci->inspecinf.
+  rs_info-header = lo_ci->inspecinf.
 
-  DELETE et_results WHERE objtype = 'STAT'.
+  DELETE rs_info-results WHERE objtype = 'STAT'.
 
 ENDMETHOD.
 
@@ -241,7 +345,7 @@ METHOD ci_run.
       OTHERS            = 3 ). "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
-  lo_objects = objectset( ).
+  lo_objects = ci_objectset( ).
   IF NOT lo_objects IS BOUND.
 * no objects valid for code inspection
     RETURN.
@@ -403,6 +507,24 @@ METHOD delete.
 ENDMETHOD.
 
 
+METHOD diff.
+
+  DATA(lt_objects) = objects_list_limu( ).
+
+  LOOP AT lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+    DATA(lt_diff) = zcl_aor_diff=>diff( <ls_object> ).
+    IF lines( lt_diff ) = 0.
+      CONTINUE.
+    ENDIF.
+
+    APPEND INITIAL LINE TO rt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+    <ls_diff>-object = <ls_object>.
+    <ls_diff>-diff   = lt_diff.
+  ENDLOOP.
+
+ENDMETHOD.
+
+
 METHOD get_description.
 
   DATA: lv_trkorr TYPE trkorr.
@@ -425,106 +547,6 @@ METHOD header.
 ENDMETHOD.
 
 
-METHOD objectset.
-
-  DATA: lt_objects TYPE scit_objs,
-        ls_e071    TYPE e071,
-        ls_tadir   TYPE tadir.
-
-
-  CASE header( )-base.
-    WHEN zif_aor_constants=>c_base-transport.
-      cl_ci_objectset=>get_ref(
-        EXPORTING
-          p_type                    = cl_ci_objectset=>c_0kor
-          p_korr                    = mv_review_id
-        RECEIVING
-          p_ref                     = ro_objectset
-        EXCEPTIONS
-          missing_parameter         = 1
-          objs_not_exists           = 2
-          invalid_request           = 3
-          object_not_exists         = 4
-          object_may_not_be_checked = 5
-          no_main_program           = 6
-          OTHERS                    = 7 ).                "#EC CI_SUBRC
-      ASSERT sy-subrc = 0.
-    WHEN zif_aor_constants=>c_base-developer
-        OR zif_aor_constants=>c_base-object.
-      cl_ci_objectset=>get_ref(
-        EXPORTING
-          p_type                    = cl_ci_objectset=>c_0obj
-          p_objsnam                 = CONV #( mv_review_id )
-        RECEIVING
-          p_ref                     = ro_objectset
-        EXCEPTIONS
-          missing_parameter         = 1
-          objs_not_exists           = 2
-          invalid_request           = 3
-          object_not_exists         = 4
-          object_may_not_be_checked = 5
-          no_main_program           = 6
-          OTHERS                    = 7 ).
-      IF sy-subrc = 0.
-        RETURN.
-      ELSEIF sy-subrc <> 2.
-        BREAK-POINT.
-      ENDIF.
-
-* see method cl_wb_object_type=>get_tadir_from_limu
-* see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
-      LOOP AT objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
-        IF <ls_review>-pgmid = 'R3TR'
-            AND ( <ls_review>-object = 'TABU'
-            OR <ls_review>-object = 'SBXL'
-            OR <ls_review>-object = 'SBXP' ).
-          CONTINUE.
-        ENDIF.
-
-        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
-
-        IF <ls_review>-pgmid = 'LIMU'.
-          MOVE-CORRESPONDING <ls_review> TO ls_e071.
-          CALL FUNCTION 'TR_CHECK_TYPE'
-            EXPORTING
-              wi_e071  = ls_e071
-            IMPORTING
-              we_tadir = ls_tadir.
-
-          <ls_review>-object   = ls_tadir-object.
-          <ls_review>-obj_name = ls_tadir-obj_name.
-        ENDIF.
-
-        <ls_object>-objtype = <ls_review>-object.
-        <ls_object>-objname = <ls_review>-obj_name.
-      ENDLOOP.
-
-      IF lt_objects IS INITIAL.
-        RETURN.
-      ENDIF.
-
-      cl_ci_objectset=>save_from_list(
-        EXPORTING
-          p_user              = ''
-          p_objects           = lt_objects
-          p_name              = CONV #( mv_review_id )
-        RECEIVING
-          p_ref               = ro_objectset
-        EXCEPTIONS
-          objs_already_exists = 1
-          locked              = 2
-          error_in_enqueue    = 3
-          not_authorized      = 4
-          OTHERS              = 5 ).
-      IF sy-subrc <> 0.
-        BREAK-POINT.
-      ENDIF.
-
-  ENDCASE.
-
-ENDMETHOD.
-
-
 METHOD objects_list.
 
   CASE header( )-base.
@@ -536,6 +558,41 @@ METHOD objects_list.
         WHERE review_id = mv_review_id ##TOO_MANY_ITAB_FIELDS. "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
   ENDCASE.
+
+ENDMETHOD.
+
+
+METHOD objects_list_limu.
+
+  DATA: ls_e071 TYPE e071,
+        lt_vrso TYPE zif_aor_types=>ty_vrso_tt.
+
+
+  DATA(lt_list) = objects_list( ).
+
+  LOOP AT lt_list ASSIGNING FIELD-SYMBOL(<ls_list>).
+    MOVE-CORRESPONDING <ls_list> TO ls_e071.
+
+    CALL FUNCTION 'SVRS_RESOLVE_E071_OBJ'
+      EXPORTING
+        e071_obj        = ls_e071
+      TABLES
+        obj_tab         = lt_vrso
+      EXCEPTIONS
+        not_versionable = 1
+        OTHERS          = 2. "#EC CI_SUBRC
+    IF sy-subrc <> 0.
+      CONTINUE.
+    ENDIF.
+
+    LOOP AT lt_vrso ASSIGNING FIELD-SYMBOL(<ls_vrso>).
+      APPEND INITIAL LINE TO rt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+      <ls_object>-pgmid    = 'LIMU'.
+      <ls_object>-object   = <ls_vrso>-objtype.
+      <ls_object>-obj_name = <ls_vrso>-objname.
+    ENDLOOP.
+
+  ENDLOOP.
 
 ENDMETHOD.
 
@@ -564,7 +621,7 @@ METHOD pdf.
   ls_control-no_dialog = abap_true.
   ls_control-getotf    = abap_true.
 
-  ci_results( IMPORTING et_results = lt_results ).
+  DATA(ls_ci) = ci_results( ).
 
   CALL FUNCTION lv_name
     EXPORTING

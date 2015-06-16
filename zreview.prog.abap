@@ -203,24 +203,21 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD diff.
 
-    DATA: lt_objects TYPE e071_t,
-          lv_style   TYPE string,
-          lt_diff    TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects.
+    DATA: lv_style TYPE string.
 
 
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
 
-    lt_objects = go_review->objects_list( ).
-    LOOP AT lt_objects ASSIGNING <ls_object>.
-      rv_html = rv_html      &&
-        <ls_object>-object   &&
-        '&nbsp;'             &&
-        <ls_object>-obj_name &&
+    DATA(lt_diff_list) = go_review->diff( ).
+
+    LOOP AT lt_diff_list ASSIGNING FIELD-SYMBOL(<ls_diff_list>).
+      rv_html = rv_html                &&
+        <ls_diff_list>-object-object   &&
+        '&nbsp;'                       &&
+        <ls_diff_list>-object-obj_name &&
         '<br><br>'.
 
-      lt_diff = zcl_aor_diff=>diff( CORRESPONDING #( <ls_object> ) ).
+      DATA(lt_diff) = <ls_diff_list>-diff.
       IF NOT lt_diff IS INITIAL.
         rv_html = rv_html &&
           '<table border="0">' &&
@@ -295,17 +292,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD code_inspector.
 
-    DATA: lt_results TYPE scit_alvlist,
-          ls_chkvinf TYPE scichkv_hd,
-          ls_header  TYPE sciins_inf.
-
-    FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
-
-
-    go_review->ci_results( IMPORTING es_header  = ls_header
-                                     et_results = lt_results
-                                     es_chkvinf	= ls_chkvinf ).
-    IF ls_header IS INITIAL.
+    DATA(ls_ci) = go_review->ci_results( ).
+    IF ls_ci-header IS INITIAL.
       RETURN.
     ENDIF.
 
@@ -313,22 +301,22 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<a href="sapevent:rerun">Rerun</a><br><br>' && gc_newline &&
       '<table>' &&
       '<tr>' &&
-      '<td>Name:</td><td>' && ls_header-inspecname && '</td>' &&
+      '<td>Name:</td><td>' && ls_ci-header-inspecname && '</td>' &&
       '</tr>' && gc_newline &&
       '<tr>' &&
-      '<td>Version:</td><td>' && ls_header-inspecvers && '</td>' &&
+      '<td>Version:</td><td>' && ls_ci-header-inspecvers && '</td>' &&
       '</tr>' && gc_newline &&
       '<tr>' &&
-      '<td>Date:</td><td>' && ls_header-creadate && '</td>' &&
+      '<td>Date:</td><td>' && ls_ci-header-creadate && '</td>' &&
       '</tr>' && gc_newline &&
       '<tr>' &&
-      '<td>Check Variant:</td><td>' && ls_chkvinf-checkvname && '</td>' &&
+      '<td>Check Variant:</td><td>' && ls_ci-chkvinf-checkvname && '</td>' &&
       '</tr>' && gc_newline &&
       '</table><br>' && gc_newline ##NO_TEXT.
 
-    IF NOT lt_results IS INITIAL.
+    IF NOT ls_ci-results IS INITIAL.
       rv_html = rv_html && '<table border="0">' && gc_newline.
-      LOOP AT lt_results ASSIGNING <ls_result>.
+      LOOP AT ls_ci-results ASSIGNING FIELD-SYMBOL(<ls_result>).
         rv_html = rv_html &&
           '<tr>' && gc_newline &&
           '<td>' && <ls_result>-sobjtype && '</td>' && gc_newline &&
@@ -548,6 +536,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
         '<td>' && <ls_list>-review_id && '</td>' &&
         '<td>' && lo_review->get_description( ) && '</td>' &&
         '<td>' && status_description( <ls_list>-status ) && '</td>' &&
+        '<td>' && <ls_list>-responsible && '</td>' &&
         '<td><a href="sapevent:show?review_id=' && <ls_list>-review_id && '">' &&
         'Show</a></td>' &&
         '<td><a href="sapevent:pdf?review_id=' && <ls_list>-review_id && '">' &&

@@ -95,16 +95,23 @@ METHOD diff.
     RETURN.
   ENDIF.
 
-  IF is_object-object = 'PROG'.
-* todo, somehow show diff for all sub objects
-    READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
-    ASSERT sy-subrc = 0.
-  ELSE.
-    ls_vrso = lt_vrso[ 1 ].
-  ENDIF.
+  ASSERT lines( lt_vrso ) = 1.
+  ls_vrso = lt_vrso[ 1 ].
+
+*  IF is_object-object = 'PROG'.
+** todo, somehow show diff for all sub objects
+*    READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
+*    ASSERT sy-subrc = 0.
+*  ELSE.
+*    ls_vrso = lt_vrso[ 1 ].
+*  ENDIF.
 
   lt_version_list = version_list( iv_object   = ls_vrso-objtype
                                   iv_obj_name = CONV #( ls_vrso-objname ) ).
+  IF lines( lt_version_list ) = 0.
+    RETURN.
+  ENDIF.
+
   READ TABLE lt_version_list INDEX 1 INTO ls_new.
   ASSERT sy-subrc = 0.
   READ TABLE lt_version_list INDEX 2 INTO ls_old.
@@ -125,7 +132,7 @@ METHOD diff.
                            iv_versno      = ls_old-versno ).
       ENDIF.
     WHEN OTHERS.
-      BREAK-POINT.
+* todo
       RETURN.
   ENDCASE.
 
@@ -279,7 +286,6 @@ METHOD version_list.
     EXCEPTIONS
       no_entry     = 1
       OTHERS       = 2. "#EC CI_SUBRC
-  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 ENDCLASS.
