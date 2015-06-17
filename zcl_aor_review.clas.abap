@@ -259,7 +259,8 @@ METHOD pdf.
       is_header          = header( )
       it_objects         = objects_list( )
       it_comments        = comments( )->list( )
-      it_results         = ci( )->results( )
+      is_ci              = ci( )->results( )
+      it_diff            = diff( )
     IMPORTING
       job_output_info    = ls_info
     EXCEPTIONS
