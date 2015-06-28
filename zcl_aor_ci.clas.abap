@@ -118,9 +118,8 @@ METHOD objectset.
           OTHERS                    = 7 ).
       IF sy-subrc = 0.
         RETURN.
-      ELSEIF sy-subrc <> 2.
-        BREAK-POINT.
       ENDIF.
+      ASSERT sy-subrc = 2.
 
 * see method cl_wb_object_type=>get_tadir_from_limu
 * see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
@@ -167,9 +166,7 @@ METHOD objectset.
           error_in_enqueue    = 3
           not_authorized      = 4
           OTHERS              = 5 ).
-      IF sy-subrc <> 0.
-        BREAK-POINT.
-      ENDIF.
+      ASSERT sy-subrc = 0.
 
   ENDCASE.
 
@@ -208,7 +205,7 @@ METHOD results.
     EXCEPTIONS
       chkv_not_exists   = 1
       missing_parameter = 2
-      OTHERS            = 3 ).
+      OTHERS            = 3 ).                           "#EC CI_SUBRC.
   ASSERT sy-subrc = 0.
 
   rs_info-chkvinf = lo_checkv->chkvinf.
@@ -274,11 +271,8 @@ METHOD run.
       locked           = 1
       error_in_enqueue = 2
       not_authorized   = 3
-      OTHERS           = 4 ).
-  IF sy-subrc <> 0.
-* todo
-    BREAK-POINT.
-  ENDIF.
+      OTHERS           = 4 ).                             "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
   lv_date = sy-datum + 100.
   CONCATENATE 'Review' lv_name
@@ -293,20 +287,15 @@ METHOD run.
                  missing_information = 1
                  insp_no_name        = 2
                  not_enqueued        = 3
-                 OTHERS              = 4 ).
-  IF sy-subrc <> 0.
-* Implement suitable error handling here
-    BREAK-POINT.
-  ENDIF.
+                 OTHERS              = 4 ).               "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
   lo_ci->run( EXPORTING
                 p_howtorun            = 'D'
               EXCEPTIONS
                 invalid_check_version = 1
-                OTHERS                = 2 ).
-  IF sy-subrc <> 0.
-    BREAK-POINT.
-  ENDIF.
+                OTHERS                = 2 ).              "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 ENDCLASS.

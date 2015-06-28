@@ -104,8 +104,7 @@ ENDMETHOD.
 
 METHOD list_open.
 
-  DATA: lv_index     LIKE sy-tabix,
-        lv_review_id TYPE zaor_review-review_id.
+  DATA: lv_index LIKE sy-tabix.
 
   FIELD-SYMBOLS: <ls_data> LIKE LINE OF rt_data.
 
@@ -120,9 +119,8 @@ METHOD list_open.
   LOOP AT rt_data ASSIGNING <ls_data>.
     lv_index = sy-tabix.
 
-    CONCATENATE <ls_data>-trkorr '%' INTO lv_review_id.
     SELECT COUNT(*) FROM zaor_review WHERE
-      review_id LIKE lv_review_id.
+      trkorr = <ls_data>-trkorr.
     IF sy-subrc = 0.
       DELETE rt_data INDEX lv_index.
       CONTINUE. " current loop

@@ -258,7 +258,7 @@ METHOD resolve.
       obj_tab         = rt_vrso
     EXCEPTIONS
       not_versionable = 1
-      OTHERS          = 2. "#EC CI_SUBRC
+      OTHERS          = 2 ##FM_SUBRC_OK. "#EC CI_SUBRC
 
 ENDMETHOD.
 
@@ -282,10 +282,7 @@ METHOD version_list.
       objtype      = lv_vobjtype
     TABLES
       lversno_list = lt_lversno_list
-      version_list = rt_version_list
-    EXCEPTIONS
-      no_entry     = 1
-      OTHERS       = 2. "#EC CI_SUBRC
+      version_list = rt_version_list.
 
 ENDMETHOD.
 ENDCLASS.

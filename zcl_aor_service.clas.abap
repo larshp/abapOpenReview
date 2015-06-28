@@ -13,7 +13,8 @@ public section.
   class-methods OPEN
     importing
       !IV_TRKORR type TRKORR
-      !IV_BASE type ZAOR_BASE
+      !IV_BASE type ZAOR_REVIEW-BASE
+      !IV_CI_FILTER type ZAOR_REVIEW-CI_FILTER
     raising
       ZCX_AOR_ERROR .
   class-methods PDF_ALL
@@ -32,20 +33,25 @@ private section.
       !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
       !IV_BASE type ZAOR_REVIEW-BASE
       !IT_OBJECTS type E071_T optional
-      !IV_RESPONSIBLE type ZAOR_REVIEW-RESPONSIBLE .
+      !IV_RESPONSIBLE type ZAOR_REVIEW-RESPONSIBLE
+      !IV_CI_FILTER type ZAOR_REVIEW-CI_FILTER
+      !IV_TRKORR type TRKORR .
   class-methods OPEN_DEVELOPER
     importing
       !IV_TRKORR type TRKORR
+      !IV_CI_FILTER type ZAOR_REVIEW-CI_FILTER
     raising
       ZCX_AOR_ERROR .
   class-methods OPEN_OBJECT
     importing
       !IV_TRKORR type TRKORR
+      !IV_CI_FILTER type ZAOR_REVIEW-CI_FILTER
     raising
       ZCX_AOR_ERROR .
   class-methods OPEN_TRANSPORT
     importing
       !IV_TRKORR type TRKORR
+      !IV_CI_FILTER type ZAOR_REVIEW-CI_FILTER
     raising
       ZCX_AOR_ERROR .
 ENDCLASS.
@@ -79,11 +85,15 @@ METHOD create.
   ASSERT NOT iv_review_id IS INITIAL.
   ASSERT NOT iv_base IS INITIAL.
   ASSERT NOT iv_responsible IS INITIAL.
+  ASSERT NOT iv_ci_filter IS INITIAL.
+  ASSERT NOT iv_trkorr IS INITIAL.
 
   ls_review-review_id   = iv_review_id.
   ls_review-status      = zif_aor_constants=>c_status-open.
   ls_review-base        = iv_base.
   ls_review-responsible = iv_responsible.
+  ls_review-ci_filter   = iv_ci_filter.
+  ls_review-trkorr      = iv_trkorr.
   INSERT zaor_review FROM ls_review.                      "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
@@ -126,15 +136,22 @@ ENDMETHOD.
 
 METHOD open.
 
+  ASSERT NOT iv_trkorr IS INITIAL.
+  ASSERT NOT iv_base IS INITIAL.
+  ASSERT NOT iv_ci_filter IS INITIAL.
+
   zcl_aor_transport=>validate_open( iv_trkorr ).
 
   CASE iv_base.
     WHEN zif_aor_constants=>c_base-transport.
-      open_transport( iv_trkorr ).
+      open_transport( iv_trkorr = iv_trkorr
+                      iv_ci_filter = iv_ci_filter ).
     WHEN zif_aor_constants=>c_base-object.
-      open_object( iv_trkorr ).
+      open_object( iv_trkorr = iv_trkorr
+                   iv_ci_filter = iv_ci_filter ).
     WHEN zif_aor_constants=>c_base-developer.
-      open_developer( iv_trkorr ).
+      open_developer( iv_trkorr = iv_trkorr
+                      iv_ci_filter = iv_ci_filter ).
     WHEN OTHERS.
       ASSERT 1 = 1 + 1.
   ENDCASE.
@@ -146,6 +163,7 @@ METHOD open_developer.
 
   BREAK-POINT.
 
+* todo, some way to resolve conflicts, multiple developers for same object
 * zif_aor_constants=>c_base-developer
 
 ENDMETHOD.
@@ -168,10 +186,12 @@ METHOD open_object.
     CLEAR lt_obj.
     APPEND <ls_object> TO lt_obj.
 
-    create( iv_review_id = lv_review_id
-            iv_base      = zif_aor_constants=>c_base-object
-            it_objects   = lt_obj
-            iv_responsible = zcl_aor_transport=>get_developer( <ls_object>-trkorr ) ).
+    create( iv_review_id   = lv_review_id
+            iv_base        = zif_aor_constants=>c_base-object
+            it_objects     = lt_obj
+            iv_responsible = zcl_aor_transport=>get_developer( <ls_object>-trkorr )
+            iv_ci_filter   = iv_ci_filter
+            iv_trkorr      = iv_trkorr ).
 
     ci_run( lv_review_id ).
 
@@ -184,7 +204,9 @@ METHOD open_transport.
 
   create( iv_review_id   = iv_trkorr
           iv_base        = zif_aor_constants=>c_base-transport
-          iv_responsible = zcl_aor_transport=>get_developer( iv_trkorr ) ).
+          iv_responsible = zcl_aor_transport=>get_developer( iv_trkorr )
+          iv_ci_filter   = iv_ci_filter
+          iv_trkorr      = iv_trkorr ).
 
   ci_run( iv_trkorr ).
 

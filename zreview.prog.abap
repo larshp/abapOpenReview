@@ -153,6 +153,11 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS render_css
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS new
+      IMPORTING iv_trkorr         TYPE trkorr
+      RETURNING VALUE(rv_success) TYPE abap_bool
+      RAISING   zcx_aor_error.
+
 ENDCLASS.                    "lcl_gui DEFINITION
 
 *----------------------------------------------------------------------*
@@ -753,6 +758,61 @@ CLASS lcl_gui IMPLEMENTATION.
 
   ENDMETHOD.                    "run
 
+  METHOD new.
+
+    DATA: lv_returncode TYPE c,
+          lv_base       TYPE zaor_review-base,
+          lv_ci_filter  TYPE zaor_review-ci_filter,
+          lt_fields     TYPE TABLE OF sval.
+
+    FIELD-SYMBOLS: <ls_field> LIKE LINE OF lt_fields.
+
+
+    APPEND INITIAL LINE TO lt_fields ASSIGNING <ls_field>.
+    <ls_field>-tabname    = 'E070'.
+    <ls_field>-fieldname  = 'TRKORR'.
+    <ls_field>-value      = iv_trkorr.
+    <ls_field>-field_attr = '02'.
+
+    APPEND INITIAL LINE TO lt_fields ASSIGNING <ls_field>.
+    <ls_field>-tabname   = 'ZAOR_REVIEW'.
+    <ls_field>-fieldname = 'BASE'.
+    <ls_field>-value     = zif_aor_constants=>c_base-object.
+    <ls_field>-field_obl = abap_true.
+
+    APPEND INITIAL LINE TO lt_fields ASSIGNING <ls_field>.
+    <ls_field>-tabname   = 'ZAOR_REVIEW'.
+    <ls_field>-fieldname = 'CI_FILTER'.
+    <ls_field>-value     = zif_aor_constants=>c_ci_filter-lines.
+    <ls_field>-field_obl = abap_true.
+
+    CALL FUNCTION 'POPUP_GET_VALUES'
+      EXPORTING
+        popup_title = 'New'                           "#EC NOTEXT
+      IMPORTING
+        returncode  = lv_returncode
+      TABLES
+        fields      = lt_fields.
+    IF lv_returncode = 'A'.
+      RETURN.
+    ENDIF.
+
+    READ TABLE lt_fields INDEX 2 ASSIGNING <ls_field>.
+    ASSERT sy-subrc = 0.
+    lv_base = <ls_field>-value.
+
+    READ TABLE lt_fields INDEX 3 ASSIGNING <ls_field>.
+    ASSERT sy-subrc = 0.
+    lv_ci_filter = <ls_field>-value.
+
+    zcl_aor_service=>open( iv_trkorr    = iv_trkorr
+                           iv_base      = lv_base
+                           iv_ci_filter = lv_ci_filter ).
+
+    rv_success = abap_true.
+
+  ENDMETHOD.
+
   METHOD on_event.
 
     DATA: lv_review_id TYPE zaor_review_id,
@@ -770,9 +830,9 @@ CLASS lcl_gui IMPLEMENTATION.
           WHEN 'new'.
             lv_trkorr = getdata( iv_field   = 'trkorr'
                                  iv_getdata = getdata ) ##NO_TEXT.
-            zcl_aor_service=>open( iv_trkorr = lv_trkorr
-                                   iv_base   = zif_aor_constants=>c_base-object ).
-            view( lcl_gui_start=>render( ) ).
+            IF new( lv_trkorr ) = abap_true.
+              view( lcl_gui_start=>render( ) ).
+            ENDIF.
           WHEN 'show'.
             CREATE OBJECT go_review
               EXPORTING

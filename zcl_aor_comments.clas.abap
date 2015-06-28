@@ -29,6 +29,12 @@ protected section.
 private section.
 
   data MO_REVIEW type ref to ZCL_AOR_REVIEW .
+
+  methods TOPIC_ID
+    importing
+      !IV_TOPIC type ZAOR_COMMENT-TOPIC
+    returning
+      value(RV_TOPIC) type ZAOR_COMMENT-TOPIC .
 ENDCLASS.
 
 
@@ -47,19 +53,10 @@ METHOD add.
 
   mo_review->check_open( ).
 
-  IF iv_topic IS INITIAL.
-    TRY.
-        ls_comment-topic = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
-      CATCH cx_uuid_error.
-        ASSERT 1 = 1 + 1.
-    ENDTRY.
-  ELSE.
-    ls_comment-topic = iv_topic.
-  ENDIF.
-
+  ls_comment-topic     = topic_id( iv_topic ).
   ls_comment-review_id = mo_review->header( )-review_id.
-  ls_comment-text   = iv_text.
-  ls_comment-bname  = sy-uname.
+  ls_comment-text      = iv_text.
+  ls_comment-bname     = sy-uname.
   GET TIME STAMP FIELD ls_comment-timestamp.
 
   INSERT zaor_comment FROM ls_comment.                    "#EC CI_SUBRC
@@ -102,19 +99,11 @@ METHOD close.
 
   mo_review->check_open( ).
 
-  IF iv_topic IS INITIAL.
-    TRY.
-        ls_comment-topic = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
-      CATCH cx_uuid_error.
-        ASSERT 1 = 1 + 1.
-    ENDTRY.
-  ELSE.
-    ls_comment-topic = iv_topic.
-  ENDIF.
+  ls_comment-topic     = topic_id( iv_topic ).
   ls_comment-review_id = mo_review->header( )-review_id.
-  ls_comment-text   = 'Ok, closed' ##NO_TEXT.
-  ls_comment-bname  = sy-uname.
-  ls_comment-closed = abap_true.
+  ls_comment-text      = 'Ok, closed' ##NO_TEXT.
+  ls_comment-bname     = sy-uname.
+  ls_comment-closed    = abap_true.
   GET TIME STAMP FIELD ls_comment-timestamp.
 
   INSERT zaor_comment FROM ls_comment.                    "#EC CI_SUBRC
@@ -137,6 +126,21 @@ METHOD list.
   SELECT * FROM zaor_comment INTO TABLE rt_data
     WHERE review_id = lv_review_id
     ORDER BY topic ASCENDING timestamp ASCENDING.         "#EC CI_SUBRC
+
+ENDMETHOD.
+
+
+METHOD topic_id.
+
+  IF iv_topic IS INITIAL.
+    TRY.
+        rv_topic = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
+      CATCH cx_uuid_error.
+        ASSERT 1 = 1 + 1.
+    ENDTRY.
+  ELSE.
+    rv_topic = iv_topic.
+  ENDIF.
 
 ENDMETHOD.
 ENDCLASS.

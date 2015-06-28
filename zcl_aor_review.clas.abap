@@ -123,6 +123,8 @@ ENDMETHOD.
 
 METHOD delete.
 
+  ci( )->delete( ).
+
   DELETE FROM zaor_review
     WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
 
@@ -131,8 +133,6 @@ METHOD delete.
 
   DELETE FROM zaor_comment
     WHERE review_id = mv_review_id.                       "#EC CI_SUBRC
-
-  ci( )->delete( ).
 
 ENDMETHOD.
 
@@ -299,7 +299,7 @@ METHOD pdf.
         cntl_error           = 1
         error_no_gui         = 2
         not_supported_by_gui = 3
-        OTHERS               = 4 ) ##NO_TEXT.
+        OTHERS               = 4 ) ##NO_TEXT.             "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
     IF gv_folder IS INITIAL.
       RETURN.
