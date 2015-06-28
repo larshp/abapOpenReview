@@ -1,9 +1,15 @@
 INTERFACE zif_aor_types
   PUBLIC .
 
+  TYPES:
+    BEGIN OF ty_comment.
+          INCLUDE TYPE zaor_comment.
+  TYPES: time_formatted TYPE string,
+         END OF ty_comment.
+
   TYPES: ty_vrso_tt TYPE STANDARD TABLE OF vrso WITH DEFAULT KEY.
   TYPES: ty_review_tt TYPE STANDARD TABLE OF zaor_review WITH DEFAULT KEY.
-  TYPES: ty_comment_tt TYPE STANDARD TABLE OF zaor_comment WITH DEFAULT KEY .
+  TYPES: ty_comment_tt TYPE STANDARD TABLE OF ty_comment WITH DEFAULT KEY .
   TYPES:
     BEGIN OF ty_transport.
           INCLUDE TYPE e070.

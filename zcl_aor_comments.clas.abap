@@ -123,9 +123,14 @@ METHOD list.
 
   DATA(lv_review_id) = mo_review->header( )-review_id.
 
-  SELECT * FROM zaor_comment INTO TABLE rt_data
+  SELECT * FROM zaor_comment
+    INTO CORRESPONDING FIELDS OF TABLE rt_data
     WHERE review_id = lv_review_id
     ORDER BY topic ASCENDING timestamp ASCENDING.         "#EC CI_SUBRC
+
+  LOOP AT rt_data ASSIGNING FIELD-SYMBOL(<ls_list>).
+    <ls_list>-time_formatted = lcl_time=>format( <ls_list>-timestamp ).
+  ENDLOOP.
 
 ENDMETHOD.
 

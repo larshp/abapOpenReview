@@ -120,7 +120,7 @@ METHOD list_open.
     lv_index = sy-tabix.
 
     SELECT COUNT(*) FROM zaor_review WHERE
-      trkorr = <ls_data>-trkorr.
+      trkorr = <ls_data>-trkorr.                        "#EC CI_NOFIELD
     IF sy-subrc = 0.
       DELETE rt_data INDEX lv_index.
       CONTINUE. " current loop
