@@ -10,6 +10,8 @@ public section.
       !IO_REVIEW type ref to ZCL_AOR_REVIEW .
   methods DELETE .
   methods RESULTS
+    importing
+      !IV_FILTER type ZAOR_REVIEW-CI_FILTER optional
     returning
       value(RS_INFO) type ZIF_AOR_TYPES=>TY_CI_ST .
   methods RUN
@@ -20,9 +22,22 @@ private section.
 
   data MO_REVIEW type ref to ZCL_AOR_REVIEW .
 
+  methods OBJECT_TO_INCLUDE
+    importing
+      !IS_OBJECT type ZAOR_OBJECT
+    returning
+      value(RV_PROGRAM) type PROGRAMM .
   methods OBJECTSET
     returning
       value(RO_OBJECTSET) type ref to CL_CI_OBJECTSET .
+  methods FILTER
+    importing
+      !IV_FILTER type ZAOR_REVIEW-CI_FILTER optional
+    changing
+      !CS_INFO type ZIF_AOR_TYPES=>TY_CI_ST .
+  methods FILTER_LINES
+    changing
+      !CS_INFO type ZIF_AOR_TYPES=>TY_CI_ST .
 ENDCLASS.
 
 
@@ -72,6 +87,51 @@ METHOD delete.
   IF sy-subrc = 0.
     lo_objectset->delete( p_mode = 'A' ).
   ENDIF.
+
+ENDMETHOD.
+
+
+METHOD filter.
+
+  CASE iv_filter.
+    WHEN zif_aor_constants=>c_ci_filter-none.
+      RETURN.
+    WHEN zif_aor_constants=>c_ci_filter-object.
+      BREAK-POINT.
+    WHEN zif_aor_constants=>c_ci_filter-include.
+      BREAK-POINT.
+    WHEN zif_aor_constants=>c_ci_filter-lines.
+      filter_lines( CHANGING cs_info = cs_info ).
+    WHEN OTHERS.
+      ASSERT 1 = 1 + 1.
+  ENDCASE.
+
+ENDMETHOD.
+
+
+METHOD filter_lines.
+
+  DATA: lv_include TYPE programm,
+        lt_results LIKE cs_info-results.
+
+  DATA(lt_diff) = mo_review->diff( ).
+
+  lt_results = cs_info-results.
+  CLEAR cs_info-results.
+
+  LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+    lv_include = object_to_include( <ls_diff>-object ).
+    IF lv_include IS INITIAL.
+      CONTINUE.
+    ENDIF.
+    LOOP AT <ls_diff>-diff ASSIGNING FIELD-SYMBOL(<ls_line>)
+        WHERE NOT new IS INITIAL.
+      LOOP AT lt_results ASSIGNING FIELD-SYMBOL(<ls_result>)
+          WHERE sobjname = lv_include AND line = <ls_line>-new.
+        APPEND <ls_result> TO cs_info-results.
+      ENDLOOP.
+    ENDLOOP.
+  ENDLOOP.
 
 ENDMETHOD.
 
@@ -165,9 +225,40 @@ METHOD objectset.
           locked              = 2
           error_in_enqueue    = 3
           not_authorized      = 4
-          OTHERS              = 5 ).
+          OTHERS              = 5 ).                      "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
 
+  ENDCASE.
+
+ENDMETHOD.
+
+
+METHOD object_to_include.
+
+  DATA: ls_mtdkey TYPE seocpdkey.
+
+
+  CASE is_object-object.
+    WHEN 'METH'.
+      ls_mtdkey = is_object-obj_name.
+      cl_oo_classname_service=>get_method_include(
+        EXPORTING
+          mtdkey              = ls_mtdkey
+        RECEIVING
+          result              = rv_program
+        EXCEPTIONS
+          class_not_existing  = 1
+          method_not_existing = 2
+          OTHERS              = 3 ).
+      IF sy-subrc <> 0.
+        BREAK-POINT.
+      ENDIF.
+    WHEN 'PROG' OR 'REPS'.
+      rv_program = is_object-obj_name.
+    WHEN 'CINS' OR 'NOTE' OR 'TABU'.
+      RETURN.
+    WHEN OTHERS.
+      BREAK-POINT.
   ENDCASE.
 
 ENDMETHOD.
@@ -176,11 +267,18 @@ ENDMETHOD.
 METHOD results.
 
   DATA: lv_name   TYPE sci_insp,
+        lv_filter TYPE zaor_review-ci_filter,
         lo_ci     TYPE REF TO cl_ci_inspection,
         lo_checkv TYPE REF TO cl_ci_checkvariant.
 
 
   lv_name = mo_review->header( )-review_id.
+
+  IF NOT iv_filter IS INITIAL.
+    lv_filter = iv_filter.
+  ELSE.
+    lv_filter = mo_review->header( )-ci_filter.
+  ENDIF.
 
   cl_ci_inspection=>get_ref(
     EXPORTING
@@ -218,6 +316,9 @@ METHOD results.
   rs_info-header = lo_ci->inspecinf.
 
   DELETE rs_info-results WHERE objtype = 'STAT'.
+
+  filter( EXPORTING iv_filter = lv_filter
+          CHANGING  cs_info   = rs_info ).
 
 ENDMETHOD.
 

@@ -278,11 +278,16 @@ METHOD version_list.
 
   CALL FUNCTION 'SVRS_GET_VERSION_DIRECTORY_46'
     EXPORTING
-      objname      = lv_vobjname
-      objtype      = lv_vobjtype
+      objname                = lv_vobjname
+      objtype                = lv_vobjtype
     TABLES
-      lversno_list = lt_lversno_list
-      version_list = rt_version_list.
+      lversno_list           = lt_lversno_list
+      version_list           = rt_version_list
+    EXCEPTIONS
+      no_entry               = 1
+      communication_failure_ = 2
+      system_failure         = 3
+      OTHERS                 = 4 ##FM_SUBRC_OK. "#EC CI_SUBRC
 
 ENDMETHOD.
 ENDCLASS.

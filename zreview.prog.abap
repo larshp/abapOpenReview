@@ -173,6 +173,8 @@ CLASS lcl_gui_review DEFINITION FINAL.
       RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
+    CLASS-DATA: gv_filter TYPE zaor_review-ci_filter.
+
   PRIVATE SECTION.
     CLASS-METHODS add_comment
       IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
@@ -196,6 +198,10 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS code_inspector
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS filter
+      IMPORTING iv_filter      TYPE zaor_review-ci_filter
+      RETURNING VALUE(rv_html) TYPE string.
+
     CLASS-METHODS shortcuts
       RETURNING VALUE(rv_html) TYPE string.
 
@@ -216,6 +222,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
 
     DATA(lt_diff_list) = go_review->diff( ).
+
+    IF lt_diff_list IS INITIAL.
+      rv_html = rv_html && 'Empty'  ##NO_TEXT.
+    ENDIF.
 
     LOOP AT lt_diff_list ASSIGNING FIELD-SYMBOL(<ls_diff_list>).
       rv_html = rv_html                &&
@@ -266,11 +276,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
       shortcuts( )                          && gc_newline &&
       '<br><br>'                            && gc_newline &&
       info( )                               && gc_newline &&
-      '<br><br>'                            && gc_newline &&
+      '<br>'                                && gc_newline &&
       objects( )                            && gc_newline &&
       '<br>'                                && gc_newline &&
       code_inspector( )                     && gc_newline &&
-      '<br><br>'                            && gc_newline &&
       diff( )                               && gc_newline &&
       '<br><br>'                            && gc_newline &&
       comments( )                           && gc_newline &&
@@ -283,9 +292,16 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD info.
 
-    rv_html = 'Responsible:&nbsp;' &&
-      go_review->header( )-responsible &&
-      '<br>' ##NO_TEXT.
+    rv_html = '<table>' &&
+      '<tr>' &&
+      '<td>Responsible:</td>' &&
+      '<td>' && go_review->header( )-responsible && '</td>' &&
+      '</tr>' &&
+      '<tr>' &&
+      '<td>Base:</td>' &&
+      '<td>' && go_review->header( )-base && '</td>' &&
+      '</tr>' &&
+      '</table>' ##NO_TEXT.
 
   ENDMETHOD.
 
@@ -299,9 +315,54 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD filter.
+
+    STATICS: st_dd07v TYPE STANDARD TABLE OF dd07v.
+
+    DATA: ls_dd07v LIKE LINE OF st_dd07v.
+
+
+    IF st_dd07v IS INITIAL.
+      CALL FUNCTION 'DD_DOMVALUES_GET'
+        EXPORTING
+          domname        = 'ZAOR_CI_FILTER'
+          text           = abap_true
+        TABLES
+          dd07v_tab      = st_dd07v
+        EXCEPTIONS
+          wrong_textflag = 1
+          OTHERS         = 2. "#EC CI_SUBRC
+      ASSERT sy-subrc = 0.
+    ENDIF.
+
+    LOOP AT st_dd07v INTO ls_dd07v.
+      IF ls_dd07v-domvalue_l = iv_filter.
+        rv_html = rv_html &&
+          '<a href="sapevent:filter?filter=' &&
+          ls_dd07v-domvalue_l && '">' &&
+          ls_dd07v-ddtext && '</a>&nbsp'.
+      ELSE.
+        rv_html = rv_html &&
+          '<a href="sapevent:filter?filter=' &&
+          ls_dd07v-domvalue_l && '" class="grey">' &&
+          ls_dd07v-ddtext && '</a>&nbsp'.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
   METHOD code_inspector.
 
-    DATA(ls_ci) = go_review->ci( )->results( ).
+    DATA: lv_filter TYPE zaor_review-ci_filter.
+
+    DATA(ls_header) = go_review->header( ).
+    IF NOT gv_filter IS INITIAL.
+      lv_filter = gv_filter.
+      CLEAR gv_filter.
+    ELSE.
+      lv_filter = ls_header-ci_filter.
+    ENDIF.
+    DATA(ls_ci) = go_review->ci( )->results( lv_filter ).
     IF ls_ci-header IS INITIAL.
       RETURN.
     ENDIF.
@@ -321,6 +382,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<tr>' &&
       '<td>Check Variant:</td><td>' && ls_ci-chkvinf-checkvname && '</td>' &&
       '</tr>' && gc_newline &&
+      '<tr>' &&
+      '<td>Filter:</td><td>' && filter( lv_filter ) && '</td>' &&
+      '</tr>' && gc_newline &&
       '</table><br>' && gc_newline ##NO_TEXT.
 
     IF NOT ls_ci-results IS INITIAL.
@@ -339,6 +403,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
     ELSE.
       rv_html = rv_html && '<font color="red"><b>APPROVED</b></font>'.
     ENDIF.
+
+    rv_html = rv_html && '<br><br>'.
 
   ENDMETHOD.                    "code_inspector
 
@@ -833,6 +899,10 @@ CLASS lcl_gui IMPLEMENTATION.
             IF new( lv_trkorr ) = abap_true.
               view( lcl_gui_start=>render( ) ).
             ENDIF.
+          WHEN 'filter'.
+            lcl_gui_review=>gv_filter = getdata( iv_field   = 'filter'
+                                                 iv_getdata = getdata ) ##NO_TEXT.
+            view( lcl_gui_review=>render( 'location.href="#ci";' ) ) ##NO_TEXT.
           WHEN 'show'.
             CREATE OBJECT go_review
               EXPORTING
