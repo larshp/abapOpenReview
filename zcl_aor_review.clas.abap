@@ -234,7 +234,6 @@ METHOD pdf.
   DATA: ls_control TYPE ssfctrlop,
         ls_info    TYPE ssfcrescl,
         lv_size    TYPE i,
-        lt_results TYPE scit_alvlist,
         lt_pdf     TYPE STANDARD TABLE OF tline,
         lv_name    TYPE rs38l_fnam.
 

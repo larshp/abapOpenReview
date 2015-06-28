@@ -284,11 +284,10 @@ METHOD run.
   CONCATENATE 'Review' lv_name
     INTO lv_text SEPARATED BY space ##NO_TEXT.
 
-  lo_ci->set( EXPORTING
-                p_chkv    = lo_variant
-                p_objs    = lo_objects
-                p_text    = lv_text
-                p_deldate = lv_date ).
+  lo_ci->set( p_chkv    = lo_variant
+              p_objs    = lo_objects
+              p_text    = lv_text
+              p_deldate = lv_date ).
 
   lo_ci->save( EXCEPTIONS
                  missing_information = 1

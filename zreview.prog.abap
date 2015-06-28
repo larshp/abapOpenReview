@@ -124,6 +124,7 @@ CLASS lcl_gui DEFINITION FINAL.
       RAISING zcx_aor_error.
 
     CLASS-METHODS render_header
+      IMPORTING iv_onload      TYPE string OPTIONAL
       RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_footer
@@ -163,6 +164,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
+      IMPORTING iv_onload      TYPE string OPTIONAL
       RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
@@ -252,7 +254,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD render.
 
-    rv_html = lcl_gui=>render_header( ) &&
+    rv_html = lcl_gui=>render_header( iv_onload ) &&
       '<h1>' && go_review->header( )-review_id
       && '&nbsp;-&nbsp;' && go_review->header( )-as4text &&
       '</h1><br>'                           && gc_newline &&
@@ -638,7 +640,7 @@ CLASS lcl_gui IMPLEMENTATION.
           '}'                                         && gc_newline &&
           '</script>'                                 && gc_newline &&
           '</head>'                                   && gc_newline &&
-          '<body>'.                                         "#EC NOTEXT
+          '<body onload=''' && iv_onload && '''>'.          "#EC NOTEXT
 
   ENDMETHOD.                    "render_header
 
@@ -796,7 +798,7 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_text = cl_http_utility=>if_http_utility~unescape_url( lv_text ).
             go_review->comments( )->add( iv_topic  = lv_topic
                                          iv_text   = lv_text ) ##NO_TEXT.
-            view( lcl_gui_review=>render( ) ).
+            view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##NO_TEXT.
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'close'.
