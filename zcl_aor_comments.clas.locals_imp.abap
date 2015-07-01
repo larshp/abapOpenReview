@@ -12,7 +12,7 @@ CLASS lcl_time DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS: format
       IMPORTING iv_timestamp   TYPE timestamp
-      RETURNING VALUE(rv_text) TYPE string.
+      RETURNING value(rv_text) TYPE string.
 
 ENDCLASS.                    "lcl_time DEFINITION
 

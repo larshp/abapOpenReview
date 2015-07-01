@@ -77,12 +77,12 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_001.
 
-* insert
-    _new 'write'.
-
     DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+* insert
+    _new 'write'.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 1.
@@ -95,12 +95,12 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_002.
 
-* delete
-    _old 'write'.
-
     DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+* delete
+    _old 'write'.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-old = 1.
@@ -113,13 +113,13 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_003.
 
-* update
-    _old 'foo'.
-    _new 'bar'.
-
     DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+* update
+    _old 'foo'.
+    _new 'bar'.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 1.
@@ -137,15 +137,15 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_004.
 
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
 * delete 2nd line
     _old 'foo'.
     _old 'bar'.
 
     _new 'foo'.
-
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-old = 2.
@@ -158,16 +158,16 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_005.
 
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
 * update 2nd line
     _old 'foo'.
     _old 'bar'.
 
     _new 'foo'.
     _new 'bar moo'.
-
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 2.
@@ -185,13 +185,13 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_006.
 
-* insert 2 lines
-    _new 'foo'.
-    _new 'bar'.
-
     DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+* insert 2 lines
+    _new 'foo'.
+    _new 'bar'.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 1.
@@ -209,6 +209,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_007.
 
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
 * insert between 2 lines
     _old 'foo'.
     _old 'bar'.
@@ -216,10 +220,6 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'foo'.
     _new 'moo'.
     _new 'bar'.
-
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 2.
@@ -232,6 +232,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_008.
 
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
 * insert between 2 lines and update
     _old '1'.
     _old '2'.
@@ -243,10 +247,6 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'inserted'.
     _new '3'.
     _new '4 update'.
-
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 3.
@@ -269,6 +269,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_009.
 
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
 * delete and update
     _old '1'.
     _old '2'.
@@ -278,10 +282,6 @@ CLASS ltcl_test IMPLEMENTATION.
     _new '1'.
     _new '3'.
     _new '4 update'.
-
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
-
-    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-old = 2.

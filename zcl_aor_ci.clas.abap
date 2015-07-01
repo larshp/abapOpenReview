@@ -178,7 +178,7 @@ METHOD objectset.
       ASSERT sy-subrc = 0.
     WHEN zif_aor_constants=>c_base-developer
         OR zif_aor_constants=>c_base-object.
-      lv_objsnam = mo_review->header( )-review_id .
+      lv_objsnam = mo_review->header( )-review_id.
       cl_ci_objectset=>get_ref(
         EXPORTING
           p_type                    = cl_ci_objectset=>c_0obj

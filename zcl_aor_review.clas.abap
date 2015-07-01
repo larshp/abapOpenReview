@@ -194,7 +194,7 @@ METHOD objects_list.
     WHEN OTHERS.
       SELECT * FROM zaor_review_obj
         INTO CORRESPONDING FIELDS OF TABLE rt_data
-        WHERE review_id = mv_review_id ##TOO_MANY_ITAB_FIELDS. "#EC CI_SUBRC
+        WHERE review_id = mv_review_id ##too_many_itab_fields. "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
   ENDCASE.
 
@@ -243,17 +243,16 @@ ENDMETHOD.
 
 METHOD pdf.
 
-  DATA: ls_control TYPE ssfctrlop,
-        ls_info    TYPE ssfcrescl,
-        lv_size    TYPE i,
-        lt_pdf     TYPE STANDARD TABLE OF tline,
-        lv_name    TYPE rs38l_fnam.
-
-  DATA: ls_header TYPE zif_aor_types=>ty_header,
-  lt_objects TYPE e071_t,
-  lt_comments TYPE zif_aor_types=>ty_comment_tt,
-  ls_ci TYPE zif_aor_types=>ty_ci_st,
-  lt_diff TYPE zif_aor_types=>ty_diff_list_tt.
+  DATA: ls_control  TYPE ssfctrlop,
+        ls_info     TYPE ssfcrescl,
+        lv_size     TYPE i,
+        lt_pdf      TYPE STANDARD TABLE OF tline,
+        lv_name     TYPE rs38l_fnam,
+        ls_header   TYPE zif_aor_types=>ty_header,
+        lt_objects  TYPE e071_t,
+        lt_comments TYPE zif_aor_types=>ty_comment_tt,
+        ls_ci       TYPE zif_aor_types=>ty_ci_st,
+        lt_diff     TYPE zif_aor_types=>ty_diff_list_tt.
 
 
   CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
