@@ -141,7 +141,7 @@ METHOD validate_open.
     INTO ls_e070
     WHERE trstatus = 'D'
     AND trfunction = 'K'
-    AND strkorr = '' ##WARN_OK.
+    AND strkorr = ''.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE zcx_aor_error
       EXPORTING

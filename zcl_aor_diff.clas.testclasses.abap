@@ -1,6 +1,11 @@
 CLASS ltcl_test DEFINITION DEFERRED.
 CLASS zcl_aor_diff DEFINITION LOCAL FRIENDS ltcl_test.
 
+*----------------------------------------------------------------------*
+*       CLASS ltcl_test DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
 CLASS ltcl_test DEFINITION FOR TESTING
   DURATION SHORT
   RISK LEVEL HARMLESS FINAL.
@@ -26,6 +31,11 @@ CLASS ltcl_test DEFINITION FOR TESTING
 
 ENDCLASS.       "ltcl_Test
 
+*----------------------------------------------------------------------*
+*       CLASS ltcl_test IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
 CLASS ltcl_test IMPLEMENTATION.
 
   DEFINE _new.
@@ -40,18 +50,21 @@ CLASS ltcl_test IMPLEMENTATION.
     CLEAR mt_old.
     CLEAR mt_new.
     CLEAR mt_diff.
-  ENDMETHOD.
+  ENDMETHOD.                    "setup
 
   METHOD run.
 
-    DATA(lt_delta) = zcl_aor_diff=>delta( it_old = mt_old
-                                          it_new = mt_new ).
+    DATA: lt_delta TYPE vxabapt255_tab.
+
+
+    lt_delta = zcl_aor_diff=>delta( it_old = mt_old
+                                    it_new = mt_new ).
 
     mt_diff = zcl_aor_diff=>render( it_old   = mt_old
                                     it_new   = mt_new
                                     it_delta = lt_delta ).
 
-  ENDMETHOD.
+  ENDMETHOD.                    "run
 
   METHOD check.
 
@@ -60,25 +73,43 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = mt_diff
                                         exp = it_diff ).
 
-  ENDMETHOD.
+  ENDMETHOD.                    "check
 
   METHOD render_001.
 
 * insert
     _new 'write'.
 
-    check( VALUE #( ( new = 1 code = 'write' updkz = 'I' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 1.
+    <ls_expected>-code = 'write'.
+    <ls_expected>-updkz = 'I'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_001
 
   METHOD render_002.
 
 * delete
     _old 'write'.
 
-    check( VALUE #( ( old = 1 code = 'write' updkz = 'D' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 1.
+    <ls_expected>-code = 'write'.
+    <ls_expected>-updkz = 'D'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_002
 
   METHOD render_003.
 
@@ -86,10 +117,23 @@ CLASS ltcl_test IMPLEMENTATION.
     _old 'foo'.
     _new 'bar'.
 
-    check( VALUE #( ( new = 1 code = 'bar' updkz = 'U' )
-                    ( old = 1 code = 'foo' updkz = 'U' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 1.
+    <ls_expected>-code = 'bar'.
+    <ls_expected>-updkz = 'U'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 1.
+    <ls_expected>-code = 'foo'.
+    <ls_expected>-updkz = 'U'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_003
 
   METHOD render_004.
 
@@ -99,9 +143,18 @@ CLASS ltcl_test IMPLEMENTATION.
 
     _new 'foo'.
 
-    check( VALUE #( ( old = 2 code = 'bar' updkz = 'D' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 2.
+    <ls_expected>-code = 'bar'.
+    <ls_expected>-updkz = 'D'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_004
 
   METHOD render_005.
 
@@ -112,10 +165,23 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'foo'.
     _new 'bar moo'.
 
-    check( VALUE #( ( new = 2 code = 'bar moo' updkz = 'U' )
-                    ( old = 2 code = 'bar' updkz = 'U' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 2.
+    <ls_expected>-code = 'bar moo'.
+    <ls_expected>-updkz = 'U'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 2.
+    <ls_expected>-code = 'bar'.
+    <ls_expected>-updkz = 'U'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_005
 
   METHOD render_006.
 
@@ -123,10 +189,23 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'foo'.
     _new 'bar'.
 
-    check( VALUE #( ( new = 1 code = 'foo' updkz = 'I' )
-                    ( new = 2 code = 'bar' updkz = 'I' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 1.
+    <ls_expected>-code = 'foo'.
+    <ls_expected>-updkz = 'I'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 2.
+    <ls_expected>-code = 'bar'.
+    <ls_expected>-updkz = 'I'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_006
 
   METHOD render_007.
 
@@ -138,9 +217,18 @@ CLASS ltcl_test IMPLEMENTATION.
     _new 'moo'.
     _new 'bar'.
 
-    check( VALUE #( ( new = 2 code = 'moo' updkz = 'I' ) ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 2.
+    <ls_expected>-code = 'moo'.
+    <ls_expected>-updkz = 'I'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_007
 
   METHOD render_008.
 
@@ -156,12 +244,28 @@ CLASS ltcl_test IMPLEMENTATION.
     _new '3'.
     _new '4 update'.
 
-    check( VALUE #( ( new = 3         code = 'inserted' updkz = 'I' )
-                    ( new = 5         code = '4 update' updkz = 'U' )
-                    (         old = 4 code = '4'        updkz = 'U' )
-                  ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 3.
+    <ls_expected>-code = 'inserted'.
+    <ls_expected>-updkz = 'I'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 5.
+    <ls_expected>-code = '4 update'.
+    <ls_expected>-updkz = 'U'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 4.
+    <ls_expected>-code = '4'.
+    <ls_expected>-updkz = 'U'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_008
 
   METHOD render_009.
 
@@ -175,11 +279,27 @@ CLASS ltcl_test IMPLEMENTATION.
     _new '3'.
     _new '4 update'.
 
-    check( VALUE #( (         old = 2 code = '2'        updkz = 'D' )
-                    ( new = 3         code = '4 update' updkz = 'U' )
-                    (         old = 4 code = '4'        updkz = 'U' )
-                  ) ).
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
 
-  ENDMETHOD.
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
-ENDCLASS.
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 2.
+    <ls_expected>-code = '2'.
+    <ls_expected>-updkz = 'D'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-new = 3.
+    <ls_expected>-code = '4 update'.
+    <ls_expected>-updkz = 'U'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 4.
+    <ls_expected>-code = '4'.
+    <ls_expected>-updkz = 'U'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.                    "render_009
+
+ENDCLASS.                    "ltcl_test IMPLEMENTATION

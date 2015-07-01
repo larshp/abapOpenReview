@@ -121,14 +121,19 @@ ENDMETHOD.
 
 METHOD list.
 
-  DATA(lv_review_id) = mo_review->header( )-review_id.
+  DATA: lv_review_id TYPE zaor_review-review_id.
+
+  FIELD-SYMBOLS: <ls_list> LIKE LINE OF rt_data.
+
+
+  lv_review_id = mo_review->header( )-review_id.
 
   SELECT * FROM zaor_comment
     INTO CORRESPONDING FIELDS OF TABLE rt_data
     WHERE review_id = lv_review_id
     ORDER BY topic ASCENDING timestamp ASCENDING.         "#EC CI_SUBRC
 
-  LOOP AT rt_data ASSIGNING FIELD-SYMBOL(<ls_list>).
+  LOOP AT rt_data ASSIGNING <ls_list>.
     <ls_list>-time_formatted = lcl_time=>format( <ls_list>-timestamp ).
   ENDLOOP.
 

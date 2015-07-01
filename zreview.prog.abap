@@ -63,7 +63,7 @@ CLASS lcl_navigate IMPLEMENTATION.
       EXCEPTIONS
         not_executed        = 1
         invalid_object_type = 2
-        OTHERS              = 3. "#EC CI_SUBRC
+        OTHERS              = 3.                          "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
 
   ENDMETHOD.                    "navigate
@@ -83,10 +83,10 @@ CLASS lcl_gui DEFINITION FINAL.
 
     CLASS-METHODS render_header
       IMPORTING iv_onload      TYPE string OPTIONAL
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS render_footer
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS on_event
                   FOR EVENT sapevent OF cl_gui_html_viewer
@@ -98,22 +98,22 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS getdata
       IMPORTING iv_field        TYPE string
                 iv_getdata      TYPE clike
-      RETURNING VALUE(rv_value) TYPE string.
+      RETURNING value(rv_value) TYPE string.
 
     CLASS-METHODS postdata
       IMPORTING iv_field        TYPE string
                 it_postdata     TYPE cnht_post_data_tab
-      RETURNING VALUE(rv_value) TYPE string.
+      RETURNING value(rv_value) TYPE string.
 
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
 
     CLASS-METHODS render_css
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS new
       IMPORTING iv_trkorr         TYPE trkorr
-      RETURNING VALUE(rv_success) TYPE abap_bool
+      RETURNING value(rv_success) TYPE abap_bool
       RAISING   zcx_aor_error.
 
 ENDCLASS.                    "lcl_gui DEFINITION
@@ -128,7 +128,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       IMPORTING iv_onload      TYPE string OPTIONAL
-      RETURNING VALUE(rv_html) TYPE string
+      RETURNING value(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
     CLASS-DATA: gv_filter TYPE zaor_review-ci_filter.
@@ -136,32 +136,32 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PRIVATE SECTION.
     CLASS-METHODS add_comment
       IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS comments
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS info
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS close_review
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS objects
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS diff
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS code_inspector
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS filter
       IMPORTING iv_filter      TYPE zaor_review-ci_filter
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS shortcuts
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
@@ -174,25 +174,30 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD diff.
 
-    DATA: lv_style TYPE string.
+    DATA: lv_style TYPE string,
+          lt_diff_list TYPE zif_aor_types=>ty_diff_list_tt,
+          lt_diff TYPE zif_aor_types=>ty_diff_tt.
+
+    FIELD-SYMBOLS: <ls_diff> LIKE LINE OF lt_diff,
+                   <ls_diff_list> LIKE LINE OF lt_diff_list.
 
 
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
 
-    DATA(lt_diff_list) = go_review->diff( ).
+    lt_diff_list = go_review->diff( ).
 
     IF lt_diff_list IS INITIAL.
-      rv_html = rv_html && 'Empty'  ##NO_TEXT.
+      rv_html = rv_html && 'Empty'  ##no_text.
     ENDIF.
 
-    LOOP AT lt_diff_list ASSIGNING FIELD-SYMBOL(<ls_diff_list>).
+    LOOP AT lt_diff_list ASSIGNING <ls_diff_list>.
       rv_html = rv_html                &&
         <ls_diff_list>-object-object   &&
         '&nbsp;'                       &&
         <ls_diff_list>-object-obj_name &&
         '<br><br>'.
 
-      DATA(lt_diff) = <ls_diff_list>-diff.
+      lt_diff = <ls_diff_list>-diff.
       IF NOT lt_diff IS INITIAL.
         rv_html = rv_html &&
           '<table border="0">' &&
@@ -202,7 +207,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
           '<td><u>Type</u></td>' &&
           '<td><u>Code</u></td>' &&
           '</tr>'.
-        LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+        LOOP AT lt_diff ASSIGNING <ls_diff>.
           <ls_diff>-code = escape( val    = <ls_diff>-code
                                    format = cl_abap_format=>e_html_attr ).
           IF <ls_diff>-new <> ''.
@@ -223,7 +228,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     ENDLOOP.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "diff
 
   METHOD render.
 
@@ -259,9 +264,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<td>Base:</td>' &&
       '<td>' && go_review->header( )-base && '</td>' &&
       '</tr>' &&
-      '</table>' ##NO_TEXT.
+      '</table>' ##no_text.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "info
 
   METHOD shortcuts.
 
@@ -271,7 +276,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<a href="#diff" class="grey">Diff</a>&nbsp'         && gc_newline &&
       '<a href="#comments" class="grey">Comments</a>'.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "shortcuts
 
   METHOD filter.
 
@@ -289,7 +294,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
           dd07v_tab      = st_dd07v
         EXCEPTIONS
           wrong_textflag = 1
-          OTHERS         = 2. "#EC CI_SUBRC
+          OTHERS         = 2.                             "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
     ENDIF.
 
@@ -307,20 +312,25 @@ CLASS lcl_gui_review IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "filter
 
   METHOD code_inspector.
 
-    DATA: lv_filter TYPE zaor_review-ci_filter.
+    DATA: ls_header TYPE zif_aor_types=>ty_header,
+          ls_ci TYPE zif_aor_types=>ty_ci_st,
+          lv_filter TYPE zaor_review-ci_filter.
 
-    DATA(ls_header) = go_review->header( ).
+    FIELD-SYMBOLS: <ls_result> LIKE LINE OF ls_ci-results.
+
+
+    ls_header = go_review->header( ).
     IF NOT gv_filter IS INITIAL.
       lv_filter = gv_filter.
       CLEAR gv_filter.
     ELSE.
       lv_filter = ls_header-ci_filter.
     ENDIF.
-    DATA(ls_ci) = go_review->ci( )->results( lv_filter ).
+    ls_ci = go_review->ci( )->results( lv_filter ).
     IF ls_ci-header IS INITIAL.
       RETURN.
     ENDIF.
@@ -343,11 +353,11 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<tr>' &&
       '<td>Filter:</td><td>' && filter( lv_filter ) && '</td>' &&
       '</tr>' && gc_newline &&
-      '</table><br>' && gc_newline ##NO_TEXT.
+      '</table><br>' && gc_newline ##no_text.
 
     IF NOT ls_ci-results IS INITIAL.
       rv_html = rv_html && '<table border="0">' && gc_newline.
-      LOOP AT ls_ci-results ASSIGNING FIELD-SYMBOL(<ls_result>).
+      LOOP AT ls_ci-results ASSIGNING <ls_result>.
         rv_html = rv_html &&
           '<tr>' && gc_newline &&
           '<td>' && <ls_result>-sobjtype && '</td>' && gc_newline &&
@@ -481,20 +491,20 @@ CLASS lcl_gui_start DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
-      RETURNING VALUE(rv_html) TYPE string
+      RETURNING value(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
-      RETURNING VALUE(rv_html) TYPE string.
+      RETURNING value(rv_html) TYPE string.
 
     CLASS-METHODS render_reviews
-      RETURNING VALUE(rv_html) TYPE string
+      RETURNING value(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
     CLASS-METHODS status_description
       IMPORTING iv_status             TYPE zaor_status
-      RETURNING VALUE(rv_description) TYPE string.
+      RETURNING value(rv_description) TYPE string.
 
 ENDCLASS.                    "lcl_gui_review DEFINITION
 
@@ -521,7 +531,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
           dd07v_tab      = st_dd07v
         EXCEPTIONS
           wrong_textflag = 1
-          OTHERS         = 2. "#EC CI_SUBRC
+          OTHERS         = 2.                             "#EC CI_SUBRC
       ASSERT sy-subrc = 0.
     ENDIF.
 
@@ -529,7 +539,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
     ASSERT sy-subrc = 0.
     rv_description = ls_dd07v-ddtext.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "status_description
 
   METHOD render.
 
@@ -576,7 +586,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
         'PDF</a></td>' &&
         '<td><a href="sapevent:delete?review_id=' && <ls_list>-review_id && '">' &&
         'Delete</a></td>' &&
-        '</tr>' ##NO_TEXT.
+        '</tr>' ##no_text.
     ENDLOOP.
     rv_html = rv_html && '</table>'.
 
@@ -812,7 +822,7 @@ CLASS lcl_gui IMPLEMENTATION.
 
     CALL FUNCTION 'POPUP_GET_VALUES'
       EXPORTING
-        popup_title = 'New'                           "#EC NOTEXT
+        popup_title = 'New'                                 "#EC NOTEXT
       IMPORTING
         returncode  = lv_returncode
       TABLES
@@ -835,7 +845,7 @@ CLASS lcl_gui IMPLEMENTATION.
 
     rv_success = abap_true.
 
-  ENDMETHOD.
+  ENDMETHOD.                    "new
 
   METHOD on_event.
 
@@ -843,24 +853,26 @@ CLASS lcl_gui IMPLEMENTATION.
           lv_topic     TYPE zaor_comment-topic,
           lv_text      TYPE string,
           lv_trkorr    TYPE trkorr,
+          lv_object    TYPE e071-object,
+          lv_obj_name  TYPE e071-obj_name,
           lx_error     TYPE REF TO zcx_aor_error.
 
 
     lv_review_id = getdata( iv_field   = 'review_id'
-                            iv_getdata = getdata ) ##NO_TEXT.
+                            iv_getdata = getdata ) ##no_text.
 
     TRY.
         CASE action.
           WHEN 'new'.
             lv_trkorr = getdata( iv_field   = 'trkorr'
-                                 iv_getdata = getdata ) ##NO_TEXT.
+                                 iv_getdata = getdata ) ##no_text.
             IF new( lv_trkorr ) = abap_true.
               view( lcl_gui_start=>render( ) ).
             ENDIF.
           WHEN 'filter'.
             lcl_gui_review=>gv_filter = getdata( iv_field   = 'filter'
-                                                 iv_getdata = getdata ) ##NO_TEXT.
-            view( lcl_gui_review=>render( 'location.href="#ci";' ) ) ##NO_TEXT.
+                                                 iv_getdata = getdata ) ##no_text.
+            view( lcl_gui_review=>render( 'location.href="#ci";' ) ) ##no_text.
           WHEN 'show'.
             CREATE OBJECT go_review
               EXPORTING
@@ -880,29 +892,30 @@ CLASS lcl_gui IMPLEMENTATION.
             go_review->pdf( ).
           WHEN 'add_comment'.
             lv_topic = postdata( iv_field    = 'topic'
-                                 it_postdata = postdata ) ##NO_TEXT.
+                                 it_postdata = postdata ) ##no_text.
             lv_text = postdata( iv_field    = 'comment'
-                                it_postdata = postdata ) ##NO_TEXT.
+                                it_postdata = postdata ) ##no_text.
             lv_text = cl_http_utility=>if_http_utility~unescape_url( lv_text ).
             go_review->comments( )->add( iv_topic  = lv_topic
-                                         iv_text   = lv_text ) ##NO_TEXT.
-            view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##NO_TEXT.
+                                         iv_text   = lv_text ) ##no_text.
+            view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##no_text.
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'close'.
             lv_topic = getdata( iv_field   = 'topic'
-                                 iv_getdata = getdata ) ##NO_TEXT.
+                                 iv_getdata = getdata ) ##no_text.
             go_review->comments( )->close( lv_topic ).
             view( lcl_gui_review=>render( ) ).
           WHEN 'closereview'.
             go_review->close( ).
             view( lcl_gui_start=>render( ) ).
           WHEN 'navigate'.
-            lcl_navigate=>navigate(
-              iv_object = CONV #( getdata( iv_field   = 'object'
-                                           iv_getdata = getdata ) )
-              iv_obj_name = CONV #( getdata( iv_field   = 'obj_name'
-                                             iv_getdata = getdata ) ) ) ##NO_TEXT.
+            lv_object = getdata( iv_field   = 'object'
+                                 iv_getdata = getdata )  ##no_text.
+            lv_obj_name = getdata( iv_field   = 'obj_name'
+                                   iv_getdata = getdata )  ##no_text.
+            lcl_navigate=>navigate( iv_object = lv_object
+                                    iv_obj_name = lv_obj_name ).
           WHEN 'rerun'.
             go_review->ci( )->run( ).
             view( lcl_gui_review=>render( ) ).

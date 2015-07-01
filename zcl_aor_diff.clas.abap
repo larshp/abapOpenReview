@@ -82,6 +82,8 @@ METHOD diff.
         lt_old          TYPE STANDARD TABLE OF abaptxt255,
         lt_version_list TYPE vrsd_tab,
         ls_new          LIKE LINE OF lt_version_list,
+        lv_obj_name     TYPE trobj_name,
+        lt_delta        TYPE VXABAPT255_TAB,
         ls_old          LIKE LINE OF lt_version_list,
         lt_vrso         TYPE zif_aor_types=>ty_vrso_tt,
         ls_vrso         LIKE LINE OF lt_vrso.
@@ -96,18 +98,11 @@ METHOD diff.
   ENDIF.
 
   ASSERT lines( lt_vrso ) = 1.
-  ls_vrso = lt_vrso[ 1 ].
+  READ TABLE lt_vrso INDEX 1 INTO ls_vrso.
 
-*  IF is_object-object = 'PROG'.
-** todo, somehow show diff for all sub objects
-*    READ TABLE lt_vrso INTO ls_vrso WITH KEY objtype = 'REPS'.
-*    ASSERT sy-subrc = 0.
-*  ELSE.
-*    ls_vrso = lt_vrso[ 1 ].
-*  ENDIF.
-
+  lv_obj_name = ls_vrso-objname.
   lt_version_list = version_list( iv_object   = ls_vrso-objtype
-                                  iv_obj_name = CONV #( ls_vrso-objname ) ).
+                                  iv_obj_name = lv_obj_name ).
   IF lines( lt_version_list ) = 0.
     RETURN.
   ENDIF.
@@ -136,8 +131,8 @@ METHOD diff.
       RETURN.
   ENDCASE.
 
-  DATA(lt_delta) = delta( it_old = lt_old
-                          it_new = lt_new ).
+  lt_delta = delta( it_old = lt_old
+                    it_new = lt_new ).
 
   rt_diff = render( it_old   = lt_old
                     it_new   = lt_new
@@ -186,11 +181,12 @@ METHOD render.
 
   DATA: lv_diff TYPE i.
 
-  FIELD-SYMBOLS: <ls_diff> LIKE LINE OF rt_diff,
-                 <ls_code> LIKE LINE OF it_old.
+  FIELD-SYMBOLS: <ls_diff>  LIKE LINE OF rt_diff,
+                 <ls_delta> LIKE LINE OF it_delta,
+                 <ls_code>  LIKE LINE OF it_old.
 
 
-  LOOP AT it_delta ASSIGNING FIELD-SYMBOL(<ls_delta>).
+  LOOP AT it_delta ASSIGNING <ls_delta>.
 
     CASE <ls_delta>-vrsflag.
       WHEN 'I'.
@@ -198,7 +194,6 @@ METHOD render.
         ASSERT sy-subrc = 0.
         APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
         <ls_diff>-new   = <ls_delta>-number + lv_diff.
-*        <ls_diff>-old   = <ls_delta>-number.
         <ls_diff>-updkz = 'I'.
         <ls_diff>-code  = <ls_code>-line.
 

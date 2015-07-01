@@ -55,13 +55,16 @@ ENDMETHOD.
 METHOD delete.
 
   DATA: lo_inspection TYPE REF TO cl_ci_inspection,
+        lv_name       TYPE sci_insp,
+        lv_objsnam    TYPE sci_objs,
         lo_objectset  TYPE REF TO cl_ci_objectset.
 
 
+  lv_name = mo_review->header( )-review_id.
   cl_ci_inspection=>get_ref(
     EXPORTING
       p_user          = ''
-      p_name          = CONV #( mo_review->header( )-review_id )
+      p_name          = lv_name
     RECEIVING
       p_ref           = lo_inspection
     EXCEPTIONS
@@ -71,9 +74,10 @@ METHOD delete.
     lo_inspection->delete( p_mode = 'A' ).
   ENDIF.
 
+  lv_objsnam = mo_review->header( )-review_id.
   cl_ci_objectset=>get_ref(
     EXPORTING
-      p_objsnam                 = CONV #( mo_review->header( )-review_id )
+      p_objsnam                 = lv_objsnam
     RECEIVING
       p_ref                     = lo_objectset
     EXCEPTIONS
@@ -112,21 +116,27 @@ ENDMETHOD.
 METHOD filter_lines.
 
   DATA: lv_include TYPE programm,
+        lt_diff    TYPE zif_aor_types=>ty_diff_list_tt,
         lt_results LIKE cs_info-results.
 
-  DATA(lt_diff) = mo_review->diff( ).
+  FIELD-SYMBOLS: <ls_diff>   LIKE LINE OF lt_diff,
+                 <ls_result> LIKE LINE OF lt_results,
+                 <ls_line>   LIKE LINE OF <ls_diff>-diff.
+
+
+  lt_diff = mo_review->diff( ).
 
   lt_results = cs_info-results.
   CLEAR cs_info-results.
 
-  LOOP AT lt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+  LOOP AT lt_diff ASSIGNING <ls_diff>.
     lv_include = object_to_include( <ls_diff>-object ).
     IF lv_include IS INITIAL.
       CONTINUE.
     ENDIF.
-    LOOP AT <ls_diff>-diff ASSIGNING FIELD-SYMBOL(<ls_line>)
+    LOOP AT <ls_diff>-diff ASSIGNING <ls_line>
         WHERE NOT new IS INITIAL.
-      LOOP AT lt_results ASSIGNING FIELD-SYMBOL(<ls_result>)
+      LOOP AT lt_results ASSIGNING <ls_result>
           WHERE sobjname = lv_include AND line = <ls_line>-new.
         APPEND <ls_result> TO cs_info-results.
       ENDLOOP.
@@ -140,7 +150,13 @@ METHOD objectset.
 
   DATA: lt_objects TYPE scit_objs,
         ls_e071    TYPE e071,
+        lv_objsnam TYPE sci_objs,
+        lv_name    TYPE sci_objs,
+        lt_list    TYPE e071_t,
         ls_tadir   TYPE tadir.
+
+  FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects,
+                 <ls_review> LIKE LINE OF lt_list.
 
 
   CASE mo_review->header( )-base.
@@ -162,10 +178,11 @@ METHOD objectset.
       ASSERT sy-subrc = 0.
     WHEN zif_aor_constants=>c_base-developer
         OR zif_aor_constants=>c_base-object.
+      lv_objsnam = mo_review->header( )-review_id .
       cl_ci_objectset=>get_ref(
         EXPORTING
           p_type                    = cl_ci_objectset=>c_0obj
-          p_objsnam                 = CONV #( mo_review->header( )-review_id )
+          p_objsnam                 = lv_objsnam
         RECEIVING
           p_ref                     = ro_objectset
         EXCEPTIONS
@@ -183,7 +200,8 @@ METHOD objectset.
 
 * see method cl_wb_object_type=>get_tadir_from_limu
 * see class CL_CI_OBJECTSET method MAP_LIMU_TO_R3TR
-      LOOP AT mo_review->objects_list( ) ASSIGNING FIELD-SYMBOL(<ls_review>).
+      lt_list = mo_review->objects_list( ).
+      LOOP AT lt_list ASSIGNING <ls_review>.
         IF <ls_review>-pgmid = 'R3TR'
             AND ( <ls_review>-object = 'TABU'
             OR <ls_review>-object = 'SBXL'
@@ -191,7 +209,7 @@ METHOD objectset.
           CONTINUE.
         ENDIF.
 
-        APPEND INITIAL LINE TO lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+        APPEND INITIAL LINE TO lt_objects ASSIGNING <ls_object>.
 
         IF <ls_review>-pgmid = 'LIMU'.
           MOVE-CORRESPONDING <ls_review> TO ls_e071.
@@ -213,11 +231,12 @@ METHOD objectset.
         RETURN.
       ENDIF.
 
+      lv_name = mo_review->header( )-review_id.
       cl_ci_objectset=>save_from_list(
         EXPORTING
           p_user              = ''
           p_objects           = lt_objects
-          p_name              = CONV #( mo_review->header( )-review_id )
+          p_name              = lv_name
         RECEIVING
           p_ref               = ro_objectset
         EXCEPTIONS
@@ -339,9 +358,16 @@ METHOD run.
 * fetch variant from ATC
   cl_satc_ac_config_access=>load_value(
     EXPORTING
-      i_key = if_satc_ac_config_state_names=>c_config-ci_check_variant
+      i_key = 'CI.CHECK.VARIANT'
     IMPORTING
       e_value = lv_variant ).
+  IF lv_variant IS INITIAL.
+    cl_ci_checkvariant=>get_chkv_alter(
+      EXPORTING
+        p_checkvname_default = 'DEFAULT'
+      IMPORTING
+        p_checkvname_new     = lv_variant ).
+  ENDIF.
 
   cl_ci_checkvariant=>get_ref(
     EXPORTING
@@ -377,7 +403,7 @@ METHOD run.
 
   lv_date = sy-datum + 100.
   CONCATENATE 'Review' lv_name
-    INTO lv_text SEPARATED BY space ##NO_TEXT.
+    INTO lv_text SEPARATED BY space ##no_text.
 
   lo_ci->set( p_chkv    = lo_variant
               p_objs    = lo_objects

@@ -139,15 +139,22 @@ ENDMETHOD.
 
 METHOD diff.
 
-  DATA(lt_objects) = objects_list_limu( ).
+  DATA: lt_objects TYPE zaor_object_tt,
+        lt_diff TYPE zif_aor_types=>ty_diff_tt.
 
-  LOOP AT lt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
-    DATA(lt_diff) = zcl_aor_diff=>diff( <ls_object> ).
+  FIELD-SYMBOLS: <ls_diff> LIKE LINE OF rt_diff,
+                 <ls_object> LIKE LINE OF lt_objects.
+
+
+  lt_objects = objects_list_limu( ).
+
+  LOOP AT lt_objects ASSIGNING <ls_object>.
+    lt_diff = zcl_aor_diff=>diff( <ls_object> ).
     IF lines( lt_diff ) = 0.
       CONTINUE.
     ENDIF.
 
-    APPEND INITIAL LINE TO rt_diff ASSIGNING FIELD-SYMBOL(<ls_diff>).
+    APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
     <ls_diff>-object = <ls_object>.
     <ls_diff>-diff   = lt_diff.
   ENDLOOP.
@@ -197,12 +204,17 @@ ENDMETHOD.
 METHOD objects_list_limu.
 
   DATA: ls_e071 TYPE e071,
+        lt_list TYPE e071_t,
         lt_vrso TYPE zif_aor_types=>ty_vrso_tt.
 
+  FIELD-SYMBOLS: <ls_object> LIKE LINE OF rt_objects,
+                 <ls_vrso> LIKE LINE OF lt_vrso,
+                 <ls_list> LIKE LINE OF lt_list.
 
-  DATA(lt_list) = objects_list( ).
 
-  LOOP AT lt_list ASSIGNING FIELD-SYMBOL(<ls_list>).
+  lt_list = objects_list( ).
+
+  LOOP AT lt_list ASSIGNING <ls_list>.
     MOVE-CORRESPONDING <ls_list> TO ls_e071.
 
     CALL FUNCTION 'SVRS_RESOLVE_E071_OBJ'
@@ -212,13 +224,13 @@ METHOD objects_list_limu.
         obj_tab         = lt_vrso
       EXCEPTIONS
         not_versionable = 1
-        OTHERS          = 2. "#EC CI_SUBRC
+        OTHERS          = 2.                              "#EC CI_SUBRC
     IF sy-subrc <> 0.
       CONTINUE.
     ENDIF.
 
-    LOOP AT lt_vrso ASSIGNING FIELD-SYMBOL(<ls_vrso>).
-      APPEND INITIAL LINE TO rt_objects ASSIGNING FIELD-SYMBOL(<ls_object>).
+    LOOP AT lt_vrso ASSIGNING <ls_vrso>.
+      APPEND INITIAL LINE TO rt_objects ASSIGNING <ls_object>.
       <ls_object>-pgmid    = 'LIMU'.
       <ls_object>-object   = <ls_vrso>-objtype.
       <ls_object>-obj_name = <ls_vrso>-objname.
@@ -237,6 +249,12 @@ METHOD pdf.
         lt_pdf     TYPE STANDARD TABLE OF tline,
         lv_name    TYPE rs38l_fnam.
 
+  DATA: ls_header TYPE zif_aor_types=>ty_header,
+  lt_objects TYPE e071_t,
+  lt_comments TYPE zif_aor_types=>ty_comment_tt,
+  ls_ci TYPE zif_aor_types=>ty_ci_st,
+  lt_diff TYPE zif_aor_types=>ty_diff_list_tt.
+
 
   CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
     EXPORTING
@@ -246,20 +264,26 @@ METHOD pdf.
     EXCEPTIONS
       no_form            = 1
       no_function_module = 2
-      OTHERS             = 3. "#EC CI_SUBRC
+      OTHERS             = 3.                             "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
   ls_control-no_dialog = abap_true.
   ls_control-getotf    = abap_true.
 
+  ls_header   = header( ).
+  lt_objects  = objects_list( ).
+  lt_comments = comments( )->list( ).
+  ls_ci       = ci( )->results( ).
+  lt_diff     = diff( ).
+
   CALL FUNCTION lv_name
     EXPORTING
       control_parameters = ls_control
-      is_header          = header( )
-      it_objects         = objects_list( )
-      it_comments        = comments( )->list( )
-      is_ci              = ci( )->results( )
-      it_diff            = diff( )
+      is_header          = ls_header
+      it_objects         = lt_objects
+      it_comments        = lt_comments
+      is_ci              = ls_ci
+      it_diff            = lt_diff
     IMPORTING
       job_output_info    = ls_info
     EXCEPTIONS
@@ -286,7 +310,7 @@ METHOD pdf.
       err_format            = 2
       err_conv_not_possible = 3
       err_bad_otf           = 4
-      OTHERS                = 5. "#EC CI_SUBRC
+      OTHERS                = 5.                          "#EC CI_SUBRC
   ASSERT sy-subrc = 0.
 
   IF gv_folder IS INITIAL.
@@ -299,7 +323,7 @@ METHOD pdf.
         cntl_error           = 1
         error_no_gui         = 2
         not_supported_by_gui = 3
-        OTHERS               = 4 ) ##NO_TEXT.             "#EC CI_SUBRC
+        OTHERS               = 4 ) ##no_text.             "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
     IF gv_folder IS INITIAL.
       RETURN.
@@ -307,7 +331,7 @@ METHOD pdf.
   ENDIF.
 
   CONCATENATE gv_folder '\' mv_review_id '_' sy-datlo '_' sy-timlo '.pdf'
-    INTO rv_file ##NO_TEXT.
+    INTO rv_file ##no_text.
 
   cl_gui_frontend_services=>gui_download(
     EXPORTING

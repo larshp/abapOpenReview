@@ -110,12 +110,15 @@ ENDMETHOD.
 
 METHOD delete_all.
 
-  DATA: lo_review TYPE REF TO zcl_aor_review.
+  DATA: lt_reviews TYPE zif_aor_types=>ty_review_tt,
+        lo_review TYPE REF TO zcl_aor_review.
+
+  FIELD-SYMBOLS: <ls_review> LIKE LINE OF lt_reviews.
 
 
-  DATA(lt_reviews) = zcl_aor_service=>list( ).
+  lt_reviews = zcl_aor_service=>list( ).
 
-  LOOP AT lt_reviews ASSIGNING FIELD-SYMBOL(<ls_review>).
+  LOOP AT lt_reviews ASSIGNING <ls_review>.
     CREATE OBJECT lo_review
       EXPORTING
         iv_review_id = <ls_review>-review_id.
@@ -215,12 +218,15 @@ ENDMETHOD.
 
 METHOD pdf_all.
 
-  DATA: lo_review TYPE REF TO zcl_aor_review.
+  DATA: lt_reviews TYPE zif_aor_types=>ty_review_tt,
+        lo_review TYPE REF TO zcl_aor_review.
+
+  FIELD-SYMBOLS: <ls_review> LIKE LINE OF lt_reviews.
 
 
-  DATA(lt_reviews) = zcl_aor_service=>list( ).
+  lt_reviews = zcl_aor_service=>list( ).
 
-  LOOP AT lt_reviews ASSIGNING FIELD-SYMBOL(<ls_review>).
+  LOOP AT lt_reviews ASSIGNING <ls_review>.
     CREATE OBJECT lo_review
       EXPORTING
         iv_review_id = <ls_review>-review_id.
