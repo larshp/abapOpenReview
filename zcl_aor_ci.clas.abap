@@ -382,7 +382,7 @@ METHOD run.
   ASSERT sy-subrc = 0.
 
   lo_objects = objectset( ).
-  IF NOT lo_objects IS BOUND.
+  IF NOT lo_objects IS BOUND OR lo_objects->objectsinf-objcnt = 0.
 * no objects valid for code inspection
     RETURN.
   ENDIF.
