@@ -28,6 +28,7 @@ public section.
   class-methods LIST_OPEN
     importing
       !IT_TRKORR type TRRNGTRKOR_TAB optional
+      !IV_AS4USER type E070-AS4USER default SY-UNAME
     returning
       value(RT_DATA) type ZIF_AOR_TYPES=>TY_TRANSPORT_TT .
   class-methods VALIDATE_OPEN
@@ -110,7 +111,7 @@ METHOD list_open.
 
 
   SELECT * FROM e070 INTO CORRESPONDING FIELDS OF TABLE rt_data
-    WHERE as4user  = sy-uname
+    WHERE as4user  = iv_as4user
     AND trstatus   = 'D'
     AND trfunction = 'K'
     AND strkorr    = ''
