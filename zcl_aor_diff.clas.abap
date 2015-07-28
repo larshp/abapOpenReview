@@ -83,7 +83,7 @@ METHOD diff.
         lt_version_list TYPE vrsd_tab,
         ls_new          LIKE LINE OF lt_version_list,
         lv_obj_name     TYPE trobj_name,
-        lt_delta        TYPE VXABAPT255_TAB,
+        lt_delta        TYPE vxabapt255_tab,
         ls_old          LIKE LINE OF lt_version_list,
         lt_vrso         TYPE zif_aor_types=>ty_vrso_tt,
         ls_vrso         LIKE LINE OF lt_vrso.
@@ -92,6 +92,9 @@ METHOD diff.
   ASSERT NOT is_object IS INITIAL.
 
   lt_vrso = resolve( is_object ).
+
+  DELETE lt_vrso WHERE objtype = 'DOCU'.
+
   IF lt_vrso IS INITIAL.
 * non versionable object
     RETURN.
