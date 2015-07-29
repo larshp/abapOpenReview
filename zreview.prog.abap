@@ -64,7 +64,7 @@ CLASS lcl_navigate IMPLEMENTATION.
         not_executed        = 1
         invalid_object_type = 2
         OTHERS              = 3.                          "#EC CI_SUBRC
-    ASSERT sy-subrc = 0.
+    ASSERT sy-subrc <> 1 AND sy-subrc <> 3.
 
   ENDMETHOD.                    "navigate
 
@@ -83,10 +83,10 @@ CLASS lcl_gui DEFINITION FINAL.
 
     CLASS-METHODS render_header
       IMPORTING iv_onload      TYPE string OPTIONAL
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_footer
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS on_event
                   FOR EVENT sapevent OF cl_gui_html_viewer
@@ -98,22 +98,22 @@ CLASS lcl_gui DEFINITION FINAL.
     CLASS-METHODS getdata
       IMPORTING iv_field        TYPE string
                 iv_getdata      TYPE clike
-      RETURNING value(rv_value) TYPE string.
+      RETURNING VALUE(rv_value) TYPE string.
 
     CLASS-METHODS postdata
       IMPORTING iv_field        TYPE string
                 it_postdata     TYPE cnht_post_data_tab
-      RETURNING value(rv_value) TYPE string.
+      RETURNING VALUE(rv_value) TYPE string.
 
     CLASS-METHODS view
       IMPORTING iv_html TYPE string.
 
     CLASS-METHODS render_css
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS new
       IMPORTING iv_trkorr         TYPE trkorr
-      RETURNING value(rv_success) TYPE abap_bool
+      RETURNING VALUE(rv_success) TYPE abap_bool
       RAISING   zcx_aor_error.
 
 ENDCLASS.                    "lcl_gui DEFINITION
@@ -128,7 +128,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PUBLIC SECTION.
     CLASS-METHODS render
       IMPORTING iv_onload      TYPE string OPTIONAL
-      RETURNING value(rv_html) TYPE string
+      RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
     CLASS-DATA: gv_filter TYPE zaor_review-ci_filter.
@@ -136,32 +136,32 @@ CLASS lcl_gui_review DEFINITION FINAL.
   PRIVATE SECTION.
     CLASS-METHODS add_comment
       IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS comments
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS info
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS close_review
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS objects
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS diff
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS code_inspector
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS filter
       IMPORTING iv_filter      TYPE zaor_review-ci_filter
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS shortcuts
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
@@ -174,11 +174,11 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD diff.
 
-    DATA: lv_style TYPE string,
+    DATA: lv_style     TYPE string,
           lt_diff_list TYPE zif_aor_types=>ty_diff_list_tt,
-          lt_diff TYPE zif_aor_types=>ty_diff_tt.
+          lt_diff      TYPE zif_aor_types=>ty_diff_tt.
 
-    FIELD-SYMBOLS: <ls_diff> LIKE LINE OF lt_diff,
+    FIELD-SYMBOLS: <ls_diff>      LIKE LINE OF lt_diff,
                    <ls_diff_list> LIKE LINE OF lt_diff_list.
 
 
@@ -317,7 +317,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
   METHOD code_inspector.
 
     DATA: ls_header TYPE zif_aor_types=>ty_header,
-          ls_ci TYPE zif_aor_types=>ty_ci_st,
+          ls_ci     TYPE zif_aor_types=>ty_ci_st,
           lv_filter TYPE zaor_review-ci_filter.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF ls_ci-results.
@@ -491,20 +491,20 @@ CLASS lcl_gui_start DEFINITION FINAL.
 
   PUBLIC SECTION.
     CLASS-METHODS render
-      RETURNING value(rv_html) TYPE string
+      RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
   PRIVATE SECTION.
     CLASS-METHODS render_transports
-      RETURNING value(rv_html) TYPE string.
+      RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS render_reviews
-      RETURNING value(rv_html) TYPE string
+      RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
     CLASS-METHODS status_description
       IMPORTING iv_status             TYPE zaor_status
-      RETURNING value(rv_description) TYPE string.
+      RETURNING VALUE(rv_description) TYPE string.
 
 ENDCLASS.                    "lcl_gui_review DEFINITION
 
