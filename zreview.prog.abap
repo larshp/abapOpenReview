@@ -811,13 +811,13 @@ CLASS lcl_gui IMPLEMENTATION.
     APPEND INITIAL LINE TO lt_fields ASSIGNING <ls_field>.
     <ls_field>-tabname   = 'ZAOR_REVIEW'.
     <ls_field>-fieldname = 'BASE'.
-    <ls_field>-value     = zif_aor_constants=>c_base-object.
+    <ls_field>-value     = zif_aor_constants=>c_base-transport.
     <ls_field>-field_obl = abap_true.
 
     APPEND INITIAL LINE TO lt_fields ASSIGNING <ls_field>.
     <ls_field>-tabname   = 'ZAOR_REVIEW'.
     <ls_field>-fieldname = 'CI_FILTER'.
-    <ls_field>-value     = zif_aor_constants=>c_ci_filter-lines.
+    <ls_field>-value     = zif_aor_constants=>c_ci_filter-none.
     <ls_field>-field_obl = abap_true.
 
     CALL FUNCTION 'POPUP_GET_VALUES'

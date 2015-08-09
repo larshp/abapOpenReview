@@ -24,6 +24,12 @@ private section.
       !IV_VERSNO type VERSNO
     returning
       value(RT_SOURCE) type ABAPTXT255_TAB .
+  class-methods GET_FUNC
+    importing
+      !IV_OBJECT_NAME type VERSOBJNAM
+      !IV_VERSNO type VERSNO
+    returning
+      value(RT_SOURCE) type ABAPTXT255_TAB .
   class-methods GET_REPS
     importing
       !IV_OBJECT_NAME type VERSOBJNAM
@@ -129,6 +135,13 @@ METHOD diff.
         lt_old = get_meth( iv_object_name = ls_vrso-objname
                            iv_versno      = ls_old-versno ).
       ENDIF.
+    WHEN 'FUNC'.
+      lt_new = get_func( iv_object_name = ls_vrso-objname
+                         iv_versno      = ls_new-versno ).
+      IF NOT ls_old IS INITIAL.
+        lt_old = get_func( iv_object_name = ls_vrso-objname
+                           iv_versno      = ls_old-versno ).
+      ENDIF.
     WHEN OTHERS.
 * todo
       RETURN.
@@ -140,6 +153,24 @@ METHOD diff.
   rt_diff = render( it_old   = lt_old
                     it_new   = lt_new
                     it_delta = lt_delta ).
+
+ENDMETHOD.
+
+
+METHOD get_func.
+
+  CALL FUNCTION 'SVRS_GET_VERSION_FUNC_40'
+    EXPORTING
+      object_name           = iv_object_name
+      versno                = iv_versno
+    TABLES
+      uincl_tab             = rt_source
+    EXCEPTIONS
+      no_version            = 1
+      system_failure        = 2
+      communication_failure = 3
+      OTHERS                = 4. "#EC CI_SUBRC
+  ASSERT sy-subrc = 0.
 
 ENDMETHOD.
 
