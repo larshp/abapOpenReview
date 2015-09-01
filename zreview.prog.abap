@@ -23,6 +23,10 @@ CONSTANTS: gc_newline TYPE abap_char1 VALUE cl_abap_char_utilities=>newline.
 
 DATA: go_review TYPE REF TO zcl_aor_review.
 
+SELECTION-SCREEN BEGIN OF SCREEN 1001.
+* dummy for triggering screen
+SELECTION-SCREEN END OF SCREEN 1001.
+
 START-OF-SELECTION.
   PERFORM run.
 
@@ -948,6 +952,6 @@ FORM run.
       MESSAGE lx_error TYPE 'E'.
   ENDTRY.
 
-  WRITE: / '.'.     " required
+  CALL SELECTION-SCREEN 1001. " trigger screen
 
 ENDFORM.                    "run
