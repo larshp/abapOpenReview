@@ -12,6 +12,9 @@ public section.
 protected section.
 private section.
 
+  class-methods ADD_NEWLINES
+    changing
+      !CT_DIFF type ZIF_AOR_TYPES=>TY_DIFF_TT .
   class-methods DELTA
     importing
       !IT_OLD type STANDARD TABLE
@@ -59,6 +62,35 @@ ENDCLASS.
 
 
 CLASS ZCL_AOR_DIFF IMPLEMENTATION.
+
+
+METHOD add_newlines.
+
+  DATA: lv_current TYPE i,
+        lv_index   TYPE i,
+        lv_new     TYPE i.
+
+  FIELD-SYMBOLS: <ls_diff> LIKE LINE OF ct_diff.
+
+
+  LOOP AT ct_diff ASSIGNING <ls_diff>.
+    lv_index = sy-tabix.
+
+    IF sy-tabix = 1.
+      lv_current = <ls_diff>-new.
+    ENDIF.
+    lv_new = <ls_diff>-new.
+
+    IF NOT lv_new IS INITIAL AND lv_new > lv_current + 1.
+      INSERT INITIAL LINE INTO ct_diff INDEX lv_index.
+    ENDIF.
+
+    IF NOT lv_new IS INITIAL.
+      lv_current = lv_new.
+    ENDIF.
+  ENDLOOP.
+
+ENDMETHOD.
 
 
 METHOD delta.
@@ -153,6 +185,8 @@ METHOD diff.
   rt_diff = render( it_old   = lt_old
                     it_new   = lt_new
                     it_delta = lt_delta ).
+
+  add_newlines( CHANGING ct_diff = rt_diff ).
 
 ENDMETHOD.
 

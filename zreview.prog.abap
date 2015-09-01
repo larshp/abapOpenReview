@@ -214,7 +214,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
         LOOP AT lt_diff ASSIGNING <ls_diff>.
           <ls_diff>-code = escape( val    = <ls_diff>-code
                                    format = cl_abap_format=>e_html_attr ).
-          IF <ls_diff>-new <> ''.
+          IF <ls_diff> IS INITIAL.
+            CLEAR lv_style.
+          ELSEIF <ls_diff>-new <> ''.
             lv_style = ' style="background:lightgreen;"'.   "#EC NOTEXT
           ELSE.
             lv_style = ' style="background:lightpink;"'.    "#EC NOTEXT
