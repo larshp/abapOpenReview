@@ -49,7 +49,7 @@ CLASS lcl_navigate IMPLEMENTATION.
 
   METHOD navigate.
 
-    IF iv_object = 'TABU'.
+    IF iv_object = 'TABU' OR iv_object = 'CDAT'.
       MESSAGE s005(zabapopenreview) DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
