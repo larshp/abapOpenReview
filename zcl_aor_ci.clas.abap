@@ -254,7 +254,8 @@ ENDMETHOD.
 
 METHOD object_to_include.
 
-  DATA: ls_mtdkey TYPE seocpdkey.
+  DATA: lv_funcname TYPE rs38l-name,
+        ls_mtdkey   TYPE seocpdkey.
 
 
   CASE is_object-object.
@@ -274,6 +275,20 @@ METHOD object_to_include.
       ENDIF.
     WHEN 'PROG' OR 'REPS'.
       rv_program = is_object-obj_name.
+    WHEN 'FUNC'.
+      lv_funcname = is_object-obj_name.
+      CALL FUNCTION 'FUNCTION_INCLUDE_INFO'
+        CHANGING
+          funcname            = lv_funcname
+          include             = rv_program
+        EXCEPTIONS
+          function_not_exists = 1
+          include_not_exists  = 2
+          group_not_exists    = 3
+          no_selections       = 4
+          no_function_include = 5
+          OTHERS              = 6. "#EC CI_SUBRC
+      ASSERT sy-subrc = 0.
     WHEN 'CINS' OR 'NOTE' OR 'TABU'.
       RETURN.
     WHEN OTHERS.
