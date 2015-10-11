@@ -145,16 +145,17 @@ ENDMETHOD.
 METHOD diff.
 
   DATA: lt_objects TYPE zaor_object_tt,
-        lt_diff TYPE zif_aor_types=>ty_diff_tt.
+        lt_diff    TYPE zif_aor_types=>ty_diff_tt.
 
-  FIELD-SYMBOLS: <ls_diff> LIKE LINE OF rt_diff,
+  FIELD-SYMBOLS: <ls_diff>   LIKE LINE OF rt_diff,
                  <ls_object> LIKE LINE OF lt_objects.
 
 
   lt_objects = objects_list_limu( ).
 
   LOOP AT lt_objects ASSIGNING <ls_object>.
-    lt_diff = zcl_aor_diff=>diff( <ls_object> ).
+    lt_diff = zcl_aor_diff=>diff( iv_trkorr = CONV #( mv_review_id(10) )
+                                  is_object = <ls_object> ).
     IF lines( lt_diff ) = 0.
       CONTINUE.
     ENDIF.

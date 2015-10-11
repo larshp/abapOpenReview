@@ -6,6 +6,7 @@ public section.
 
   class-methods DIFF
     importing
+      !IV_TRKORR type TRKORR
       !IS_OBJECT type ZAOR_OBJECT
     returning
       value(RT_DIFF) type ZIF_AOR_TYPES=>TY_DIFF_TT .
@@ -13,6 +14,8 @@ protected section.
 private section.
 
   class-methods FILTER_VERSIONS
+    importing
+      !IV_TRKORR type TRKORR
     changing
       !CT_LIST type VRSD_TAB .
   class-methods ADD_NEWLINES
@@ -147,7 +150,8 @@ METHOD diff.
   lv_obj_name = ls_vrso-objname.
   lt_version_list = version_list( iv_object   = ls_vrso-objtype
                                   iv_obj_name = lv_obj_name ).
-  filter_versions( CHANGING ct_list = lt_version_list ).
+  filter_versions( EXPORTING iv_trkorr = iv_trkorr
+                   CHANGING  ct_list   = lt_version_list ).
   IF lines( lt_version_list ) = 0.
     RETURN.
   ENDIF.
@@ -198,6 +202,7 @@ ENDMETHOD.
 METHOD filter_versions.
 
   DATA: lv_index      TYPE i,
+        lv_found      TYPE abap_bool,
         lv_trfunction TYPE e070-trfunction.
 
   FIELD-SYMBOLS: <ls_list> LIKE LINE OF ct_list.
@@ -206,15 +211,33 @@ METHOD filter_versions.
   LOOP AT ct_list ASSIGNING <ls_list>.
     lv_index = sy-tabix.
 
-    IF NOT <ls_list>-korrnum IS INITIAL.
-      SELECT SINGLE trfunction
-        INTO lv_trfunction
-        FROM e070
-        WHERE trkorr = <ls_list>-korrnum.
-      IF sy-subrc = 0 AND lv_trfunction = 'T'.
-* remove transport of copies.
-        DELETE ct_list INDEX lv_index.
+    IF <ls_list>-korrnum IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    IF <ls_list>-korrnum = iv_trkorr.
+      lv_found = abap_true.
+    ELSEIF <ls_list>-versno = '00000'.
+      SELECT SINGLE COUNT( * ) FROM e070
+        WHERE trkorr = <ls_list>-korrnum
+        AND strkorr = iv_trkorr.
+      IF sy-subrc = 0.
+        lv_found = abap_true.
       ENDIF.
+    ENDIF.
+
+    IF lv_found = abap_false.
+      DELETE ct_list INDEX lv_index.
+      CONTINUE.
+    ENDIF.
+
+    SELECT SINGLE trfunction
+      INTO lv_trfunction
+      FROM e070
+      WHERE trkorr = <ls_list>-korrnum.
+    IF sy-subrc = 0 AND lv_trfunction = 'T'.
+* remove transport of copies.
+      DELETE ct_list INDEX lv_index.
     ENDIF.
   ENDLOOP.
 
