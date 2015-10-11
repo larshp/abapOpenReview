@@ -43,6 +43,11 @@ private section.
   data MV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID .
   class-data GV_FOLDER type STRING .
 
+  methods FIX_NEWLINES
+    importing
+      !IT_COMMENTS type ZIF_AOR_TYPES=>TY_COMMENT_TT
+    returning
+      value(RT_COMMENTS) type ZIF_AOR_TYPES=>TY_COMMENT_TT .
   methods GET_DESCRIPTION
     returning
       value(RV_TEXT) type AS4TEXT .
@@ -162,6 +167,35 @@ METHOD diff.
 ENDMETHOD.
 
 
+METHOD fix_newlines.
+
+  DATA: lv_index TYPE i,
+        lt_lines TYPE TABLE OF string.
+
+  FIELD-SYMBOLS: <lv_line>    LIKE LINE OF lt_lines,
+                 <ls_return>  LIKE LINE OF rt_comments,
+                 <ls_comment> LIKE LINE OF it_comments.
+
+
+  LOOP AT it_comments ASSIGNING <ls_comment>.
+    SPLIT <ls_comment>-text AT cl_abap_char_utilities=>cr_lf INTO TABLE lt_lines.
+
+    LOOP AT lt_lines ASSIGNING <lv_line>.
+      lv_index = sy-tabix.
+
+      APPEND INITIAL LINE TO rt_comments ASSIGNING <ls_return>.
+      IF lv_index = 1.
+        MOVE-CORRESPONDING <ls_comment> TO <ls_return>.
+      ENDIF.
+      <ls_return>-topic     = <ls_comment>-topic.
+      <ls_return>-timestamp = <ls_comment>-timestamp.
+      <ls_return>-text      = <lv_line>.
+    ENDLOOP.
+  ENDLOOP.
+
+ENDMETHOD.
+
+
 METHOD get_description.
 
   DATA: lv_trkorr TYPE trkorr.
@@ -271,7 +305,7 @@ METHOD pdf.
 
   ls_header   = header( ).
   lt_objects  = objects_list( ).
-  lt_comments = comments( )->list( ).
+  lt_comments = fix_newlines( comments( )->list( ) ).
   ls_ci       = ci( )->results( ).
   lt_diff     = diff( ).
 

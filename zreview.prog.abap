@@ -74,6 +74,33 @@ CLASS lcl_navigate IMPLEMENTATION.
 
 ENDCLASS.                    "lcl_navigate IMPLEMENTATION
 
+CLASS lcl_util DEFINITION FINAL.
+
+  PUBLIC SECTION.
+    CLASS-METHODS:
+      unescape IMPORTING iv_data        TYPE clike
+               RETURNING VALUE(rv_data) TYPE string.
+
+ENDCLASS.
+
+CLASS lcl_util IMPLEMENTATION.
+
+  METHOD unescape.
+* http://www.obkb.com/dcljr/charstxt.html
+
+* cl_http_utility=>if_http_utility~unescape_url removes newlines
+* is there no standard utility to call?
+
+    rv_data = iv_data.
+
+    REPLACE ALL OCCURRENCES OF '%3D' IN rv_data WITH '='.
+    REPLACE ALL OCCURRENCES OF '%3F' IN rv_data WITH '?'.
+    REPLACE ALL OCCURRENCES OF '%26' IN rv_data WITH '&'.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
 *----------------------------------------------------------------------*
 *       CLASS lcl_gui DEFINITION
 *----------------------------------------------------------------------*
@@ -438,6 +465,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
           CLEAR lv_color.
         ENDIF.
       ENDAT.
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf
+        IN <ls_list>-text WITH '<br>'.
       rv_html = rv_html &&
         '<u>' &&
         <ls_list>-bname && '&nbsp;' &&
@@ -901,7 +930,7 @@ CLASS lcl_gui IMPLEMENTATION.
                                  it_postdata = postdata ) ##no_text.
             lv_text = postdata( iv_field    = 'comment'
                                 it_postdata = postdata ) ##no_text.
-            lv_text = cl_http_utility=>if_http_utility~unescape_url( lv_text ).
+            lv_text = lcl_util=>unescape( lv_text ).
             go_review->comments( )->add( iv_topic  = lv_topic
                                          iv_text   = lv_text ) ##no_text.
             view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##no_text.
