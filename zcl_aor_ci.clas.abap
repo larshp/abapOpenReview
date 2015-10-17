@@ -165,6 +165,7 @@ METHOD objectset.
         EXPORTING
           p_type                    = cl_ci_objectset=>c_0kor
           p_korr                    = mo_review->header( )-review_id
+          p_korr_skip_svim          = abap_true
         RECEIVING
           p_ref                     = ro_objectset
         EXCEPTIONS
@@ -237,6 +238,7 @@ METHOD objectset.
           p_user              = ''
           p_objects           = lt_objects
           p_name              = lv_name
+          p_skip_svim         = abap_true
         RECEIVING
           p_ref               = ro_objectset
         EXCEPTIONS
@@ -433,7 +435,7 @@ METHOD run.
   ASSERT sy-subrc = 0.
 
   lo_ci->run( EXPORTING
-                p_howtorun            = 'D'
+                p_howtorun            = 'L' " parallel local server
               EXCEPTIONS
                 invalid_check_version = 1
                 OTHERS                = 2 ).              "#EC CI_SUBRC
