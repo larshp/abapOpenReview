@@ -212,10 +212,8 @@ METHOD filter_versions.
     lv_index = sy-tabix.
 
     IF <ls_list>-korrnum IS INITIAL.
-      CONTINUE.
-    ENDIF.
-
-    IF <ls_list>-korrnum = iv_trkorr.
+      lv_found = abap_false.
+    ELSEIF <ls_list>-korrnum = iv_trkorr.
       lv_found = abap_true.
     ELSEIF <ls_list>-versno = '00000'.
       SELECT SINGLE COUNT( * ) FROM e070
