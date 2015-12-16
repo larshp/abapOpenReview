@@ -145,6 +145,7 @@ ENDMETHOD.
 METHOD diff.
 
   DATA: lt_objects TYPE zaor_object_tt,
+        lv_trkorr  TYPE trkorr,
         lt_diff    TYPE zif_aor_types=>ty_diff_tt.
 
   FIELD-SYMBOLS: <ls_diff>   LIKE LINE OF rt_diff,
@@ -154,7 +155,8 @@ METHOD diff.
   lt_objects = objects_list_limu( ).
 
   LOOP AT lt_objects ASSIGNING <ls_object>.
-    lt_diff = zcl_aor_diff=>diff( iv_trkorr = CONV #( mv_review_id(10) )
+    lv_trkorr = mv_review_id(10).
+    lt_diff = zcl_aor_diff=>diff( iv_trkorr = lv_trkorr
                                   is_object = <ls_object> ).
     IF lines( lt_diff ) = 0.
       CONTINUE.

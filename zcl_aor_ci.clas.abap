@@ -165,7 +165,7 @@ METHOD objectset.
         EXPORTING
           p_type                    = cl_ci_objectset=>c_0kor
           p_korr                    = mo_review->header( )-review_id
-          p_korr_skip_svim          = abap_true
+*          p_korr_skip_svim          = abap_true   " parameter does not exist in 730
         RECEIVING
           p_ref                     = ro_objectset
         EXCEPTIONS
