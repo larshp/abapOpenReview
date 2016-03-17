@@ -1,63 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<abapGit version="v0.2-alpha">
- <T100A>
-  <ARBGB>ZABAPOPENREVIEW</ARBGB>
-  <MASTERLANG>E</MASTERLANG>
-  <APPLCLASS></APPLCLASS>
-  <RESPUSER></RESPUSER>
-  <LASTUSER></LASTUSER>
-  <LDATE>00000000</LDATE>
-  <LTIME>000000</LTIME>
-  <STEXT>abapOpenReview</STEXT>
- </T100A>
- <T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>000</MSGNR>
-   <TEXT>Some comments still pending</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>001</MSGNR>
-   <TEXT>Review closed</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>002</MSGNR>
-   <TEXT>Not found</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>003</MSGNR>
-   <TEXT>Unknown action</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>004</MSGNR>
-   <TEXT>Transport released</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>005</MSGNR>
-   <TEXT>Navigation not possible for object type</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>006</MSGNR>
-   <TEXT>Downloaded to &amp;1</TEXT>
-  </T100>
-  <T100>
-   <SPRSL>E</SPRSL>
-   <ARBGB>ZABAPOPENREVIEW</ARBGB>
-   <MSGNR>007</MSGNR>
-   <TEXT>No comments</TEXT>
-  </T100>
- </T100>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZABAPOPENREVIEW</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <APPLCLASS/>
+    <RESPUSER/>
+    <LASTUSER/>
+    <LDATE>0000-00-00</LDATE>
+    <LTIME>00:00:00</LTIME>
+    <STEXT>abapOpenReview</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>000</MSGNR>
+     <TEXT>Some comments still pending</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Review closed</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Not found</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Unknown action</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Transport released</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Navigation not possible for object type</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>Downloaded to &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>No comments</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
 </abapGit>
