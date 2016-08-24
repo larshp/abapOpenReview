@@ -5401,7 +5401,7 @@
                                        <TEXT>
                                         <item>
                                          <TDFORMAT>A0</TDFORMAT>
-                                         <TDLINE> &amp;ls_diff-updkz&amp;</TDLINE>
+                                         <TDLINE>&amp;ls_diff-updkz&amp;</TDLINE>
                                         </item>
                                        </TEXT>
                                        <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
@@ -6770,7 +6770,7 @@
                                        <TEXT>
                                         <item>
                                          <TDFORMAT>A0</TDFORMAT>
-                                         <TDLINE> &amp;ls_diff-updkz&amp;</TDLINE>
+                                         <TDLINE>&amp;ls_diff-updkz&amp;</TDLINE>
                                         </item>
                                        </TEXT>
                                        <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
