@@ -2,8 +2,6 @@ REPORT zreview.
 
 * See https://github.com/larshp/abapOpenReview
 
-CONSTANTS: gc_version TYPE string VALUE 'v0.1-alpha'.       "#EC NOTEXT
-
 ************************************************************************
 * abapOpenReview is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,6 +129,9 @@ CLASS lcl_gui DEFINITION FINAL.
                 iv_getdata      TYPE clike
       RETURNING VALUE(rv_value) TYPE string.
 
+    CLASS-METHODS answer
+      IMPORTING iv_getdata TYPE clike.
+
     CLASS-METHODS postdata
       IMPORTING iv_field        TYPE string
                 it_postdata     TYPE cnht_post_data_tab
@@ -173,6 +174,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
       RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS info
+      RETURNING VALUE(rv_html) TYPE string.
+
+    CLASS-METHODS checklist
       RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS close_review
@@ -274,6 +278,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       info( )                               && gc_newline &&
       '<br>'                                && gc_newline &&
       objects( )                            && gc_newline &&
+      '<br>'                                && gc_newline &&
+      checklist( )                          && gc_newline &&
       '<br>'                                && gc_newline &&
       code_inspector( )                     && gc_newline &&
       diff( )                               && gc_newline &&
@@ -408,6 +414,51 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = rv_html && '<br><br>'.
 
   ENDMETHOD.                    "code_inspector
+
+  METHOD checklist.
+
+    DATA: lo_checklist TYPE REF TO zcl_aor_checklist,
+          lv_info      TYPE string,
+          lt_list      TYPE zcl_aor_checklist=>ty_checklist_tt.
+
+    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
+
+
+    CREATE OBJECT lo_checklist
+      EXPORTING
+        io_review = go_review.
+
+    lt_list = lo_checklist->list( ).
+
+    IF lines( lt_list ) = 0.
+      RETURN.
+    ENDIF.
+
+    rv_html = '<a name="checklist"></a><h2>Checklist</h2><br><br>' && gc_newline.
+
+    rv_html = rv_html && '<table border="0">' && gc_newline.
+    LOOP AT lt_list ASSIGNING <ls_list>.
+
+      IF <ls_list>-answer IS INITIAL.
+        lv_info = '<a href="sapevent:answer?item=' && <ls_list>-item && '&answer=Yes' && '">Yes</a>&nbsp;' &&
+                  '<a href="sapevent:answer?item=' && <ls_list>-item && '&answer=No' && '">No</a>'.
+      ELSE.
+        lv_info = <ls_list>-bname &&
+          '&nbsp;' &&
+          zcl_aor_time=>format( <ls_list>-timestamp ).
+      ENDIF.
+
+      rv_html = rv_html &&
+        '<tr>' && gc_newline &&
+        '<td>' && <ls_list>-description && '</td>' && gc_newline &&
+        '<td>' &&
+        lv_info &&
+        '</td>' && gc_newline &&
+        '</tr>' && gc_newline.
+    ENDLOOP.
+    rv_html = rv_html && '</table>' && gc_newline.
+
+  ENDMETHOD.
 
   METHOD objects.
 
@@ -693,9 +744,7 @@ CLASS lcl_gui IMPLEMENTATION.
   METHOD render_footer.
 
     rv_html = rv_html &&
-      '<br><br><hr><center><h3>abapOpenReview Version:&nbsp;' &&
-      gc_version &&
-      '&nbsp;</h3></center>'.                               "#EC NOTEXT
+      '<br><br><hr><center><h3>abapOpenReview</h3></center>'. "#EC NOTEXT
 
     rv_html = rv_html && '</body></html>'.
 
@@ -882,6 +931,28 @@ CLASS lcl_gui IMPLEMENTATION.
 
   ENDMETHOD.                    "new
 
+  METHOD answer.
+
+    DATA: lo_checklist TYPE REF TO zcl_aor_checklist,
+          lv_item      TYPE zaor_checklist_item,
+          lv_answer    TYPE zaor_checklist_answer.
+
+
+    lv_item = getdata( iv_field   = 'item'
+                       iv_getdata = iv_getdata ) ##no_text.
+
+    lv_answer = getdata( iv_field   = 'answer'
+                         iv_getdata = iv_getdata ) ##no_text.
+
+    CREATE OBJECT lo_checklist
+      EXPORTING
+        io_review = go_review.
+
+    lo_checklist->answer(  iv_item   = lv_item
+                           iv_answer = lv_answer ).
+
+  ENDMETHOD.
+
   METHOD on_event.
 
     DATA: lv_review_id TYPE zaor_review_id,
@@ -920,6 +991,9 @@ CLASS lcl_gui IMPLEMENTATION.
             go_review->delete( ).
             CLEAR go_review.
             view( lcl_gui_start=>render( ) ).
+          WHEN 'answer'.
+            answer( getdata ).
+            view( lcl_gui_review=>render( 'location.href="#checklist";' ) ) ##no_text.
           WHEN 'pdf'.
             CREATE OBJECT go_review
               EXPORTING

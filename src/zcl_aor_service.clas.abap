@@ -17,9 +17,6 @@ CLASS zcl_aor_service DEFINITION
         !iv_ci_filter TYPE zaor_review-ci_filter
       RAISING
         zcx_aor_error .
-    CLASS-METHODS pdf_all
-      RAISING
-        zcx_aor_error .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -138,6 +135,7 @@ CLASS ZCL_AOR_SERVICE IMPLEMENTATION.
 
 
   METHOD open.
+* starts/creates a review. Todo: rename method?
 
     ASSERT NOT iv_trkorr IS INITIAL.
     ASSERT NOT iv_base IS INITIAL.
@@ -212,26 +210,6 @@ CLASS ZCL_AOR_SERVICE IMPLEMENTATION.
             iv_trkorr      = iv_trkorr ).
 
     ci_run( iv_trkorr ).
-
-  ENDMETHOD.
-
-
-  METHOD pdf_all.
-
-    DATA: lt_reviews TYPE zif_aor_types=>ty_review_tt,
-          lo_review  TYPE REF TO zcl_aor_review.
-
-    FIELD-SYMBOLS: <ls_review> LIKE LINE OF lt_reviews.
-
-
-    lt_reviews = zcl_aor_service=>list( ).
-
-    LOOP AT lt_reviews ASSIGNING <ls_review>.
-      CREATE OBJECT lo_review
-        EXPORTING
-          iv_review_id = <ls_review>-review_id.
-      lo_review->pdf( ).
-    ENDLOOP.
 
   ENDMETHOD.
 ENDCLASS.

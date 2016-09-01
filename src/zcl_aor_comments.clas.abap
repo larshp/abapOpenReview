@@ -134,7 +134,7 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
       ORDER BY topic ASCENDING timestamp ASCENDING.       "#EC CI_SUBRC
 
     LOOP AT rt_data ASSIGNING <ls_list>.
-      <ls_list>-time_formatted = lcl_time=>format( <ls_list>-timestamp ).
+      <ls_list>-time_formatted = zcl_aor_time=>format( <ls_list>-timestamp ).
     ENDLOOP.
 
   ENDMETHOD.
