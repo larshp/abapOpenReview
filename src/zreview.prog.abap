@@ -443,7 +443,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
         lv_info = '<a href="sapevent:answer?item=' && <ls_list>-item && '&answer=Yes' && '">Yes</a>&nbsp;' &&
                   '<a href="sapevent:answer?item=' && <ls_list>-item && '&answer=No' && '">No</a>'.
       ELSE.
-        lv_info = <ls_list>-bname &&
+        lv_info = <ls_list>-answer &&
+          '&nbsp;' &&
+          <ls_list>-bname &&
           '&nbsp;' &&
           zcl_aor_time=>format( <ls_list>-timestamp ).
       ENDIF.
