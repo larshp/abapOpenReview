@@ -1,4 +1,4 @@
-[![abaplint](http://abaplint.org/badges/larshp/abapOpenReview)](http://abaplint.org/project/larshp/abapOpenReview)
+[![abaplint](https://abaplint.org/badges/larshp/abapOpenReview)](http://abaplint.org/project/larshp/abapOpenReview)
 
 # abapOpenReview
 ABAP Review Tool
