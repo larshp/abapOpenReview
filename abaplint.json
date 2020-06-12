@@ -112,7 +112,7 @@
       "systemCall": true,
       "defaultKey": false,
       "break": false,
-      "statics": true
+      "statics": false
     },
     "begin_end_names": true,
     "check_transformation_exists": true,
