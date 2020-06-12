@@ -20,7 +20,7 @@
   },
   "rules": {
     "downport": false,
-    "line_break_multiple_parameters": true,
+    "line_break_multiple_parameters": false,
     "unknown_types": true,
     "forbidden_void_type": {
       "check": []
