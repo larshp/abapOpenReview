@@ -148,6 +148,10 @@ CLASS lcl_gui DEFINITION FINAL.
       RETURNING VALUE(rv_success) TYPE abap_bool
       RAISING   zcx_aor_error.
 
+    CLASS-METHODS parse_query_table
+      IMPORTING query  TYPE cnht_query_table
+      EXPORTING result TYPE any.
+
 ENDCLASS.                    "lcl_gui DEFINITION
 
 *----------------------------------------------------------------------*
@@ -166,11 +170,18 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-DATA: gv_filter TYPE zaor_review-ci_filter.
 
   PRIVATE SECTION.
+    CONSTANTS: gc_color_comment TYPE c LENGTH 7 VALUE '#C0C0C0'.
+
     CLASS-METHODS add_comment
       IMPORTING iv_topic       TYPE zaor_comment-topic OPTIONAL
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS comments_header
+      RETURNING VALUE(rv_html) TYPE string.
+
     CLASS-METHODS comments
+      IMPORTING it_list TYPE zif_aor_types=>ty_comment_tt
+        iv_add_new_topic TYPE sap_bool
       RETURNING VALUE(rv_html) TYPE string.
 
     CLASS-METHODS info
@@ -198,6 +209,28 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS shortcuts
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS create_diff_key
+      IMPORTING object     TYPE zaor_object
+                line       TYPE zif_aor_types=>ty_diff_st
+      RETURNING VALUE(key) TYPE string.
+
+    CLASS-METHODS line_has_comment
+      IMPORTING object   TYPE zaor_object
+                line     TYPE zif_aor_types=>ty_diff_st
+                comments TYPE zif_aor_types=>ty_comment_tt
+      EXPORTING comments_on_topic TYPE zif_aor_types=>ty_comment_tt
+      RETURNING VALUE(result) TYPE sap_bool.
+
+    CLASS-METHODS line_has_new_comment
+      IMPORTING object        TYPE zaor_object
+                line          TYPE zif_aor_types=>ty_diff_st
+      EXPORTING topic         TYPE zaor_topic
+      RETURNING VALUE(result) TYPE sap_bool.
+
+    CLASS-METHODS add_new_comment
+      IMPORTING iv_topic TYPE zaor_topic OPTIONAL
+      RETURNING VALUE(rv_html) TYPE string.
+
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
 *----------------------------------------------------------------------*
@@ -211,7 +244,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
     DATA: lv_style     TYPE string,
           lt_diff_list TYPE zif_aor_types=>ty_diff_list_tt,
-          lt_diff      TYPE zif_aor_types=>ty_diff_tt.
+          lt_diff      TYPE zif_aor_types=>ty_diff_tt,
+          lt_comments  TYPE zif_aor_types=>ty_comment_tt,
+          lt_comments_on_topic  TYPE zif_aor_types=>ty_comment_tt,
+          lv_topic     TYPE zaor_topic.
 
     FIELD-SYMBOLS: <ls_diff>      LIKE LINE OF lt_diff,
                    <ls_diff_list> LIKE LINE OF lt_diff_list.
@@ -220,6 +256,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
 
     lt_diff_list = go_review->diff( ).
+    lt_comments = go_review->comments( )->list( iv_with_code_comments = abap_true ).
 
     IF lt_diff_list IS INITIAL.
       rv_html = rv_html && 'Empty'  ##no_text.
@@ -254,11 +291,24 @@ CLASS lcl_gui_review IMPLEMENTATION.
           ENDIF.
           rv_html = rv_html &&
             '<tr>' &&
-            '<td>' && <ls_diff>-new && '&nbsp;</td>' &&
+            |<td><a href="sapevent:add_comment_on_code?{ create_diff_key( object = <ls_diff_list>-object line = <ls_diff> ) }">|
+              && <ls_diff>-new && '&nbsp;</a></td>' &&
             '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
             '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
             '<td' && lv_style && '><pre>' && <ls_diff>-code && '</pre></td>' &&
             '</tr>'.
+          IF line_has_comment( EXPORTING object = <ls_diff_list>-object
+            comments = lt_comments line = <ls_diff>
+            IMPORTING comments_on_topic = lt_comments_on_topic ) = abap_true.
+            rv_html = rv_html && '<tr><td></td><td></td><td></td><td>'
+              && comments( it_list = lt_comments_on_topic iv_add_new_topic = abap_false )
+              && '</td></tr>' && gc_newline.
+          ENDIF.
+          IF line_has_new_comment( EXPORTING object = <ls_diff_list>-object line = <ls_diff>
+            IMPORTING topic = lv_topic ) = abap_true.
+            rv_html = rv_html && '<tr><td></td><td></td><td></td>' && add_new_comment( lv_topic )
+              && '</tr>' && gc_newline.
+          ENDIF.
         ENDLOOP.
         rv_html = rv_html && '</table>'.
       ENDIF.
@@ -266,6 +316,49 @@ CLASS lcl_gui_review IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.                    "diff
+
+  METHOD create_diff_key.
+
+    key = |PGMID={ object-pgmid }&OBJECT={ object-object }&OBJ_NAME={ object-obj_name }| &&
+      |&NEW_LINE={ line-new }&OLD_LINE={ line-old }|.
+
+  ENDMETHOD.
+
+  METHOD line_has_comment.
+    DATA: comment TYPE REF TO zif_aor_types=>ty_comment.
+
+    CLEAR comments_on_topic.
+    LOOP AT comments REFERENCE INTO comment
+      WHERE pgmid = object-pgmid AND object = object-object AND obj_name = object-obj_name
+      AND new_line = line-new AND old_line = line-old.
+
+      APPEND comment->* TO comments_on_topic.
+
+    ENDLOOP.
+    IF sy-subrc = 0.
+      result = abap_true.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD line_has_new_comment.
+    DATA: BEGIN OF ls_line,
+            new TYPE zaor_code_com-new_line,
+            old TYPE zaor_code_com-new_line,
+          END OF ls_line,
+          ls_position TYPE REF TO zaor_code_com.
+
+    ls_line-new = line-new.
+    ls_line-old = line-old.
+    READ TABLE go_review->pos_new_code_comments REFERENCE INTO ls_position
+      WITH TABLE KEY pgmid = object-pgmid object = object-object obj_name = object-obj_name
+      new_line = ls_line-new old_line = ls_line-old.
+    IF sy-subrc = 0.
+      topic = ls_position->*-topic.
+      result = abap_true.
+    ENDIF.
+
+  ENDMETHOD.
 
   METHOD render.
 
@@ -284,7 +377,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       code_inspector( )                     && gc_newline &&
       diff( )                               && gc_newline &&
       '<br><br>'                            && gc_newline &&
-      comments( )                           && gc_newline &&
+      comments_header( )                    && gc_newline &&
+      comments( it_list = go_review->comments( )->list( ) iv_add_new_topic = abap_true ) && gc_newline &&
       '<br>'                                && gc_newline &&
       close_review( )                       && gc_newline &&
       shortcuts( )                          && gc_newline &&
@@ -492,59 +586,69 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   ENDMETHOD.                    "objects
 
+  METHOD comments_header.
+
+    rv_html = '<a name="comments"></a><h2>Comments</h2><br>'.
+
+  ENDMETHOD.
+
   METHOD comments.
+    DATA: lv_color(7),
+          ls_list TYPE zif_aor_types=>ty_comment,
+          topic_closed TYPE sap_bool.
 
-    CONSTANTS: lc_color TYPE c LENGTH 7 VALUE '#C0C0C0'.
-
-    DATA: lv_color TYPE c LENGTH 7,
-          lt_list  TYPE zif_aor_types=>ty_comment_tt.
-
-    FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
-
-
-    lt_list = go_review->comments( )->list( ).
-
-    lv_color = lc_color.
-
-    rv_html = '<a name="comments"></a><h2>Comments</h2><br>' &&
-      '<table border="0">' && gc_newline.
-    LOOP AT lt_list ASSIGNING <ls_list>.
+    rv_html = '<table border="0">'.
+    LOOP AT it_list INTO ls_list.
       AT NEW topic.
         rv_html = rv_html && '<tr bgcolor="' && lv_color && '">' && '<td>'.
 
         IF lv_color IS INITIAL.
-          lv_color = lc_color.
+          lv_color = gc_color_comment.
         ELSE.
           CLEAR lv_color.
         ENDIF.
       ENDAT.
       REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf
-        IN <ls_list>-text WITH '<br>'.
+        IN ls_list-text WITH '<br>'.
       rv_html = rv_html &&
         '<u>' &&
-        <ls_list>-bname && '&nbsp;' &&
-        <ls_list>-time_formatted && '</u>:&nbsp;' &&
-        <ls_list>-text &&
+        ls_list-bname && '&nbsp;' &&
+        ls_list-time_formatted && '</u>:&nbsp;' &&
+        ls_list-text &&
         '<br><br>'.
+
+      " Buffer it: in the AT-block "closed" just contains a star
+      topic_closed = ls_list-closed.
       AT END OF topic.
-        IF <ls_list>-closed = abap_false.
+        IF topic_closed = abap_false.
           rv_html = rv_html &&
-            add_comment( <ls_list>-topic ) &&
+            add_comment( ls_list-topic ) &&
             '</td>' &&
             '</tr>'.
         ENDIF.
       ENDAT.
     ENDLOOP.
 
-    rv_html = rv_html                     &&
-      '<tr bgcolor="' && lv_color && '">' &&
-      '<td>New topic:'                    && gc_newline &&
-      add_comment( )                      &&
-      '</td></tr>'                        && gc_newline.
+    IF iv_add_new_topic = abap_true.
+      rv_html = rv_html &&
+        '<tr>' && gc_newline &&
+        add_new_comment( ) &&
+        '</tr>' && gc_newline.
+    ENDIF.
 
     rv_html = rv_html && '</table>'.
 
   ENDMETHOD.                    "comments
+
+  METHOD add_new_comment.
+
+    rv_html =
+      '<td bgcolor="' && gc_color_comment && '">' &&
+      'New topic:'                                && gc_newline &&
+      add_comment( iv_topic )                     &&
+      '</td>'.
+
+  ENDMETHOD.
 
   METHOD add_comment.
 
@@ -957,13 +1061,15 @@ CLASS lcl_gui IMPLEMENTATION.
 
   METHOD on_event.
 
-    DATA: lv_review_id TYPE zaor_review_id,
-          lv_topic     TYPE zaor_comment-topic,
-          lv_text      TYPE string,
-          lv_trkorr    TYPE trkorr,
-          lv_object    TYPE e071-object,
-          lv_obj_name  TYPE e071-obj_name,
-          lx_error     TYPE REF TO zcx_aor_error.
+    DATA: lv_review_id          TYPE zaor_review_id,
+          lv_topic              TYPE zaor_comment-topic,
+          lv_text               TYPE string,
+          lv_trkorr             TYPE trkorr,
+          lv_object             TYPE e071-object,
+          lv_obj_name           TYPE e071-obj_name,
+          position_code_comment TYPE zaor_code_com,
+          lv_is_code_comment    TYPE sap_bool,
+          lx_error              TYPE REF TO zcx_aor_error.
 
 
     lv_review_id = getdata( iv_field   = 'review_id'
@@ -1007,9 +1113,18 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_text = postdata( iv_field    = 'comment'
                                 it_postdata = postdata ) ##no_text.
             lv_text = lcl_util=>unescape( lv_text ).
-            go_review->comments( )->add( iv_topic  = lv_topic
+            lv_is_code_comment = go_review->comments( )->add( iv_topic  = lv_topic
                                          iv_text   = lv_text ) ##no_text.
-            view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##no_text.
+            IF lv_is_code_comment = abap_false.
+              view( lcl_gui_review=>render( 'location.href="#comments";' ) ) ##no_text.
+            ELSE.
+              view( lcl_gui_review=>render( 'location.href="#diff";' ) ) ##no_text.
+            ENDIF.
+          WHEN 'add_comment_on_code'.
+            parse_query_table( EXPORTING query = query_table
+              IMPORTING result = position_code_comment ).
+            go_review->pre_add_code_comment( iv_position = position_code_comment ).
+            view( lcl_gui_review=>render( 'location.href="#diff";' ) ) ##no_text.
           WHEN 'back'.
             view( lcl_gui_start=>render( ) ).
           WHEN 'close'.
@@ -1040,6 +1155,25 @@ CLASS lcl_gui IMPLEMENTATION.
     ENDTRY.
 
   ENDMETHOD.                    "on_event
+
+  METHOD parse_query_table.
+    DATA: descriptor TYPE REF TO cl_abap_structdescr.
+    FIELD-SYMBOLS: <component> TYPE abap_compdescr,
+                   <query_var> TYPE w3query,
+                   <value>     TYPE any.
+
+    descriptor ?= cl_abap_datadescr=>describe_by_data( result ).
+
+    LOOP AT descriptor->components ASSIGNING <component>.
+      READ TABLE query ASSIGNING <query_var>
+        WITH KEY name = <component>-name.
+      IF sy-subrc = 0.
+        ASSIGN COMPONENT <component>-name OF STRUCTURE result TO <value>.
+        <value> = <query_var>-value.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
 
 ENDCLASS.                    "lcl_gui IMPLEMENTATION
 
