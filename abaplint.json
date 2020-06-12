@@ -102,17 +102,7 @@
     "check_ddic": true,
     "check_include": true,
     "form_no_dash": true,
-    "allowed_object_types": {
-      "allowed": [
-        "PROG",
-        "CLAS",
-        "INTF",
-        "FUGR",
-        "DEVC",
-        "TRAN",
-        "W3MI"
-      ]
-    },
+    "allowed_object_types": false,
     "ambiguous_statement": false,
     "avoid_use": {
       "define": true,
