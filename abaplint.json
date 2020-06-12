@@ -84,7 +84,7 @@
     "allowed_object_naming": true,
     "check_comments": false,
     "fully_type_constants": true,
-    "keep_single_parameter_on_one_line": true,
+    "keep_single_parameter_on_one_line": false,
     "prefer_returning_to_exporting": true,
     "selection_screen_naming": true,
     "sicf_consistency": true,
