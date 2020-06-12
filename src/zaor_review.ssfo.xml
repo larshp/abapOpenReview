@@ -3,7 +3,6 @@
  <sf:SMARTFORM xmlns:sf="urn:sap-com:SmartForms:2000:internal-structure" xmlns="urn:sap-com:sdixml-ifr:2000">
   <HEADER>
    <FORMNAME>ZAOR_REVIEW</FORMNAME>
-   <CAPTION>Review</CAPTION>
    <MASTERLANG>E</MASTERLANG>
    <LANGVECTOR>*</LANGVECTOR>
    <DEVCLASS></DEVCLASS>
@@ -254,7 +253,6 @@
               <NAME>
                <INAME>MAIN</INAME>
               </NAME>
-              <CAPTION>Main Window</CAPTION>
               <WTYPE>M</WTYPE>
               <T_CAPTION>
                <item>
@@ -278,26 +276,6 @@
                       <INAME>HEADER</INAME>
                      </NAME>
                      <APPMODE>P</APPMODE>
-                     <TEXT>
-                      <item>
-                       <TDFORMAT>B5</TDFORMAT>
-                       <TDLINE>Review &amp;is_header-review_id&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <TDFORMAT>*</TDFORMAT>
-                       <TDLINE>&amp;is_header-as4text&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <TDFORMAT>*</TDFORMAT>
-                      </item>
-                      <item>
-                       <TDFORMAT>*</TDFORMAT>
-                       <TDLINE>Responsible: &amp;is_header-responsible&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <TDFORMAT>*</TDFORMAT>
-                      </item>
-                     </TEXT>
                      <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                      <TEXT_AREA>
                       <ENABLED>F</ENABLED>
@@ -402,21 +380,6 @@
                          <INAME>OBJECTS</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Objects</TDLINE>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -622,7 +585,6 @@
                            <NAME>
                             <INAME>%EVENT1</INAME>
                            </NAME>
-                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -644,7 +606,6 @@
                               <NAME>
                                <INAME>%ROW1</INAME>
                               </NAME>
-                              <CAPTION>New Line 1</CAPTION>
                               <SECTTYPE>R</SECTTYPE>
                               <U_FHEIGHT>CM</U_FHEIGHT>
                               <PATTERN>
@@ -750,7 +711,6 @@
                                  <NAME>
                                   <INAME>%CELL1</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 1</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -855,14 +815,7 @@
                                     <NAME>
                                      <INAME>%TEXT1</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 1</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Type</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -905,7 +858,6 @@
                                  <NAME>
                                   <INAME>%CELL2</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 2</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -1010,14 +962,7 @@
                                     <NAME>
                                      <INAME>%TEXT2</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 2</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Object</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -1066,7 +1011,6 @@
                            <NAME>
                             <INAME>%EVENT2</INAME>
                            </NAME>
-                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1088,7 +1032,6 @@
                               <NAME>
                                <INAME>%ROW2</INAME>
                               </NAME>
-                              <CAPTION>New Line 2</CAPTION>
                               <SECTTYPE>R</SECTTYPE>
                               <U_FHEIGHT>CM</U_FHEIGHT>
                               <PATTERN>
@@ -1194,7 +1137,6 @@
                                  <NAME>
                                   <INAME>%CELL3</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 3</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -1299,7 +1241,6 @@
                                     <NAME>
                                      <INAME>%TEXT3</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 3</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -1339,7 +1280,6 @@
                                  <NAME>
                                   <INAME>%CELL4</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 4</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -1444,7 +1384,6 @@
                                     <NAME>
                                      <INAME>%TEXT4</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 4</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -1490,7 +1429,6 @@
                            <NAME>
                             <INAME>%EVENT3</INAME>
                            </NAME>
-                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1552,21 +1490,6 @@
                          <INAME>CODE_INSPECTOR</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Code Inspector</TDLINE>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -1684,12 +1607,6 @@
                          <INAME>CI_EMPTY</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                          <TDLINE>Empty</TDLINE>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -1722,7 +1639,6 @@
                         <NAME>
                          <INAME>%CONDITION1</INAME>
                         </NAME>
-                        <CAPTION>New Alternative 1</CAPTION>
                         <COND>
                          <item>
                           <COP>EQ</COP>
@@ -1946,7 +1862,6 @@
                            <NAME>
                             <INAME>%EVENT4</INAME>
                            </NAME>
-                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1970,7 +1885,6 @@
                            <NAME>
                             <INAME>%EVENT5</INAME>
                            </NAME>
-                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -2096,7 +2010,6 @@
                                  <NAME>
                                   <INAME>%CELL5</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 5</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -2201,14 +2114,7 @@
                                     <NAME>
                                      <INAME>%TEXT5</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 5</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Type</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -2251,7 +2157,6 @@
                                  <NAME>
                                   <INAME>%CELL6</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 6</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -2356,7 +2261,6 @@
                                     <NAME>
                                      <INAME>%TEXT9</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 9</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -2503,7 +2407,6 @@
                                  <NAME>
                                   <INAME>%CELL11</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 11</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -2608,14 +2511,7 @@
                                     <NAME>
                                      <INAME>%TEXT6</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 6</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Name</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -2658,7 +2554,6 @@
                                  <NAME>
                                   <INAME>%CELL12</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 12</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -2763,7 +2658,6 @@
                                     <NAME>
                                      <INAME>%TEXT10</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 10</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -2910,7 +2804,6 @@
                                  <NAME>
                                   <INAME>%CELL9</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 9</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -3015,14 +2908,7 @@
                                     <NAME>
                                      <INAME>%TEXT7</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 7</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Kind</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -3065,7 +2951,6 @@
                                  <NAME>
                                   <INAME>%CELL10</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 10</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -3170,7 +3055,6 @@
                                     <NAME>
                                      <INAME>%TEXT11</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 11</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -3317,7 +3201,6 @@
                                  <NAME>
                                   <INAME>%CELL7</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 7</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -3422,14 +3305,7 @@
                                     <NAME>
                                      <INAME>%TEXT8</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 8</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Line</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -3472,7 +3348,6 @@
                                  <NAME>
                                   <INAME>%CELL8</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 8</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -3577,7 +3452,6 @@
                                     <NAME>
                                      <INAME>%TEXT12</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 12</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -3724,7 +3598,6 @@
                                  <NAME>
                                   <INAME>%CELL13</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 13</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -3829,7 +3702,6 @@
                                     <NAME>
                                      <INAME>%TEXT13</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 13</CAPTION>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <TEXT>
@@ -3878,7 +3750,6 @@
                            <NAME>
                             <INAME>%EVENT6</INAME>
                            </NAME>
-                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -3940,21 +3811,6 @@
                          <INAME>DIFF</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Diff</TDLINE>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -4071,12 +3927,6 @@
                          <INAME>DIFF_EMPTY</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                          <TDLINE>Empty</TDLINE>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -4109,7 +3959,6 @@
                         <NAME>
                          <INAME>%CONDITION2</INAME>
                         </NAME>
-                        <CAPTION>New Alternative 1</CAPTION>
                         <COND>
                          <item>
                           <COP>EQ</COP>
@@ -4140,7 +3989,6 @@
                         <NAME>
                          <INAME>DIFF</INAME>
                         </NAME>
-                        <CAPTION>Per object</CAPTION>
                         <SECTTYPE>L</SECTTYPE>
                         <DATATYPE>L</DATATYPE>
                         <TABNAME>IT_DIFF</TABNAME>
@@ -4829,7 +4677,6 @@
                               <NAME>
                                <INAME>%EVENT11</INAME>
                               </NAME>
-                              <CAPTION>Header</CAPTION>
                               <EVTYPE>H</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -4853,7 +4700,6 @@
                               <NAME>
                                <INAME>%EVENT12</INAME>
                               </NAME>
-                              <CAPTION>Main Area</CAPTION>
                               <EVTYPE>B</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -4975,7 +4821,6 @@
                                  <NAME>
                                   <INAME>%CONDITION10</INAME>
                                  </NAME>
-                                 <CAPTION>New Alternative 10</CAPTION>
                                  <COND>
                                   <item>
                                    <COP>NE</COP>
@@ -5145,7 +4990,6 @@
                                     <NAME>
                                      <INAME>%CELL19</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 17</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -5250,7 +5094,6 @@
                                        <NAME>
                                         <INAME>%TEXT19</INAME>
                                        </NAME>
-                                       <CAPTION>New Text 17</CAPTION>
                                        <NOLANGUAGE>X</NOLANGUAGE>
                                        <APPMODE>P</APPMODE>
                                        <TEXT>
@@ -5290,7 +5133,6 @@
                                     <NAME>
                                      <INAME>%CELL20</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 18</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -5395,7 +5237,6 @@
                                        <NAME>
                                         <INAME>%TEXT20</INAME>
                                        </NAME>
-                                       <CAPTION>New Text 18</CAPTION>
                                        <NOLANGUAGE>X</NOLANGUAGE>
                                        <APPMODE>P</APPMODE>
                                        <TEXT>
@@ -5751,7 +5592,6 @@
                                  <NAME>
                                   <INAME>%CONDITION4</INAME>
                                  </NAME>
-                                 <CAPTION>New Alternative 10</CAPTION>
                                  <COND>
                                   <item>
                                    <COP>EQ</COP>
@@ -5883,7 +5723,6 @@
                                        <NAME>
                                         <INAME>%TEXT22</INAME>
                                        </NAME>
-                                       <CAPTION>New Text 22</CAPTION>
                                        <NOLANGUAGE>X</NOLANGUAGE>
                                        <APPMODE>P</APPMODE>
                                        <TEXT>
@@ -5922,7 +5761,6 @@
                                     <NAME>
                                      <INAME>%CELL23</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 17</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -6029,7 +5867,6 @@
                                     <NAME>
                                      <INAME>%CELL24</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 18</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -6344,7 +6181,6 @@
                                  <NAME>
                                   <INAME>%CONDITION11</INAME>
                                  </NAME>
-                                 <CAPTION>New Alternative 11</CAPTION>
                                  <COND>
                                   <item>
                                    <COP>NE</COP>
@@ -6514,7 +6350,6 @@
                                     <NAME>
                                      <INAME>%CELL17</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 17</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -6619,7 +6454,6 @@
                                        <NAME>
                                         <INAME>%TEXT17</INAME>
                                        </NAME>
-                                       <CAPTION>New Text 17</CAPTION>
                                        <NOLANGUAGE>X</NOLANGUAGE>
                                        <APPMODE>P</APPMODE>
                                        <TEXT>
@@ -6659,7 +6493,6 @@
                                     <NAME>
                                      <INAME>%CELL18</INAME>
                                     </NAME>
-                                    <CAPTION>New Column 18</CAPTION>
                                     <SECTTYPE>E</SECTTYPE>
                                     <U_FHEIGHT>CM</U_FHEIGHT>
                                     <PATTERN>
@@ -6764,7 +6597,6 @@
                                        <NAME>
                                         <INAME>%TEXT18</INAME>
                                        </NAME>
-                                       <CAPTION>New Text 18</CAPTION>
                                        <NOLANGUAGE>X</NOLANGUAGE>
                                        <APPMODE>P</APPMODE>
                                        <TEXT>
@@ -7023,7 +6855,6 @@
                               <NAME>
                                <INAME>%EVENT13</INAME>
                               </NAME>
-                              <CAPTION>Footer</CAPTION>
                               <EVTYPE>F</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -7088,21 +6919,6 @@
                          <INAME>COMMENTS</INAME>
                         </NAME>
                         <APPMODE>P</APPMODE>
-                        <TEXT>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Comments</TDLINE>
-                         </item>
-                         <item>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -7273,7 +7089,6 @@
                            <NAME>
                             <INAME>%EVENT7</INAME>
                            </NAME>
-                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -7297,7 +7112,6 @@
                            <NAME>
                             <INAME>%EVENT10</INAME>
                            </NAME>
-                           <CAPTION>TOPIC Event on Sort Begin</CAPTION>
                            <EVTYPE>S</EVTYPE>
                            <SFIELD>TOPIC</SFIELD>
                            <T_CAPTION>
@@ -7320,7 +7134,6 @@
                               <NAME>
                                <INAME>%ROW3</INAME>
                               </NAME>
-                              <CAPTION>New Line 3</CAPTION>
                               <SECTTYPE>R</SECTTYPE>
                               <U_FHEIGHT>CM</U_FHEIGHT>
                               <PATTERN>
@@ -7426,7 +7239,6 @@
                                  <NAME>
                                   <INAME>%CELL14</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 14</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -7531,14 +7343,7 @@
                                     <NAME>
                                      <INAME>%TEXT14</INAME>
                                     </NAME>
-                                    <CAPTION>New Text 14</CAPTION>
                                     <APPMODE>P</APPMODE>
-                                    <TEXT>
-                                     <item>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Topic</TDLINE>
-                                     </item>
-                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -7587,7 +7392,6 @@
                            <NAME>
                             <INAME>%EVENT8</INAME>
                            </NAME>
-                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -7609,7 +7413,6 @@
                               <NAME>
                                <INAME>%ROW4</INAME>
                               </NAME>
-                              <CAPTION>New Line 4</CAPTION>
                               <SECTTYPE>R</SECTTYPE>
                               <U_FHEIGHT>CM</U_FHEIGHT>
                               <PATTERN>
@@ -7715,7 +7518,6 @@
                                  <NAME>
                                   <INAME>%CELL15</INAME>
                                  </NAME>
-                                 <CAPTION>New Column 15</CAPTION>
                                  <SECTTYPE>E</SECTTYPE>
                                  <U_FHEIGHT>CM</U_FHEIGHT>
                                  <PATTERN>
@@ -7820,7 +7622,6 @@
                                     <NAME>
                                      <INAME>%CONDITION3</INAME>
                                     </NAME>
-                                    <CAPTION>New Alternative 3</CAPTION>
                                     <COND>
                                      <item>
                                       <COP>EQ</COP>
@@ -7849,7 +7650,6 @@
                                        <NAME>
                                         <INAME>%EVENT14</INAME>
                                        </NAME>
-                                       <CAPTION>TRUE</CAPTION>
                                        <EVTYPE>+</EVTYPE>
                                        <T_CAPTION>
                                         <item>
@@ -7871,7 +7671,6 @@
                                           <NAME>
                                            <INAME>%TEXT23</INAME>
                                           </NAME>
-                                          <CAPTION>New Text 15</CAPTION>
                                           <NOLANGUAGE>X</NOLANGUAGE>
                                           <APPMODE>P</APPMODE>
                                           <TEXT>
@@ -7911,7 +7710,6 @@
                                        <NAME>
                                         <INAME>%EVENT15</INAME>
                                        </NAME>
-                                       <CAPTION>FALSE</CAPTION>
                                        <EVTYPE>-</EVTYPE>
                                        <T_CAPTION>
                                         <item>
@@ -7933,7 +7731,6 @@
                                           <NAME>
                                            <INAME>%TEXT15</INAME>
                                           </NAME>
-                                          <CAPTION>New Text 15</CAPTION>
                                           <NOLANGUAGE>X</NOLANGUAGE>
                                           <APPMODE>P</APPMODE>
                                           <TEXT>
@@ -7985,7 +7782,6 @@
                            <NAME>
                             <INAME>%EVENT9</INAME>
                            </NAME>
-                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -8017,7 +7813,6 @@
               <NAME>
                <INAME>%OUTATTRIB1</INAME>
               </NAME>
-              <CAPTION>New Display Option</CAPTION>
               <U_WFRAME>PT</U_WFRAME>
               <U_WBOXV>CM</U_WBOXV>
               <U_WBOXH>CM</U_WBOXH>
@@ -8123,12 +7918,6 @@
                       <INAME>PAGE</INAME>
                      </NAME>
                      <APPMODE>P</APPMODE>
-                     <TEXT>
-                      <item>
-                       <TDFORMAT>R0</TDFORMAT>
-                       <TDLINE>Page &amp;sfsy-page&amp; of &amp;sfsy-jobpages&amp;</TDLINE>
-                      </item>
-                     </TEXT>
                      <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                      <TEXT_AREA>
                       <ENABLED>F</ENABLED>

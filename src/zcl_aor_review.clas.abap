@@ -1,40 +1,48 @@
-CLASS zcl_aor_review DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_AOR_REVIEW definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    METHODS ci
-      RETURNING
-        VALUE(ro_ci) TYPE REF TO zcl_aor_ci .
-    METHODS comments
-      RETURNING
-        VALUE(ro_comments) TYPE REF TO zcl_aor_comments .
-    METHODS pdf
-      RETURNING
-        VALUE(rv_file) TYPE string .
-    METHODS delete .
-    METHODS check_open
-      RAISING
-        zcx_aor_error .
-    METHODS close
-      RAISING
-        zcx_aor_error .
-    METHODS objects_list
-      RETURNING
-        VALUE(rt_data) TYPE e071_t .
-    METHODS constructor
-      IMPORTING
-        !iv_review_id TYPE zaor_review-review_id
-      RAISING
-        zcx_aor_error .
-    METHODS header
-      RETURNING
-        VALUE(rs_header) TYPE zif_aor_types=>ty_header .
-    METHODS diff
-      RETURNING
-        VALUE(rt_diff) TYPE zif_aor_types=>ty_diff_list_tt .
+  data POS_NEW_CODE_COMMENTS type ZIF_AOR_TYPES=>TY_CODE_COMMENT_TT read-only .
+
+  methods CI
+    returning
+      value(RO_CI) type ref to ZCL_AOR_CI .
+  methods COMMENTS
+    returning
+      value(RO_COMMENTS) type ref to ZCL_AOR_COMMENTS .
+  methods PDF
+    returning
+      value(RV_FILE) type STRING .
+  methods DELETE .
+  methods CHECK_OPEN
+    raising
+      ZCX_AOR_ERROR .
+  methods CLOSE
+    raising
+      ZCX_AOR_ERROR .
+  methods OBJECTS_LIST
+    returning
+      value(RT_DATA) type E071_T .
+  methods CONSTRUCTOR
+    importing
+      !IV_REVIEW_ID type ZAOR_REVIEW-REVIEW_ID
+    raising
+      ZCX_AOR_ERROR .
+  methods HEADER
+    returning
+      value(RS_HEADER) type ZIF_AOR_TYPES=>TY_HEADER .
+  methods DIFF
+    returning
+      value(RT_DIFF) type ZIF_AOR_TYPES=>TY_DIFF_LIST_TT .
+  methods PRE_ADD_CODE_COMMENT
+    importing
+      value(IV_POSITION) type ZAOR_CODE_COM .
+  methods ON_CODE_COMMENT_POSTED
+    importing
+      value(comment) type zaor_code_com.
   PROTECTED SECTION.
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
@@ -278,6 +286,13 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  method ON_CODE_COMMENT_POSTED.
+
+    DELETE TABLE pos_new_code_comments FROM comment.
+
+  endmethod.
+
+
   METHOD pdf.
 
     DATA: ls_control  TYPE ssfctrlop,
@@ -404,6 +419,20 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
     ASSERT sy-subrc = 0.
 
     MESSAGE s006(zabapopenreview) WITH rv_file.
+
+  ENDMETHOD.
+
+
+  METHOD pre_add_code_comment.
+
+    TRY.
+        iv_position-topic = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
+      CATCH cx_uuid_error.
+        ASSERT 1 = 0.
+    ENDTRY.
+    iv_position-review_id = mv_review_id.
+
+    INSERT iv_position INTO TABLE pos_new_code_comments.
 
   ENDMETHOD.
 ENDCLASS.

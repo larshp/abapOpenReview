@@ -4,7 +4,10 @@ INTERFACE zif_aor_types
   TYPES:
     BEGIN OF ty_comment.
           INCLUDE TYPE zaor_comment.
+          INCLUDE TYPE zaor_object.
   TYPES: time_formatted TYPE string,
+         new_line TYPE zaor_code_com-new_line,
+         old_line TYPE zaor_code_com-old_line,
          END OF ty_comment.
 
   TYPES: ty_vrso_tt TYPE STANDARD TABLE OF vrso WITH DEFAULT KEY.
@@ -17,6 +20,9 @@ INTERFACE zif_aor_types
          END OF ty_transport.
   TYPES:
     ty_transport_tt TYPE STANDARD TABLE OF ty_transport WITH DEFAULT KEY .
+  TYPES:
+    ty_code_comment_tt TYPE HASHED TABLE OF zaor_code_com WITH UNIQUE KEY
+      pgmid object obj_name new_line old_line.
 
   TYPES: BEGIN OF ty_diff_st,
            new   TYPE c LENGTH 6,
