@@ -112,7 +112,7 @@
       "communication": true,
       "systemCall": true,
       "defaultKey": false,
-      "break": true,
+      "break": false,
       "statics": true
     },
     "begin_end_names": true,
