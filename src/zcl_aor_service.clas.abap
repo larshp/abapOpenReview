@@ -113,7 +113,7 @@ CLASS ZCL_AOR_SERVICE IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_review> LIKE LINE OF lt_reviews.
 
 
-    lt_reviews = zcl_aor_service=>list( ).
+    lt_reviews = list( ).
 
     LOOP AT lt_reviews ASSIGNING <ls_review>.
       CREATE OBJECT lo_review

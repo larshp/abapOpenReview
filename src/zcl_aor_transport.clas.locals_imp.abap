@@ -9,7 +9,7 @@ CLASS lcl_range DEFINITION.
       IMPORTING
         iv_trkorr TYPE trkorr
       RETURNING
-        value(rt_trkorr) TYPE trrngtrkor_tab.
+        VALUE(rt_trkorr) TYPE trrngtrkor_tab.
 
 ENDCLASS.                    "lcl_range DEFINITION
 

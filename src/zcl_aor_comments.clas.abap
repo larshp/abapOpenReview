@@ -48,7 +48,7 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
   METHOD add.
 
     DATA: ls_comment TYPE zaor_comment,
-          code_comment TYPE REF TO zaor_code_com.
+          ls_code_comment TYPE REF TO zaor_code_com.
 
     IF iv_text IS INITIAL.
       RETURN.
@@ -65,12 +65,12 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
     INSERT zaor_comment FROM ls_comment.                  "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
 
-    READ TABLE mo_review->pos_new_code_comments REFERENCE INTO code_comment
+    READ TABLE mo_review->mv_pos_new_code_comments REFERENCE INTO ls_code_comment
       WITH KEY topic = ls_comment-topic.
     IF sy-subrc = 0.
-      INSERT zaor_code_com FROM code_comment->*.
+      INSERT zaor_code_com FROM ls_code_comment->*.
       ASSERT sy-subrc = 0.
-      mo_review->on_code_comment_posted( code_comment->* ).
+      mo_review->on_code_comment_posted( ls_code_comment->* ).
     ENDIF.
 
     SELECT COUNT(*) FROM zaor_code_com WHERE

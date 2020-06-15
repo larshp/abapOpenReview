@@ -40,7 +40,7 @@ INTERFACE zif_aor_types
 
   TYPES: BEGIN OF ty_diff_list_st,
            object TYPE zaor_object,
-           diff   TYPE zif_aor_types=>ty_diff_tt,
+           diff   TYPE ty_diff_tt,
          END OF ty_diff_list_st.
   TYPES: ty_diff_list_tt TYPE STANDARD TABLE OF ty_diff_list_st WITH DEFAULT KEY.
 
