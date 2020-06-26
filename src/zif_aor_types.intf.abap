@@ -6,8 +6,8 @@ INTERFACE zif_aor_types
           INCLUDE TYPE zaor_comment.
           INCLUDE TYPE zaor_object.
   TYPES: time_formatted TYPE string,
-         new_line TYPE zaor_code_com-new_line,
-         old_line TYPE zaor_code_com-old_line,
+         new_line       TYPE zaor_code_com-new_line,
+         old_line       TYPE zaor_code_com-old_line,
          END OF ty_comment.
 
   TYPES: ty_vrso_tt TYPE STANDARD TABLE OF vrso WITH DEFAULT KEY.
@@ -39,8 +39,10 @@ INTERFACE zif_aor_types
          END OF ty_ci_st.
 
   TYPES: BEGIN OF ty_diff_list_st,
-           object TYPE zaor_object,
-           diff   TYPE ty_diff_tt,
+           object            TYPE zaor_object,
+           last_changed_date TYPE d,
+           last_changed_time TYPE t,
+           diff              TYPE ty_diff_tt,
          END OF ty_diff_list_st.
   TYPES: ty_diff_list_tt TYPE STANDARD TABLE OF ty_diff_list_st WITH DEFAULT KEY.
 

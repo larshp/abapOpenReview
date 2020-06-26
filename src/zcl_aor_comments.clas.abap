@@ -158,7 +158,7 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
     ENDIF.
 
     LOOP AT rt_data ASSIGNING <ls_list>.
-      <ls_list>-time_formatted = zcl_aor_time=>format( <ls_list>-timestamp ).
+      <ls_list>-time_formatted = zcl_aor_time=>format_timestamp( <ls_list>-timestamp ).
     ENDLOOP.
 
   ENDMETHOD.

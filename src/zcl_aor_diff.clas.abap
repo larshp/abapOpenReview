@@ -10,6 +10,12 @@ CLASS zcl_aor_diff DEFINITION
         !is_object     TYPE zaor_object
       RETURNING
         VALUE(rt_diff) TYPE zif_aor_types=>ty_diff_tt .
+    CLASS-METHODS last_change_timestamp
+      IMPORTING
+        is_object TYPE zaor_object
+      EXPORTING
+        ev_date   TYPE d
+        ev_time   TYPE t.
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -292,6 +298,37 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
         communication_failure = 3
         OTHERS                = 4. "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
+
+  ENDMETHOD.
+
+
+  METHOD last_change_timestamp.
+    DATA: lv_program_name  TYPE progname,
+          lv_function_name TYPE rs38l_fnam,
+          ls_class_method_key TYPE seocpdkey.
+
+    CLEAR: ev_date, ev_time.
+
+    CASE is_object-object.
+      WHEN 'REPS'.
+        lv_program_name = is_object-obj_name.
+      WHEN 'FUNC'.
+        lv_function_name = is_object-obj_name.
+        CALL FUNCTION 'FUNCTION_INCLUDE_INFO'
+          CHANGING
+            funcname = lv_function_name
+            include  = lv_program_name.
+      WHEN 'METH'.
+        ls_class_method_key = is_object-obj_name.
+        lv_program_name = cl_oo_classname_service=>get_method_include(
+          mtdkey = ls_class_method_key ).
+      WHEN OTHERS.
+        RETURN.
+    ENDCASE.
+
+    SELECT SINGLE udat utime FROM reposrc
+      INTO (ev_date, ev_time)
+      WHERE progname = lv_program_name AND r3state = 'A'.
 
   ENDMETHOD.
 

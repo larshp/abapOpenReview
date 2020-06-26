@@ -173,6 +173,10 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
       APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
       <ls_diff>-object = <ls_object>.
       <ls_diff>-diff   = lt_diff.
+      zcl_aor_diff=>last_change_timestamp(
+        EXPORTING is_object = <ls_object>
+        IMPORTING ev_date = <ls_diff>-last_changed_date
+          ev_time = <ls_diff>-last_changed_time ).
     ENDLOOP.
 
   ENDMETHOD.

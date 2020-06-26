@@ -168,6 +168,7 @@ CLASS lcl_gui_review DEFINITION FINAL.
       RAISING   zcx_aor_error.
 
     CLASS-DATA: gv_filter TYPE zaor_review-ci_filter.
+    CLASS-DATA: gv_code_comments_hidden TYPE sap_bool.
 
   PRIVATE SECTION.
     CONSTANTS: gc_color_comment TYPE c LENGTH 7 VALUE '#C0C0C0'.
@@ -199,6 +200,17 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS diff
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS render_diff_with_comments
+      IMPORTING object         TYPE zaor_object
+                diff           TYPE zif_aor_types=>ty_diff_st
+                comments       TYPE zif_aor_types=>ty_comment_tt
+      RETURNING VALUE(rv_html) TYPE string.
+
+    CLASS-METHODS render_pure_diff
+      IMPORTING
+                diff           TYPE zif_aor_types=>ty_diff_st
+      RETURNING VALUE(rv_html) TYPE string.
+
     CLASS-METHODS code_inspector
       RETURNING VALUE(rv_html) TYPE string.
 
@@ -215,9 +227,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
       RETURNING VALUE(key) TYPE string.
 
     CLASS-METHODS get_comments_for_line
-      IMPORTING object            TYPE zaor_object
-                line              TYPE zif_aor_types=>ty_diff_st
-                comments          TYPE zif_aor_types=>ty_comment_tt
+      IMPORTING object                   TYPE zaor_object
+                line                     TYPE zif_aor_types=>ty_diff_st
+                comments                 TYPE zif_aor_types=>ty_comment_tt
       RETURNING VALUE(comments_on_topic) TYPE zif_aor_types=>ty_comment_tt.
 
     CLASS-METHODS line_has_new_comment
@@ -244,16 +256,20 @@ CLASS lcl_gui_review IMPLEMENTATION.
     DATA: lv_style             TYPE string,
           lt_diff_list         TYPE zif_aor_types=>ty_diff_list_tt,
           lt_diff              TYPE zif_aor_types=>ty_diff_tt,
-          lt_comments          TYPE zif_aor_types=>ty_comment_tt,
-          lt_comments_on_topic TYPE zif_aor_types=>ty_comment_tt,
-          lv_topic             TYPE zaor_topic,
-          lv_has_comment       TYPE sap_bool.
+          lt_comments          TYPE zif_aor_types=>ty_comment_tt.
 
     FIELD-SYMBOLS: <ls_diff>      LIKE LINE OF lt_diff,
                    <ls_diff_list> LIKE LINE OF lt_diff_list.
 
 
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
+    IF gv_code_comments_hidden = abap_false.
+      rv_html = rv_html && '<form method="post" action="sapevent:hide_code_comments">' &&
+                '<input type="submit" value="Hide code comments" ></form>'.
+    ELSE.
+      rv_html = rv_html && '<form method="post" action="sapevent:show_code_comments">' &&
+                '<input type="submit" value="Show code comments" ></form>'.
+    ENDIF.
 
     lt_diff_list = go_review->diff( ).
     lt_comments = go_review->comments( )->list( iv_with_code_comments = abap_true ).
@@ -267,6 +283,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
         <ls_diff_list>-object-object   &&
         '&nbsp;'                       &&
         <ls_diff_list>-object-obj_name &&
+        '&nbsp;Last changed:&nbsp;'    &&
+        zcl_aor_time=>format_date_time( iv_date = <ls_diff_list>-last_changed_date
+          iv_time = <ls_diff_list>-last_changed_time ) &&
         '<br><br>'.
 
       lt_diff = <ls_diff_list>-diff.
@@ -282,35 +301,11 @@ CLASS lcl_gui_review IMPLEMENTATION.
         LOOP AT lt_diff ASSIGNING <ls_diff>.
           <ls_diff>-code = escape( val    = <ls_diff>-code
                                    format = cl_abap_format=>e_html_attr ).
-          IF <ls_diff> IS INITIAL.
-            CLEAR lv_style.
-          ELSEIF <ls_diff>-new <> ''.
-            lv_style = ' style="background:lightgreen;"'.   "#EC NOTEXT
+          IF gv_code_comments_hidden = abap_false.
+            rv_html = rv_html && render_diff_with_comments( object = <ls_diff_list>-object
+              diff = <ls_diff> comments = lt_comments ).
           ELSE.
-            lv_style = ' style="background:lightpink;"'.    "#EC NOTEXT
-          ENDIF.
-          rv_html = rv_html &&
-            '<tr>' &&
-            '<td><a href="sapevent:add_comment_on_code?' &&
-              create_diff_key( object = <ls_diff_list>-object line = <ls_diff> )
-              && '">'
-              && <ls_diff>-new && '&nbsp;</a></td>' &&
-            '<td>' && <ls_diff>-old && '&nbsp;</td>' &&
-            '<td>' && <ls_diff>-updkz && '&nbsp;</td>' &&
-            '<td' && lv_style && '><pre>' && <ls_diff>-code && '</pre></td>' &&
-            '</tr>'.
-          lt_comments_on_topic = get_comments_for_line( object = <ls_diff_list>-object
-            comments = lt_comments line = <ls_diff> ).
-          IF lines( lt_comments_on_topic ) > 0.
-            rv_html = rv_html && '<tr><td></td><td></td><td></td><td>'
-              && comments( it_list = lt_comments_on_topic iv_add_new_topic = abap_false )
-              && '</td></tr>' && gc_newline.
-          ENDIF.
-          line_has_new_comment( EXPORTING object = <ls_diff_list>-object line = <ls_diff>
-            IMPORTING topic = lv_topic has_comment = lv_has_comment ).
-          IF lv_has_comment = abap_true.
-            rv_html = rv_html && '<tr><td></td><td></td><td></td>' && add_new_comment( lv_topic )
-              && '</tr>' && gc_newline.
+            rv_html = rv_html && render_pure_diff( diff = <ls_diff> ).
           ENDIF.
         ENDLOOP.
         rv_html = rv_html && '</table>'.
@@ -319,6 +314,65 @@ CLASS lcl_gui_review IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.                    "diff
+
+  METHOD render_diff_with_comments.
+    DATA: lv_style             TYPE string,
+          lt_comments_on_topic TYPE zif_aor_types=>ty_comment_tt,
+          lv_topic             TYPE zaor_topic,
+          lv_has_comment       TYPE sap_bool.
+
+    IF diff IS INITIAL.
+      CLEAR lv_style.
+    ELSEIF diff-new <> ''.
+      lv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
+    ELSE.
+      lv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
+    ENDIF.
+    rv_html = rv_html &&
+      '<tr>' &&
+      '<td><a href="sapevent:add_comment_on_code?' &&
+        create_diff_key( object = object line = diff )
+        && '">'
+        && diff-new && '&nbsp;</a></td>' &&
+      '<td>' && diff-old && '&nbsp;</td>' &&
+      '<td>' && diff-updkz && '&nbsp;</td>' &&
+      '<td' && lv_style && '><pre>' && diff-code && '</pre></td>' &&
+      '</tr>'.
+    lt_comments_on_topic = get_comments_for_line( object = object
+      comments = comments line = diff ).
+    IF lines( lt_comments_on_topic ) > 0.
+      rv_html = rv_html && '<tr><td></td><td></td><td></td><td>'
+        && comments( it_list = lt_comments_on_topic iv_add_new_topic = abap_false )
+        && '</td></tr>' && gc_newline.
+    ENDIF.
+    line_has_new_comment( EXPORTING object = object line = diff
+      IMPORTING topic = lv_topic has_comment = lv_has_comment ).
+    IF lv_has_comment = abap_true.
+      rv_html = rv_html && '<tr><td></td><td></td><td></td>' && add_new_comment( lv_topic )
+        && '</tr>' && gc_newline.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD render_pure_diff.
+    DATA: lv_style TYPE string.
+
+    IF diff IS INITIAL.
+      CLEAR lv_style.
+    ELSEIF diff-new <> ''.
+      lv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
+    ELSE.
+      lv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
+    ENDIF.
+    rv_html = rv_html &&
+      '<tr>' &&
+      '<td>' && diff-new && '&nbsp;</a></td>' &&
+      '<td>' && diff-old && '&nbsp;</td>' &&
+      '<td>' && diff-updkz && '&nbsp;</td>' &&
+      '<td' && lv_style && '><pre>' && diff-code && '</pre></td>' &&
+      '</tr>'.
+
+  ENDMETHOD.
 
   METHOD create_diff_key.
 
@@ -542,7 +596,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
           '&nbsp;' &&
           <ls_list>-bname &&
           '&nbsp;' &&
-          zcl_aor_time=>format( <ls_list>-timestamp ).
+          zcl_aor_time=>format_timestamp( <ls_list>-timestamp ).
       ENDIF.
 
       rv_html = rv_html &&
@@ -1146,6 +1200,12 @@ CLASS lcl_gui IMPLEMENTATION.
           WHEN 'rerun'.
             go_review->ci( )->run( ).
             view( lcl_gui_review=>render( ) ).
+          WHEN 'hide_code_comments'.
+            lcl_gui_review=>gv_code_comments_hidden = abap_true.
+            view( lcl_gui_review=>render( 'location.href="#diff";' ) ) ##no_text.
+          WHEN 'show_code_comments'.
+            lcl_gui_review=>gv_code_comments_hidden = abap_false.
+            view( lcl_gui_review=>render( 'location.href="#diff";' ) ) ##no_text.
           WHEN OTHERS.
             RAISE EXCEPTION TYPE zcx_aor_error
               EXPORTING
