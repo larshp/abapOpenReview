@@ -662,6 +662,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
         ELSE.
           CLEAR lv_color.
         ENDIF.
+        IF zcl_aor_comments=>can_delete( ls_list ) = abap_true.
+          rv_html = rv_html &&
+            |<a href="sapevent:delete_comment?topic={ ls_list-topic }">Delete</a>&nbsp;|.
+        ENDIF.
       ENDAT.
       REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf
         IN ls_list-text WITH '<br>'.
@@ -1186,7 +1190,12 @@ CLASS lcl_gui IMPLEMENTATION.
             lv_topic = getdata( iv_field   = 'topic'
                                  iv_getdata = getdata ) ##no_text.
             go_review->comments( )->close( lv_topic ).
-            view( lcl_gui_review=>render( ) ).
+            view( lcl_gui_review=>render( 'location.href="#comments"' ) ).
+          WHEN 'delete_comment'.
+            lv_topic = getdata( iv_field   = 'topic'
+                                 iv_getdata = getdata ) ##no_text.
+            go_review->comments( )->delete( lv_topic ).
+            view( lcl_gui_review=>render( 'location.href="#comments"' ) ).
           WHEN 'closereview'.
             go_review->close( ).
             view( lcl_gui_start=>render( ) ).

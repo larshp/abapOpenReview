@@ -7,12 +7,13 @@ CLASS zcl_aor_comments DEFINITION
 
     METHODS constructor
       IMPORTING
-        !io_review TYPE REF TO zcl_aor_review.
+        !io_review TYPE REF TO zcl_aor_review .
     METHODS add
       IMPORTING
-        !iv_text  TYPE string
-        !iv_topic TYPE zaor_comment-topic OPTIONAL
-      RETURNING VALUE(is_code_comment) TYPE sap_bool
+        !iv_text               TYPE string
+        !iv_topic              TYPE zaor_comment-topic OPTIONAL
+      RETURNING
+        VALUE(is_code_comment) TYPE sap_bool
       RAISING
         zcx_aor_error .
     METHODS close
@@ -25,9 +26,19 @@ CLASS zcl_aor_comments DEFINITION
         zcx_aor_error .
     METHODS list
       IMPORTING
-        iv_with_code_comments TYPE abap_bool OPTIONAL
+        !iv_with_code_comments TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(rt_data) TYPE zif_aor_types=>ty_comment_tt .
+        VALUE(rt_data)         TYPE zif_aor_types=>ty_comment_tt .
+    METHODS delete
+      IMPORTING
+        !iv_topic TYPE zaor_comment-topic
+      RAISING
+        zcx_aor_error .
+    CLASS-METHODS can_delete
+      IMPORTING
+        !is_comment       TYPE zif_aor_types=>ty_comment
+      RETURNING
+        VALUE(can_delete) TYPE abap_bool .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -82,6 +93,28 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD can_delete.
+
+    can_delete = abap_true.
+
+    SELECT COUNT(*) FROM zaor_comment
+      WHERE review_id = is_comment-review_id
+      AND topic = is_comment-topic AND bname = sy-uname.
+    IF sy-subrc <> 0.
+      can_delete = abap_false.
+    ENDIF.
+
+    SELECT COUNT(*) FROM zaor_comment
+      WHERE review_id = is_comment-review_id
+      AND topic = is_comment-topic.
+    IF sy-dbcnt > 1.
+      " conversation exists
+      can_delete = abap_false.
+    ENDIF.
+
+  ENDMETHOD.
+
+
   METHOD check_all_closed.
 
     DATA: lt_comments TYPE zif_aor_types=>ty_comment_tt.
@@ -113,7 +146,6 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
 
     DATA: ls_comment TYPE zaor_comment.
 
-
     mo_review->check_open( ).
 
     ls_comment-topic     = topic_id( iv_topic ).
@@ -122,6 +154,14 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
     ls_comment-bname     = sy-uname.
     ls_comment-closed    = abap_true.
     GET TIME STAMP FIELD ls_comment-timestamp.
+
+    SELECT COUNT(*) FROM zaor_comment WHERE topic = ls_comment-topic
+      AND review_id = ls_comment-review_id.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_aor_error
+        EXPORTING
+          textid = zcx_aor_error=>close_new_topic.
+    ENDIF.
 
     INSERT zaor_comment FROM ls_comment.                  "#EC CI_SUBRC
     ASSERT sy-subrc = 0.
@@ -136,6 +176,17 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD delete.
+    DATA: review_id TYPE zaor_review_id.
+
+    review_id = mo_review->header( )-review_id.
+
+    DELETE FROM zaor_comment WHERE review_id = review_id
+      AND topic = iv_topic.
+
+  ENDMETHOD.
+
+
   METHOD list.
 
     DATA: lv_review_id TYPE zaor_review-review_id.
@@ -144,6 +195,7 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
 
     lv_review_id = mo_review->header( )-review_id.
 
+    ##TOO_MANY_ITAB_FIELDS
     SELECT c~review_id c~topic c~timestamp c~text c~bname c~closed
       p~pgmid p~object p~obj_name p~new_line p~old_line
       FROM zaor_comment AS c LEFT OUTER JOIN zaor_code_com AS p

@@ -61,6 +61,15 @@ public section.
       attr3 type scx_attrname value '',
       attr4 type scx_attrname value '',
     end of NO_COMMENTS .
+  constants:
+    begin of CLOSE_NEW_TOPIC,
+      msgid type symsgid value 'ZABAPOPENREVIEW',
+      msgno type symsgno value '008',
+      attr1 type scx_attrname value '',
+      attr2 type scx_attrname value '',
+      attr3 type scx_attrname value '',
+      attr4 type scx_attrname value '',
+    end of CLOSE_NEW_TOPIC .
 
   methods CONSTRUCTOR
     importing
