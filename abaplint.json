@@ -8,8 +8,13 @@
   "dependencies": [
     {
       "url": "https://github.com/abaplint/deps",
-      "folder": "/deps",
+      "folder": "/deps1",
       "files": "/src/**/*.*"
+    },
+    {
+      "url": "https://github.com/epeterson320/ABAP-Logger",
+      "folder": "/deps2",
+      "files": "/**/*.*"
     }
   ],
   "syntax": {
