@@ -177,11 +177,11 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
 
 
   METHOD delete.
-    DATA: review_id TYPE zaor_review_id.
+    DATA: lv_review_id TYPE zaor_review_id.
 
-    review_id = mo_review->header( )-review_id.
+    lv_review_id = mo_review->header( )-review_id.
 
-    DELETE FROM zaor_comment WHERE review_id = review_id
+    DELETE FROM zaor_comment WHERE review_id = lv_review_id
       AND topic = iv_topic.
 
   ENDMETHOD.

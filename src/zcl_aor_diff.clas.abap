@@ -6,16 +6,21 @@ CLASS zcl_aor_diff DEFINITION
 
     CLASS-METHODS diff
       IMPORTING
-        !iv_trkorr     TYPE trkorr
-        !is_object     TYPE zaor_object
-      RETURNING
-        VALUE(rt_diff) TYPE zif_aor_types=>ty_diff_tt .
-    CLASS-METHODS last_change_timestamp
-      IMPORTING
-        is_object TYPE zaor_object
+        !iv_trkorr      TYPE trkorr
+        !is_object      TYPE zaor_object
       EXPORTING
-        ev_date   TYPE d
-        ev_time   TYPE t.
+        !et_diff        TYPE zif_aor_types=>ty_diff_tt
+        !es_new_version TYPE vrsd .
+    CLASS-METHODS enhancement_diff
+      IMPORTING
+        !is_object          TYPE zaor_object
+        !iv_trkorr          TYPE trkorr
+      EXPORTING
+        !et_diff            TYPE zif_aor_types=>ty_enh_diff_tt
+        !es_enhanced_object TYPE zaor_object
+        !es_new_version     TYPE vrsd
+      RAISING
+        cx_enh_root .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -69,6 +74,24 @@ CLASS zcl_aor_diff DEFINITION
         !iv_obj_name           TYPE trobj_name
       RETURNING
         VALUE(rt_version_list) TYPE vrsd_tab .
+    CLASS-METHODS render_hook_diff
+      IMPORTING
+        !ir_version_manager_new TYPE REF TO if_enh_tool
+        !ir_version_manager_old TYPE REF TO if_enh_tool
+      EXPORTING
+        !et_diff                TYPE zif_aor_types=>ty_enh_diff_tt
+        !es_enhanced_object     TYPE zaor_object
+      RAISING
+        cx_enh_root .
+    CLASS-METHODS render_class_diff
+      IMPORTING
+        !ir_version_manager_new TYPE REF TO if_enh_tool
+        !ir_version_manager_old TYPE REF TO if_enh_tool
+      EXPORTING
+        !et_diff                TYPE zif_aor_types=>ty_enh_diff_tt
+        !es_enhanced_object     TYPE zaor_object
+      RAISING
+        cx_enh_root.
 ENDCLASS.
 
 
@@ -131,7 +154,6 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
     DATA: lt_new          TYPE STANDARD TABLE OF abaptxt255,
           lt_old          TYPE STANDARD TABLE OF abaptxt255,
           lt_version_list TYPE vrsd_tab,
-          ls_new          LIKE LINE OF lt_version_list,
           lv_obj_name     TYPE trobj_name,
           lt_delta        TYPE vxabapt255_tab,
           ls_old          LIKE LINE OF lt_version_list,
@@ -162,28 +184,28 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    READ TABLE lt_version_list INDEX 1 INTO ls_new.
+    READ TABLE lt_version_list INDEX 1 INTO es_new_version.
     ASSERT sy-subrc = 0.
     READ TABLE lt_version_list INDEX 2 INTO ls_old.
 
     CASE ls_vrso-objtype.
       WHEN 'REPS'.
         lt_new = get_reps( iv_object_name = ls_vrso-objname
-                           iv_versno      = ls_new-versno ).
+                           iv_versno      = es_new_version-versno ).
         IF NOT ls_old IS INITIAL.
           lt_old = get_reps( iv_object_name = ls_vrso-objname
                              iv_versno      = ls_old-versno ).
         ENDIF.
       WHEN 'METH'.
         lt_new = get_meth( iv_object_name = ls_vrso-objname
-                           iv_versno      = ls_new-versno ).
+                           iv_versno      = es_new_version-versno ).
         IF NOT ls_old IS INITIAL.
           lt_old = get_meth( iv_object_name = ls_vrso-objname
                              iv_versno      = ls_old-versno ).
         ENDIF.
       WHEN 'FUNC'.
         lt_new = get_func( iv_object_name = ls_vrso-objname
-                           iv_versno      = ls_new-versno ).
+                           iv_versno      = es_new_version-versno ).
         IF NOT ls_old IS INITIAL.
           lt_old = get_func( iv_object_name = ls_vrso-objname
                              iv_versno      = ls_old-versno ).
@@ -196,11 +218,68 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
     lt_delta = delta( it_old = lt_old
                       it_new = lt_new ).
 
-    rt_diff = render( it_old   = lt_old
+    et_diff = render( it_old   = lt_old
                       it_new   = lt_new
                       it_delta = lt_delta ).
 
-    add_newlines( CHANGING ct_diff = rt_diff ).
+    add_newlines( CHANGING ct_diff = et_diff ).
+
+  ENDMETHOD.
+
+
+  METHOD enhancement_diff.
+    DATA: lr_version_manager_new TYPE REF TO if_enh_tool,
+          lr_version_manager_old TYPE REF TO if_enh_tool,
+          lv_enhancement_id      TYPE enhname,
+          lv_obj_name            TYPE trobj_name,
+          lt_version_list        TYPE vrsd_tab,
+          lt_vrso                TYPE zif_aor_types=>ty_vrso_tt,
+          ls_vrso                LIKE LINE OF lt_vrso,
+          ls_version_old         TYPE REF TO vrsd.
+
+    lv_enhancement_id = is_object-obj_name.
+
+    lt_vrso = resolve( is_object ).
+    IF lt_vrso IS INITIAL.
+* non versionable object
+      RETURN.
+    ENDIF.
+
+    ASSERT lines( lt_vrso ) = 1.
+    READ TABLE lt_vrso INDEX 1 INTO ls_vrso.
+
+    ASSERT ls_vrso-objtype = 'ENHO'.
+    lv_obj_name = ls_vrso-objname.
+    lt_version_list = version_list( iv_object   = ls_vrso-objtype
+                                    iv_obj_name = lv_obj_name ).
+    filter_versions( EXPORTING iv_trkorr = iv_trkorr
+                     CHANGING  ct_list   = lt_version_list ).
+    IF lines( lt_version_list ) = 0.
+      RETURN.
+    ENDIF.
+
+    READ TABLE lt_version_list INDEX 1 INTO es_new_version.
+    ASSERT sy-subrc = 0.
+    lr_version_manager_new = cl_enh_factory=>get_enhancement(
+      enhancement_id = lv_enhancement_id
+      versno = es_new_version-versno ).
+    READ TABLE lt_version_list INDEX 2 REFERENCE INTO ls_version_old.
+    IF sy-subrc = 0.
+      lr_version_manager_old = cl_enh_factory=>get_enhancement(
+        enhancement_id = lv_enhancement_id
+        versno = ls_version_old->*-versno ).
+    ENDIF.
+
+    CASE lr_version_manager_new->get_tool( ).
+      WHEN 'HOOK_IMPL'.
+        render_hook_diff( EXPORTING ir_version_manager_new = lr_version_manager_new
+          ir_version_manager_old = lr_version_manager_old
+          IMPORTING et_diff = et_diff es_enhanced_object = es_enhanced_object ).
+      WHEN 'CLASENH'.
+        render_class_diff( EXPORTING ir_version_manager_new = lr_version_manager_new
+          ir_version_manager_old = lr_version_manager_old
+          IMPORTING et_diff = et_diff es_enhanced_object = es_enhanced_object ).
+    ENDCASE.
 
   ENDMETHOD.
 
@@ -302,37 +381,6 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD last_change_timestamp.
-    DATA: lv_program_name  TYPE progname,
-          lv_function_name TYPE rs38l_fnam,
-          ls_class_method_key TYPE seocpdkey.
-
-    CLEAR: ev_date, ev_time.
-
-    CASE is_object-object.
-      WHEN 'REPS'.
-        lv_program_name = is_object-obj_name.
-      WHEN 'FUNC'.
-        lv_function_name = is_object-obj_name.
-        CALL FUNCTION 'FUNCTION_INCLUDE_INFO'
-          CHANGING
-            funcname = lv_function_name
-            include  = lv_program_name.
-      WHEN 'METH'.
-        ls_class_method_key = is_object-obj_name.
-        lv_program_name = cl_oo_classname_service=>get_method_include(
-          mtdkey = ls_class_method_key ).
-      WHEN OTHERS.
-        RETURN.
-    ENDCASE.
-
-    SELECT SINGLE udat utime FROM reposrc
-      INTO (ev_date, ev_time)
-      WHERE progname = lv_program_name AND r3state = 'A'.
-
-  ENDMETHOD.
-
-
   METHOD render.
 
     DATA: lv_diff TYPE i.
@@ -395,6 +443,117 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD render_class_diff.
+    DATA: lr_version_manager_new   TYPE REF TO cl_enh_tool_class,
+          lr_version_manager_old   TYPE REF TO cl_enh_tool_class,
+          ls_enhancement_new       TYPE enhclassmethdata,
+          ls_enhancement_old       TYPE enhclassmethdata,
+          ls_new_method_definition TYPE REF TO enhnewmeth_data,
+          ls_new_source            TYPE REF TO seo_method_source,
+          lt_new_source_code       TYPE abaptxt255_tab,
+          ls_old_method_definition TYPE REF TO enhnewmeth_data,
+          ls_old_source            TYPE REF TO seo_method_source,
+          lt_old_source_code       TYPE abaptxt255_tab,
+          lt_delta                 TYPE vxabapt255_tab,
+          l_class_name             TYPE seoclsname,
+          ls_diff_method           TYPE zif_aor_types=>ty_enh_diff_st.
+
+    lr_version_manager_new ?= ir_version_manager_new.
+    IF ir_version_manager_old IS BOUND.
+      lr_version_manager_old ?= ir_version_manager_old.
+    ENDIF.
+
+    es_enhanced_object-pgmid = 'R3TR'.
+    es_enhanced_object-object = 'CLAS'.
+    lr_version_manager_new->get_class(
+      IMPORTING class_name = l_class_name ).
+    es_enhanced_object-obj_name = l_class_name.
+
+    lr_version_manager_new->get_all_data_for_class( EXPORTING class_name = l_class_name
+      IMPORTING enha_data = ls_enhancement_new ).
+    IF lr_version_manager_old IS BOUND.
+      lr_version_manager_old->get_all_data_for_class( EXPORTING class_name = l_class_name
+        IMPORTING enha_data = ls_enhancement_old ).
+    ENDIF.
+    " methods
+    LOOP AT ls_enhancement_new-enh_newmethodes REFERENCE INTO ls_new_method_definition.
+      CLEAR: lt_new_source_code, lt_old_source_code, lt_delta.
+      READ TABLE ls_enhancement_new-enh_methsources REFERENCE INTO ls_new_source
+        WITH KEY cpdname = ls_new_method_definition->*-methkey-cmpname.
+      ASSERT sy-subrc = 0.
+      APPEND LINES OF ls_new_source->*-source TO lt_new_source_code.
+
+      READ TABLE ls_enhancement_old-enh_newmethodes REFERENCE INTO ls_old_method_definition
+        WITH KEY methkey = ls_new_method_definition->*-methkey.
+      IF sy-subrc = 0.
+        READ TABLE ls_enhancement_old-enh_methsources REFERENCE INTO ls_old_source
+          WITH KEY cpdname = ls_old_method_definition->*-methkey-cmpname.
+        APPEND LINES OF ls_old_source->*-source TO lt_old_source_code.
+      ENDIF.
+
+      lt_delta = delta( it_old = lt_old_source_code it_new = lt_new_source_code ).
+      IF lt_delta IS NOT INITIAL.
+        ls_diff_method-id = lines( et_diff ) + 1.
+        ls_diff_method-full_name = |Method { ls_new_method_definition->*-methkey-cmpname }|.
+        ls_diff_method-diff = render( it_old = lt_old_source_code it_new = lt_new_source_code
+          it_delta = lt_delta ).
+        add_newlines( CHANGING ct_diff = ls_diff_method-diff ).
+        INSERT ls_diff_method INTO TABLE et_diff.
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD render_hook_diff.
+    DATA: lr_version_manager_new TYPE REF TO cl_enh_tool_hook_impl,
+          lr_version_manager_old TYPE REF TO cl_enh_tool_hook_impl,
+          ls_hook_header TYPE enh_hook_admin,
+          lr_hook_impl_new TYPE REF TO enh_hook_impl,
+          ls_hook_impl_old TYPE enh_hook_impl,
+          lt_source_new TYPE STANDARD TABLE OF abaptxt255,
+          lt_source_old LIKE lt_source_new,
+          lt_delta TYPE vxabapt255_tab,
+          ls_diff_hook LIKE LINE OF et_diff.
+
+    lr_version_manager_new ?= ir_version_manager_new.
+    IF ir_version_manager_old IS BOUND.
+      lr_version_manager_old ?= ir_version_manager_old.
+    ENDIF.
+
+    ir_version_manager_new->if_enh_object~get_data( IMPORTING data = ls_hook_header ).
+
+    es_enhanced_object-pgmid = ls_hook_header-pgmid.
+    es_enhanced_object-object = ls_hook_header-org_obj_type.
+    es_enhanced_object-obj_name = ls_hook_header-org_obj_name.
+
+    LOOP AT lr_version_manager_new->get_hook_impls( ) REFERENCE INTO lr_hook_impl_new.
+
+      CLEAR: lt_source_new, lt_source_old, lt_delta.
+
+      APPEND LINES OF lr_hook_impl_new->*-source TO lt_source_new.
+      IF ir_version_manager_old IS BOUND.
+        READ TABLE lr_version_manager_old->get_hook_impls( ) INTO ls_hook_impl_old
+          WITH KEY id = lr_hook_impl_new->*-id.
+        IF sy-subrc = 0.
+          APPEND LINES OF ls_hook_impl_old-source TO lt_source_old.
+        ENDIF.
+      ENDIF.
+      lt_delta = delta( it_old = lt_source_old it_new = lt_source_new ).
+      IF lt_delta IS NOT INITIAL.
+        ls_diff_hook-id = lr_hook_impl_new->*-id.
+        ls_diff_hook-full_name = lr_hook_impl_new->*-full_name.
+        ls_diff_hook-diff = render( it_old = lt_source_old it_new = lt_source_new it_delta = lt_delta ).
+        add_newlines( CHANGING ct_diff = ls_diff_hook-diff ).
+        INSERT ls_diff_hook INTO TABLE et_diff.
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
   METHOD resolve.
 
     DATA: ls_e071 TYPE e071.
@@ -419,7 +578,6 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
     DATA: lt_lversno_list TYPE STANDARD TABLE OF vrsn,
           lv_vobjname     TYPE vrsd-objname,
           lv_vobjtype     TYPE vrsd-objtype.
-
 
     ASSERT NOT iv_object IS INITIAL.
     ASSERT NOT iv_obj_name IS INITIAL.
