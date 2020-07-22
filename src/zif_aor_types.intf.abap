@@ -31,6 +31,14 @@ INTERFACE zif_aor_types
            code  TYPE text255,
          END OF ty_diff_st.
   TYPES: ty_diff_tt TYPE STANDARD TABLE OF ty_diff_st WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_enh_diff_st,
+    type TYPE enhtooltype,
+    id TYPE i,
+    full_name TYPE string,
+    diff TYPE ty_diff_tt,
+  END OF ty_enh_diff_st.
+  TYPES: ty_enh_diff_tt TYPE STANDARD TABLE OF ty_enh_diff_st
+    WITH NON-UNIQUE KEY id.
 
   TYPES: BEGIN OF ty_ci_st,
            header  TYPE sciins_inf,
@@ -43,6 +51,8 @@ INTERFACE zif_aor_types
            last_changed_date TYPE d,
            last_changed_time TYPE t,
            diff              TYPE ty_diff_tt,
+           enhanced_object   TYPE zaor_object,
+           enhancement_diff  TYPE ty_enh_diff_tt,
          END OF ty_diff_list_st.
   TYPES: ty_diff_list_tt TYPE STANDARD TABLE OF ty_diff_list_st WITH DEFAULT KEY.
 

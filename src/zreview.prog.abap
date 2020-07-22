@@ -259,7 +259,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
           lt_comments          TYPE zif_aor_types=>ty_comment_tt.
 
     FIELD-SYMBOLS: <ls_diff>      LIKE LINE OF lt_diff,
-                   <ls_diff_list> LIKE LINE OF lt_diff_list.
+                   <ls_diff_list> LIKE LINE OF lt_diff_list,
+                   <ls_enh_diff>  TYPE zif_aor_types=>ty_enh_diff_st.
 
 
     rv_html = '<a name="diff"></a><h2>Diff</h2><br>'.
@@ -309,6 +310,29 @@ CLASS lcl_gui_review IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         rv_html = rv_html && '</table>'.
+      ELSEIF NOT <ls_diff_list>-enhancement_diff IS INITIAL.
+        " todo: type class, hook
+        rv_html = rv_html && 'Enhanced object:&nbsp;' &&
+          <ls_diff_list>-enhanced_object-object && '&nbsp;' &&
+          <ls_diff_list>-enhanced_object-obj_name && '<br>'.
+        LOOP AT <ls_diff_list>-enhancement_diff ASSIGNING <ls_enh_diff>.
+          rv_html = rv_html &&
+            <ls_enh_diff>-id && '&nbsp;' && <ls_enh_diff>-full_name && '<br>' &&
+            '<table border="0">' &&
+            '<tr>' &&
+            '<td><u>New</u></td>' &&
+            '<td><u>Old</u></td>' &&
+            '<td><u>Type</u></td>' &&
+            '<td><u>Code</u></td>' &&
+            '</tr>'.
+          LOOP AT <ls_enh_diff>-diff ASSIGNING <ls_diff>.
+            <ls_diff>-code = escape( val    = <ls_diff>-code
+                                   format = cl_abap_format=>e_html_attr ).
+            " todo code comments
+            rv_html = rv_html && render_pure_diff( diff = <ls_diff> ).
+          ENDLOOP.
+          rv_html = rv_html && '</table>'.
+        ENDLOOP.
       ENDIF.
 
     ENDLOOP.

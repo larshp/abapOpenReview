@@ -6,6 +6,7 @@ CLASS zcl_aor_review DEFINITION
   PUBLIC SECTION.
 
     DATA mv_pos_new_code_comments TYPE zif_aor_types=>ty_code_comment_tt READ-ONLY .
+    DATA mv_logger TYPE REF TO zif_logger READ-ONLY.
 
     METHODS ci
       RETURNING
@@ -131,6 +132,8 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
           textid = zcx_aor_error=>not_found.
     ENDIF.
 
+    mv_logger = zcl_logger_factory=>create_log( ).
+
   ENDMETHOD.
 
 
@@ -152,9 +155,13 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
   METHOD diff.
 
-    DATA: lt_objects TYPE zaor_object_tt,
-          lv_trkorr  TYPE trkorr,
-          lt_diff    TYPE zif_aor_types=>ty_diff_tt.
+    DATA: lt_objects          TYPE zaor_object_tt,
+          lv_trkorr           TYPE trkorr,
+          lt_diff             TYPE zif_aor_types=>ty_diff_tt,
+          lt_enhancement_diff TYPE zif_aor_types=>ty_enh_diff_tt,
+          ls_enhanced_object  TYPE zaor_object,
+          ls_new_version      TYPE vrsd,
+          lr_failure          TYPE REF TO cx_enh_root.
 
     FIELD-SYMBOLS: <ls_diff>   LIKE LINE OF rt_diff,
                    <ls_object> LIKE LINE OF lt_objects.
@@ -163,20 +170,36 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
     lt_objects = objects_list_limu( ).
 
     LOOP AT lt_objects ASSIGNING <ls_object>.
+
+      CLEAR: lt_enhancement_diff, ls_enhanced_object, lt_diff.
       lv_trkorr = mv_review_id(10).
-      lt_diff = zcl_aor_diff=>diff( iv_trkorr = lv_trkorr
-                                    is_object = <ls_object> ).
-      IF lines( lt_diff ) = 0.
+      TRY.
+          IF <ls_object>-object = 'ENHO'.
+            zcl_aor_diff=>enhancement_diff( EXPORTING is_object = <ls_object>
+              iv_trkorr = lv_trkorr
+              IMPORTING et_diff = lt_enhancement_diff
+                es_enhanced_object = ls_enhanced_object
+                es_new_version = ls_new_version ).
+          ELSE.
+            zcl_aor_diff=>diff( EXPORTING iv_trkorr = lv_trkorr
+              is_object = <ls_object>
+              IMPORTING et_diff = lt_diff es_new_version = ls_new_version ).
+          ENDIF.
+        CATCH cx_enh_root INTO lr_failure.
+          mv_logger->e( obj_to_log = lr_failure ).
+      ENDTRY.
+      IF lines( lt_diff ) = 0 AND lines( lt_enhancement_diff ) = 0.
         CONTINUE.
       ENDIF.
 
       APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
       <ls_diff>-object = <ls_object>.
       <ls_diff>-diff   = lt_diff.
-      zcl_aor_diff=>last_change_timestamp(
-        EXPORTING is_object = <ls_object>
-        IMPORTING ev_date = <ls_diff>-last_changed_date
-          ev_time = <ls_diff>-last_changed_time ).
+      <ls_diff>-enhanced_object = ls_enhanced_object.
+      <ls_diff>-enhancement_diff = lt_enhancement_diff.
+      <ls_diff>-last_changed_date = ls_new_version-datum.
+      <ls_diff>-last_changed_time = ls_new_version-zeit.
+
     ENDLOOP.
 
   ENDMETHOD.
