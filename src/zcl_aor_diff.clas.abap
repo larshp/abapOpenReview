@@ -455,7 +455,7 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
           ls_old_source            TYPE REF TO seo_method_source,
           lt_old_source_code       TYPE abaptxt255_tab,
           lt_delta                 TYPE vxabapt255_tab,
-          l_class_name             TYPE seoclsname,
+          lv_class_name             TYPE seoclsname,
           ls_diff_method           TYPE zif_aor_types=>ty_enh_diff_st.
 
     lr_version_manager_new ?= ir_version_manager_new.
@@ -466,13 +466,13 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
     es_enhanced_object-pgmid = 'R3TR'.
     es_enhanced_object-object = 'CLAS'.
     lr_version_manager_new->get_class(
-      IMPORTING class_name = l_class_name ).
-    es_enhanced_object-obj_name = l_class_name.
+      IMPORTING class_name = lv_class_name ).
+    es_enhanced_object-obj_name = lv_class_name.
 
-    lr_version_manager_new->get_all_data_for_class( EXPORTING class_name = l_class_name
+    lr_version_manager_new->get_all_data_for_class( EXPORTING class_name = lv_class_name
       IMPORTING enha_data = ls_enhancement_new ).
     IF lr_version_manager_old IS BOUND.
-      lr_version_manager_old->get_all_data_for_class( EXPORTING class_name = l_class_name
+      lr_version_manager_old->get_all_data_for_class( EXPORTING class_name = lv_class_name
         IMPORTING enha_data = ls_enhancement_old ).
     ENDIF.
     " methods
@@ -507,15 +507,16 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
 
 
   METHOD render_hook_diff.
-    DATA: lr_version_manager_new TYPE REF TO cl_enh_tool_hook_impl,
-          lr_version_manager_old TYPE REF TO cl_enh_tool_hook_impl,
-          ls_hook_header TYPE enh_hook_admin,
-          lr_hook_impl_new TYPE REF TO enh_hook_impl,
-          ls_hook_impl_old TYPE enh_hook_impl,
-          lt_source_new TYPE STANDARD TABLE OF abaptxt255,
-          lt_source_old LIKE lt_source_new,
-          lt_delta TYPE vxabapt255_tab,
-          ls_diff_hook LIKE LINE OF et_diff.
+    DATA: lr_version_manager_new  TYPE REF TO cl_enh_tool_hook_impl,
+          lr_version_manager_old  TYPE REF TO cl_enh_tool_hook_impl,
+          ls_hook_header          TYPE enh_hook_admin,
+          lt_hook_implementations TYPE enh_hook_impl_it,
+          lr_hook_impl_new        TYPE REF TO enh_hook_impl,
+          ls_hook_impl_old        TYPE enh_hook_impl,
+          lt_source_new           TYPE STANDARD TABLE OF abaptxt255,
+          lt_source_old           LIKE lt_source_new,
+          lt_delta                TYPE vxabapt255_tab,
+          ls_diff_hook            LIKE LINE OF et_diff.
 
     lr_version_manager_new ?= ir_version_manager_new.
     IF ir_version_manager_old IS BOUND.
@@ -528,7 +529,8 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
     es_enhanced_object-object = ls_hook_header-org_obj_type.
     es_enhanced_object-obj_name = ls_hook_header-org_obj_name.
 
-    LOOP AT lr_version_manager_new->get_hook_impls( ) REFERENCE INTO lr_hook_impl_new.
+    lt_hook_implementations = lr_version_manager_new->get_hook_impls( ).
+    LOOP AT lt_hook_implementations REFERENCE INTO lr_hook_impl_new.
 
       CLEAR: lt_source_new, lt_source_old, lt_delta.
 
