@@ -242,6 +242,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
       IMPORTING iv_topic       TYPE zaor_topic OPTIONAL
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS approval
+      RETURNING VALUE(rv_html) TYPE string.
+
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
 *----------------------------------------------------------------------*
@@ -458,6 +461,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       '<br><br>'                            && gc_newline &&
       comments_header( )                    && gc_newline &&
       comments( it_list = go_review->comments( )->list( ) iv_add_new_topic = abap_true ) && gc_newline &&
+      '<br>'                                && gc_newline &&
+      approval( )                           && gc_newline &&
       '<br>'                                && gc_newline &&
       close_review( )                       && gc_newline &&
       shortcuts( )                          && gc_newline &&
@@ -751,9 +756,36 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD close_review.
 
-    rv_html = '<a href="sapevent:closereview">Close review</a><br><br>'.
+    IF go_review->get_status( ) <> zif_aor_constants=>c_status-closed.
+      rv_html = '<a href="sapevent:closereview">Close review</a> (Review is automatically closed after transport release)<br><br>'.
+    ENDIF.
 
   ENDMETHOD.                    "close_review
+
+  METHOD approval.
+    DATA approval TYPE REF TO zaor_approvals.
+
+    rv_html = '<div name="approval">'.
+    DATA(approvals) = go_review->get_approvals( ).
+    IF lines( approvals ) > 0.
+      rv_html = rv_html && 'Approved by:<br><table>'.
+      LOOP AT approvals REFERENCE INTO approval.
+        rv_html = rv_html && |<tr><td>{ approval->*-approved_by }</td>|.
+        rv_html = rv_html && |<td>{ zcl_aor_time=>format_timestamp( approval->*-timestamp ) }</td></tr>|.
+      ENDLOOP.
+      rv_html = rv_html && '</table><br>'.
+    ENDIF.
+
+    IF go_review->get_status( ) <> zif_aor_constants=>c_status-closed.
+      IF go_review->can_approve( ) = abap_true.
+        rv_html = rv_html && '<a href="sapevent:create_approval">Approve</a><br><br>'.
+      ELSE.
+        rv_html = rv_html && '<a href="sapevent:remove_approval">Reject approval</a><br><br>'.
+      ENDIF.
+    ENDIF.
+    rv_html = rv_html && '</div>'.
+
+  ENDMETHOD.
 
 ENDCLASS.                    "lcl_gui_review IMPLEMENTATION
 
@@ -1220,6 +1252,12 @@ CLASS lcl_gui IMPLEMENTATION.
                                  iv_getdata = getdata ) ##no_text.
             go_review->comments( )->delete( lv_topic ).
             view( lcl_gui_review=>render( 'location.href="#comments"' ) ).
+          WHEN 'create_approval'.
+            go_review->approve( ).
+            view( lcl_gui_review=>render( 'location.href="#approval"' ) ).
+          WHEN 'remove_approval'.
+            go_review->remove_approval( ).
+            view( lcl_gui_review=>render( 'location.href="#approval"' ) ).
           WHEN 'closereview'.
             go_review->close( ).
             view( lcl_gui_start=>render( ) ).

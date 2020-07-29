@@ -1,80 +1,98 @@
-class ZCX_AOR_ERROR definition
-  public
-  inheriting from CX_STATIC_CHECK
-  create public .
+CLASS zcx_aor_error DEFINITION
+  PUBLIC
+  INHERITING FROM cx_static_check
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces IF_T100_MESSAGE .
+    INTERFACES if_t100_message .
 
-  constants:
-    begin of COMMENTS_PENDING,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '000',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of COMMENTS_PENDING .
-  constants:
-    begin of REVIEW_CLOSED,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '001',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of REVIEW_CLOSED .
-  constants:
-    begin of NOT_FOUND,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '002',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of NOT_FOUND .
-  constants:
-    begin of UNKNOWN_ACTION,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '003',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of UNKNOWN_ACTION .
-  constants:
-    begin of TRANSPORT_RELEASED,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '004',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of TRANSPORT_RELEASED .
-  constants:
-    begin of NO_COMMENTS,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '007',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of NO_COMMENTS .
-  constants:
-    begin of CLOSE_NEW_TOPIC,
-      msgid type symsgid value 'ZABAPOPENREVIEW',
-      msgno type symsgno value '008',
-      attr1 type scx_attrname value '',
-      attr2 type scx_attrname value '',
-      attr3 type scx_attrname value '',
-      attr4 type scx_attrname value '',
-    end of CLOSE_NEW_TOPIC .
+    CONSTANTS:
+      BEGIN OF comments_pending,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '000',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF comments_pending .
+    CONSTANTS:
+      BEGIN OF review_closed,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '001',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF review_closed .
+    CONSTANTS:
+      BEGIN OF not_found,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '002',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF not_found .
+    CONSTANTS:
+      BEGIN OF unknown_action,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '003',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF unknown_action .
+    CONSTANTS:
+      BEGIN OF transport_released,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '004',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF transport_released .
+    CONSTANTS:
+      BEGIN OF no_comments,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '007',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF no_comments .
+    CONSTANTS:
+      BEGIN OF close_new_topic,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '008',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF close_new_topic .
+    CONSTANTS:
+      BEGIN OF already_approved,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '009',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF already_approved .
+    CONSTANTS:
+      BEGIN OF approve_before,
+        msgid TYPE symsgid VALUE 'ZABAPOPENREVIEW',
+        msgno TYPE symsgno VALUE '010',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF approve_before .
 
-  methods CONSTRUCTOR
-    importing
-      !TEXTID like IF_T100_MESSAGE=>T100KEY optional
-      !PREVIOUS like PREVIOUS optional .
+    METHODS constructor
+      IMPORTING
+        !textid   LIKE if_t100_message=>t100key OPTIONAL
+        !previous LIKE previous OPTIONAL .
 protected section.
 private section.
 ENDCLASS.

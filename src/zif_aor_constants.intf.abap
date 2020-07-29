@@ -5,6 +5,7 @@ INTERFACE zif_aor_constants
     BEGIN OF c_status,
       open   TYPE zaor_status VALUE 'O' ##NO_TEXT,
       closed TYPE zaor_status VALUE 'C' ##NO_TEXT,
+      approved TYPE zaor_status VALUE 'A' ##NO_TEXT,
     END OF c_status.
 
   CONSTANTS:

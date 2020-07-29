@@ -124,9 +124,7 @@ CLASS ZCL_AOR_COMMENTS IMPLEMENTATION.
 
     lt_comments = list( ).
     IF lt_comments IS INITIAL.
-      RAISE EXCEPTION TYPE zcx_aor_error
-        EXPORTING
-          textid = zcx_aor_error=>no_comments.
+      RETURN.
     ENDIF.
 
     LOOP AT lt_comments ASSIGNING <ls_comment> WHERE closed = abap_true.

@@ -265,7 +265,6 @@
                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                 <OBJTYPE>WI</OBJTYPE>
                 <INAME>MAIN</INAME>
-                <CAPTION>Main Window</CAPTION>
                </item>
               </T_CAPTION>
               <sf:PROC_CTRL>
@@ -280,6 +279,7 @@
                      <NAME>
                       <INAME>HEADER</INAME>
                      </NAME>
+                     <NOLANGUAGE>X</NOLANGUAGE>
                      <APPMODE>P</APPMODE>
                      <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                      <TEXT_AREA>
@@ -295,51 +295,6 @@
                        <INAME>HEADER</INAME>
                       </item>
                      </T_CAPTION>
-                     <T_TEXT>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>HEADER</INAME>
-                       <LINENR>000001</LINENR>
-                       <TDFORMAT>B5</TDFORMAT>
-                       <TDLINE>Review &amp;is_header-review_id&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>HEADER</INAME>
-                       <LINENR>000002</LINENR>
-                       <TDFORMAT>*</TDFORMAT>
-                       <TDLINE>&amp;is_header-as4text&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>HEADER</INAME>
-                       <LINENR>000003</LINENR>
-                       <TDFORMAT>*</TDFORMAT>
-                      </item>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>HEADER</INAME>
-                       <LINENR>000004</LINENR>
-                       <TDFORMAT>*</TDFORMAT>
-                       <TDLINE>Responsible: &amp;is_header-responsible&amp;</TDLINE>
-                      </item>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>HEADER</INAME>
-                       <LINENR>000005</LINENR>
-                       <TDFORMAT>*</TDFORMAT>
-                      </item>
-                     </T_TEXT>
                     </sf:TEXT>
                    </sf:OBJ>
                    <sf:SUCC/>
@@ -384,6 +339,7 @@
                         <NAME>
                          <INAME>OBJECTS</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -399,41 +355,6 @@
                           <INAME>OBJECTS</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>OBJECTS</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>OBJECTS</INAME>
-                          <LINENR>000002</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>OBJECTS</INAME>
-                          <LINENR>000003</LINENR>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Objects</TDLINE>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>OBJECTS</INAME>
-                          <LINENR>000004</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:SUCC/>
@@ -597,7 +518,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT1</INAME>
-                             <CAPTION>Kopfbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -629,7 +549,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>SE</OBJTYPE>
                                 <INAME>%ROW1</INAME>
-                                <CAPTION>New Line 1</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:SECTION>
@@ -734,7 +653,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL1</INAME>
-                                   <CAPTION>New Column 1</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -820,6 +738,7 @@
                                     <NAME>
                                      <INAME>%TEXT1</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -833,20 +752,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT1</INAME>
-                                      <CAPTION>New Text 1</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT1</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Type</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -881,7 +788,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL2</INAME>
-                                   <CAPTION>New Column 2</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -967,6 +873,7 @@
                                     <NAME>
                                      <INAME>%TEXT2</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -980,20 +887,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT2</INAME>
-                                      <CAPTION>New Text 2</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT2</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Object</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -1023,7 +918,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT2</INAME>
-                             <CAPTION>Hauptbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1055,7 +949,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>SE</OBJTYPE>
                                 <INAME>%ROW2</INAME>
-                                <CAPTION>New Line 2</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:SECTION>
@@ -1160,7 +1053,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL3</INAME>
-                                   <CAPTION>New Column 3</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -1266,7 +1158,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT3</INAME>
-                                      <CAPTION>New Text 3</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -1303,7 +1194,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL4</INAME>
-                                   <CAPTION>New Column 4</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -1409,7 +1299,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT4</INAME>
-                                      <CAPTION>New Text 4</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -1441,7 +1330,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT3</INAME>
-                             <CAPTION>Fußbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1494,6 +1382,7 @@
                         <NAME>
                          <INAME>CODE_INSPECTOR</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -1509,41 +1398,6 @@
                           <INAME>CODE_INSPECTOR</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>CODE_INSPECTOR</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>CODE_INSPECTOR</INAME>
-                          <LINENR>000002</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>CODE_INSPECTOR</INAME>
-                          <LINENR>000003</LINENR>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Code Inspector</TDLINE>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>CODE_INSPECTOR</INAME>
-                          <LINENR>000004</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:SUCC/>
@@ -1611,6 +1465,7 @@
                         <NAME>
                          <INAME>CI_EMPTY</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -1626,17 +1481,6 @@
                           <INAME>CI_EMPTY</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>CI_EMPTY</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                          <TDLINE>Empty</TDLINE>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:COND>
@@ -1658,7 +1502,6 @@
                           <FORMNAME>ZAOR_REVIEW</FORMNAME>
                           <OBJTYPE>CD</OBJTYPE>
                           <INAME>%CONDITION1</INAME>
-                          <CAPTION>New Alternative 1</CAPTION>
                          </item>
                         </T_CAPTION>
                        </sf:CONDITION>
@@ -1874,7 +1717,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT4</INAME>
-                             <CAPTION>Kopfbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1897,7 +1739,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT5</INAME>
-                             <CAPTION>Hauptbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -2033,7 +1874,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL5</INAME>
-                                   <CAPTION>New Column 5</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -2119,6 +1959,7 @@
                                     <NAME>
                                      <INAME>%TEXT5</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -2132,20 +1973,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT5</INAME>
-                                      <CAPTION>New Text 5</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT5</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Type</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -2180,7 +2009,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL6</INAME>
-                                   <CAPTION>New Column 6</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -2286,7 +2114,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT9</INAME>
-                                      <CAPTION>New Text 9</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -2430,7 +2257,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL11</INAME>
-                                   <CAPTION>New Column 11</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -2516,6 +2342,7 @@
                                     <NAME>
                                      <INAME>%TEXT6</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -2529,20 +2356,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT6</INAME>
-                                      <CAPTION>New Text 6</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT6</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Name</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -2577,7 +2392,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL12</INAME>
-                                   <CAPTION>New Column 12</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -2683,7 +2497,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT10</INAME>
-                                      <CAPTION>New Text 10</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -2827,7 +2640,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL9</INAME>
-                                   <CAPTION>New Column 9</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -2913,6 +2725,7 @@
                                     <NAME>
                                      <INAME>%TEXT7</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -2926,20 +2739,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT7</INAME>
-                                      <CAPTION>New Text 7</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT7</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Kind</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -2974,7 +2775,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL10</INAME>
-                                   <CAPTION>New Column 10</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -3080,7 +2880,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT11</INAME>
-                                      <CAPTION>New Text 11</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -3224,7 +3023,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL7</INAME>
-                                   <CAPTION>New Column 7</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -3310,6 +3108,7 @@
                                     <NAME>
                                      <INAME>%TEXT8</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -3323,20 +3122,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT8</INAME>
-                                      <CAPTION>New Text 8</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT8</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Line</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -3371,7 +3158,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL8</INAME>
-                                   <CAPTION>New Column 8</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -3477,7 +3263,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT12</INAME>
-                                      <CAPTION>New Text 12</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -3621,7 +3406,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL13</INAME>
-                                   <CAPTION>New Column 13</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -3730,7 +3514,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT13</INAME>
-                                      <CAPTION>New Text 13</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:TEXT>
@@ -3762,7 +3545,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT6</INAME>
-                             <CAPTION>Fußbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -3815,6 +3597,7 @@
                         <NAME>
                          <INAME>DIFF</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -3830,41 +3613,6 @@
                           <INAME>DIFF</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>DIFF</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>DIFF</INAME>
-                          <LINENR>000002</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>DIFF</INAME>
-                          <LINENR>000003</LINENR>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Diff</TDLINE>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>DIFF</INAME>
-                          <LINENR>000004</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:SUCC/>
@@ -3931,6 +3679,7 @@
                         <NAME>
                          <INAME>DIFF_EMPTY</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -3946,17 +3695,6 @@
                           <INAME>DIFF_EMPTY</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>DIFF_EMPTY</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                          <TDLINE>Empty</TDLINE>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:COND>
@@ -3978,7 +3716,6 @@
                           <FORMNAME>ZAOR_REVIEW</FORMNAME>
                           <OBJTYPE>CD</OBJTYPE>
                           <INAME>%CONDITION2</INAME>
-                          <CAPTION>New Alternative 1</CAPTION>
                          </item>
                         </T_CAPTION>
                        </sf:CONDITION>
@@ -4016,7 +3753,6 @@
                           <FORMNAME>ZAOR_REVIEW</FORMNAME>
                           <OBJTYPE>SE</OBJTYPE>
                           <INAME>DIFF</INAME>
-                          <CAPTION>Per object</CAPTION>
                          </item>
                         </T_CAPTION>
                        </sf:SECTION>
@@ -4068,6 +3804,7 @@
                            <NAME>
                             <INAME>ENHANCED_OBJECT</INAME>
                            </NAME>
+                           <NOLANGUAGE>X</NOLANGUAGE>
                            <APPMODE>P</APPMODE>
                            <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                            <TEXT_AREA>
@@ -4083,33 +3820,6 @@
                              <INAME>ENHANCED_OBJECT</INAME>
                             </item>
                            </T_CAPTION>
-                           <T_TEXT>
-                            <item>
-                             <SPRAS>E</SPRAS>
-                             <TXTYPE>F</TXTYPE>
-                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                             <INAME>ENHANCED_OBJECT</INAME>
-                             <LINENR>000001</LINENR>
-                             <TDFORMAT>*</TDFORMAT>
-                             <TDLINE>Enhanced object: &amp;LS_DIFF_LIST-ENHANCED_OBJECT-OBJECT&amp;</TDLINE>
-                            </item>
-                            <item>
-                             <SPRAS>E</SPRAS>
-                             <TXTYPE>F</TXTYPE>
-                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                             <INAME>ENHANCED_OBJECT</INAME>
-                             <LINENR>000002</LINENR>
-                             <TDLINE>&amp;LS_DIFF_LIST-ENHANCED_OBJECT-OBJ_NAME&amp;</TDLINE>
-                            </item>
-                            <item>
-                             <SPRAS>E</SPRAS>
-                             <TXTYPE>F</TXTYPE>
-                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                             <INAME>ENHANCED_OBJECT</INAME>
-                             <LINENR>000003</LINENR>
-                             <TDFORMAT>*</TDFORMAT>
-                            </item>
-                           </T_TEXT>
                           </sf:TEXT>
                          </sf:OBJ>
                          <sf:COND>
@@ -4131,7 +3841,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>CD</OBJTYPE>
                              <INAME>%CONDITION19</INAME>
-                             <CAPTION>Neue Alternative 19</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:CONDITION>
@@ -4768,7 +4477,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT11</INAME>
-                                <CAPTION>Kopfbereich</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -4791,7 +4499,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT12</INAME>
-                                <CAPTION>Hauptbereich</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -4919,7 +4626,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>CD</OBJTYPE>
                                    <INAME>%CONDITION10</INAME>
-                                   <CAPTION>New Alternative 10</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:CONDITION>
@@ -5092,7 +4798,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL19</INAME>
-                                      <CAPTION>New Column 17</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -5198,7 +4903,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>TI</OBJTYPE>
                                          <INAME>%TEXT19</INAME>
-                                         <CAPTION>New Text 17</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:TEXT>
@@ -5235,7 +4939,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL20</INAME>
-                                      <CAPTION>New Column 18</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -5341,7 +5044,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>TI</OBJTYPE>
                                          <INAME>%TEXT20</INAME>
-                                         <CAPTION>New Text 18</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:TEXT>
@@ -5690,7 +5392,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>CD</OBJTYPE>
                                    <INAME>%CONDITION4</INAME>
-                                   <CAPTION>New Alternative 10</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:CONDITION>
@@ -5826,7 +5527,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>TI</OBJTYPE>
                                          <INAME>%TEXT22</INAME>
-                                         <CAPTION>New Text 22</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:TEXT>
@@ -5863,7 +5563,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL23</INAME>
-                                      <CAPTION>New Column 17</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -5969,7 +5668,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL24</INAME>
-                                      <CAPTION>New Column 18</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -6279,7 +5977,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>CD</OBJTYPE>
                                    <INAME>%CONDITION11</INAME>
-                                   <CAPTION>New Alternative 11</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:CONDITION>
@@ -6452,7 +6149,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL17</INAME>
-                                      <CAPTION>New Column 17</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -6558,7 +6254,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>TI</OBJTYPE>
                                          <INAME>%TEXT17</INAME>
-                                         <CAPTION>New Text 17</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:TEXT>
@@ -6595,7 +6290,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>SE</OBJTYPE>
                                       <INAME>%CELL18</INAME>
-                                      <CAPTION>New Column 18</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:SECTION>
@@ -6701,7 +6395,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>TI</OBJTYPE>
                                          <INAME>%TEXT18</INAME>
-                                         <CAPTION>New Text 18</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:TEXT>
@@ -6946,7 +6639,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT13</INAME>
-                                <CAPTION>Fußbereich</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -6987,7 +6679,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>SE</OBJTYPE>
                              <INAME>ENHANCEMENT_DIFF_OBJECT</INAME>
-                             <CAPTION>enhanced objects</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:SECTION>
@@ -7657,7 +7348,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT16</INAME>
-                                   <CAPTION>Kopfbereich</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -7680,7 +7370,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT17</INAME>
-                                   <CAPTION>Hauptbereich</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -7808,7 +7497,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>CD</OBJTYPE>
                                       <INAME>%CONDITION16</INAME>
-                                      <CAPTION>New Alternative 10</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:CONDITION>
@@ -7981,7 +7669,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL27</INAME>
-                                         <CAPTION>New Column 17</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -8087,7 +7774,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT25</INAME>
-                                            <CAPTION>New Text 17</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -8124,7 +7810,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL28</INAME>
-                                         <CAPTION>New Column 18</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -8230,7 +7915,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT26</INAME>
-                                            <CAPTION>New Text 18</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -8579,7 +8263,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>CD</OBJTYPE>
                                       <INAME>%CONDITION17</INAME>
-                                      <CAPTION>New Alternative 10</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:CONDITION>
@@ -8715,7 +8398,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT28</INAME>
-                                            <CAPTION>New Text 22</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -8752,7 +8434,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL31</INAME>
-                                         <CAPTION>New Column 17</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -8858,7 +8539,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL32</INAME>
-                                         <CAPTION>New Column 18</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -9168,7 +8848,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>CD</OBJTYPE>
                                       <INAME>%CONDITION18</INAME>
-                                      <CAPTION>New Alternative 11</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:CONDITION>
@@ -9341,7 +9020,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL35</INAME>
-                                         <CAPTION>New Column 17</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -9447,7 +9125,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT30</INAME>
-                                            <CAPTION>New Text 17</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -9484,7 +9161,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>SE</OBJTYPE>
                                          <INAME>%CELL36</INAME>
-                                         <CAPTION>New Column 18</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:SECTION>
@@ -9590,7 +9266,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT31</INAME>
-                                            <CAPTION>New Text 18</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -9835,7 +9510,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT18</INAME>
-                                   <CAPTION>Fußbereich</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -9894,6 +9568,7 @@
                         <NAME>
                          <INAME>COMMENTS</INAME>
                         </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
@@ -9909,41 +9584,6 @@
                           <INAME>COMMENTS</INAME>
                          </item>
                         </T_CAPTION>
-                        <T_TEXT>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>COMMENTS</INAME>
-                          <LINENR>000001</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>COMMENTS</INAME>
-                          <LINENR>000002</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>COMMENTS</INAME>
-                          <LINENR>000003</LINENR>
-                          <TDFORMAT>B4</TDFORMAT>
-                          <TDLINE>Comments</TDLINE>
-                         </item>
-                         <item>
-                          <SPRAS>E</SPRAS>
-                          <TXTYPE>F</TXTYPE>
-                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                          <INAME>COMMENTS</INAME>
-                          <LINENR>000004</LINENR>
-                          <TDFORMAT>*</TDFORMAT>
-                         </item>
-                        </T_TEXT>
                        </sf:TEXT>
                       </sf:OBJ>
                       <sf:SUCC/>
@@ -10072,7 +9712,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT7</INAME>
-                             <CAPTION>Kopfbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -10096,7 +9735,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT10</INAME>
-                             <CAPTION>TOPIC Event on Sort Begin</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -10128,7 +9766,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>SE</OBJTYPE>
                                 <INAME>%ROW3</INAME>
-                                <CAPTION>New Line 3</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:SECTION>
@@ -10233,7 +9870,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL14</INAME>
-                                   <CAPTION>New Column 14</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -10319,6 +9955,7 @@
                                     <NAME>
                                      <INAME>%TEXT14</INAME>
                                     </NAME>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
@@ -10332,20 +9969,8 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>TI</OBJTYPE>
                                       <INAME>%TEXT14</INAME>
-                                      <CAPTION>New Text 14</CAPTION>
                                      </item>
                                     </T_CAPTION>
-                                    <T_TEXT>
-                                     <item>
-                                      <SPRAS>E</SPRAS>
-                                      <TXTYPE>F</TXTYPE>
-                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                                      <INAME>%TEXT14</INAME>
-                                      <LINENR>000001</LINENR>
-                                      <TDFORMAT>U1</TDFORMAT>
-                                      <TDLINE>Topic</TDLINE>
-                                     </item>
-                                    </T_TEXT>
                                    </sf:TEXT>
                                   </sf:OBJ>
                                   <sf:SUCC/>
@@ -10375,7 +10000,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT8</INAME>
-                             <CAPTION>Hauptbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -10407,7 +10031,6 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>SE</OBJTYPE>
                                 <INAME>%ROW4</INAME>
-                                <CAPTION>New Line 4</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:SECTION>
@@ -10512,7 +10135,6 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>SE</OBJTYPE>
                                    <INAME>%CELL15</INAME>
-                                   <CAPTION>New Column 15</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:SECTION>
@@ -10612,7 +10234,6 @@
                                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                       <OBJTYPE>CD</OBJTYPE>
                                       <INAME>%CONDITION3</INAME>
-                                      <CAPTION>New Alternative 3</CAPTION>
                                      </item>
                                     </T_CAPTION>
                                    </sf:CONDITION>
@@ -10633,7 +10254,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>EV</OBJTYPE>
                                          <INAME>%EVENT14</INAME>
-                                         <CAPTION>TRUE</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:EVENT>
@@ -10667,7 +10287,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT23</INAME>
-                                            <CAPTION>New Text 15</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -10693,7 +10312,6 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>EV</OBJTYPE>
                                          <INAME>%EVENT15</INAME>
-                                         <CAPTION>FALSE</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:EVENT>
@@ -10727,7 +10345,6 @@
                                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                             <OBJTYPE>TI</OBJTYPE>
                                             <INAME>%TEXT15</INAME>
-                                            <CAPTION>New Text 15</CAPTION>
                                            </item>
                                           </T_CAPTION>
                                          </sf:TEXT>
@@ -10765,7 +10382,6 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT9</INAME>
-                             <CAPTION>Fußbereich</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -10856,7 +10472,6 @@
                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                 <OBJTYPE>OA</OBJTYPE>
                 <INAME>%OUTATTRIB1</INAME>
-                <CAPTION>New Display Option</CAPTION>
                </item>
               </T_CAPTION>
              </sf:OUTATTR>
@@ -10893,6 +10508,7 @@
                      <NAME>
                       <INAME>PAGE</INAME>
                      </NAME>
+                     <NOLANGUAGE>X</NOLANGUAGE>
                      <APPMODE>P</APPMODE>
                      <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                      <TEXT_AREA>
@@ -10908,17 +10524,6 @@
                        <INAME>PAGE</INAME>
                       </item>
                      </T_CAPTION>
-                     <T_TEXT>
-                      <item>
-                       <SPRAS>E</SPRAS>
-                       <TXTYPE>F</TXTYPE>
-                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
-                       <INAME>PAGE</INAME>
-                       <LINENR>000001</LINENR>
-                       <TDFORMAT>R0</TDFORMAT>
-                       <TDLINE>Page &amp;sfsy-page&amp; of &amp;sfsy-jobpages&amp;</TDLINE>
-                      </item>
-                     </T_TEXT>
                     </sf:TEXT>
                    </sf:OBJ>
                    <sf:SUCC/>

@@ -62,4 +62,6 @@ INTERFACE zif_aor_types
   TYPES: as4text TYPE e07t-as4text,
          END OF ty_header.
 
+   TYPES: ty_approvals_tt TYPE STANDARD TABLE OF zaor_approvals WITH DEFAULT KEY.
+
 ENDINTERFACE.

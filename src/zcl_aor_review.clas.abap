@@ -6,7 +6,7 @@ CLASS zcl_aor_review DEFINITION
   PUBLIC SECTION.
 
     DATA mv_pos_new_code_comments TYPE zif_aor_types=>ty_code_comment_tt READ-ONLY .
-    DATA mv_logger TYPE REF TO zif_logger READ-ONLY.
+    DATA mv_logger TYPE REF TO zif_logger READ-ONLY .
 
     METHODS ci
       RETURNING
@@ -19,9 +19,6 @@ CLASS zcl_aor_review DEFINITION
         VALUE(rv_file) TYPE string .
     METHODS delete .
     METHODS check_open
-      RAISING
-        zcx_aor_error .
-    METHODS close
       RAISING
         zcx_aor_error .
     METHODS objects_list
@@ -43,26 +40,41 @@ CLASS zcl_aor_review DEFINITION
         VALUE(iv_position) TYPE zaor_code_com .
     METHODS on_code_comment_posted
       IMPORTING
-        VALUE(comment) TYPE zaor_code_com.
-  PROTECTED SECTION.
+        VALUE(comment) TYPE zaor_code_com .
+    METHODS get_approvals
+      RETURNING
+        VALUE(rt_approvals) TYPE zif_aor_types=>ty_approvals_tt .
+    METHODS approve
+      RAISING
+        zcx_aor_error .
+    METHODS can_approve
+      RETURNING
+        VALUE(rv_result) TYPE sap_bool .
+    METHODS close
+      RAISING
+        zcx_aor_error .
+    METHODS remove_approval.
+    METHODS get_status
+      RETURNING VALUE(rv_status) TYPE zaor_status.
+protected section.
 *"* protected components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
-  PRIVATE SECTION.
+PRIVATE SECTION.
 
-    DATA mv_review_id TYPE zaor_review-review_id .
-    CLASS-DATA gv_folder TYPE string .
+  DATA mv_review_id TYPE zaor_review-review_id .
+  CLASS-DATA gv_folder TYPE string .
 
-    METHODS fix_newlines
-      IMPORTING
-        !it_comments       TYPE zif_aor_types=>ty_comment_tt
-      RETURNING
-        VALUE(rt_comments) TYPE zif_aor_types=>ty_comment_tt .
-    METHODS get_description
-      RETURNING
-        VALUE(rv_text) TYPE as4text .
-    METHODS objects_list_limu
-      RETURNING
-        VALUE(rt_objects) TYPE zaor_object_tt .
+  METHODS fix_newlines
+    IMPORTING
+      !it_comments       TYPE zif_aor_types=>ty_comment_tt
+    RETURNING
+      VALUE(rt_comments) TYPE zif_aor_types=>ty_comment_tt .
+  METHODS get_description
+    RETURNING
+      VALUE(rv_text) TYPE as4text .
+  METHODS objects_list_limu
+    RETURNING
+      VALUE(rt_objects) TYPE zaor_object_tt .
 *"* private components of class ZCL_AOR_REVIEW
 *"* do not include other source files here!!!
 ENDCLASS.
@@ -72,17 +84,45 @@ ENDCLASS.
 CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
 
-  METHOD check_open.
+  METHOD approve.
+    DATA: ls_approval TYPE zaor_approvals.
 
-    DATA: lv_status TYPE zaor_review-status.
+    comments( )->check_all_closed( ).
 
+    ls_approval-review_id = mv_review_id.
+    ls_approval-approved_by = sy-uname.
+    GET TIME STAMP FIELD ls_approval-timestamp.
 
-    SELECT SINGLE status
-      FROM zaor_review INTO lv_status
-      WHERE review_id = mv_review_id.                     "#EC CI_SUBRC
+    INSERT zaor_approvals FROM ls_approval.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_aor_error
+        EXPORTING
+          textid = zcx_aor_error=>already_approved.
+    ENDIF.
+
+    UPDATE zaor_review SET status = zif_aor_constants=>c_status-approved
+      WHERE review_id = mv_review_id.
     ASSERT sy-subrc = 0.
 
-    IF lv_status = zif_aor_constants=>c_status-closed.
+  ENDMETHOD.
+
+
+  METHOD can_approve.
+
+    SELECT COUNT(*) FROM zaor_approvals
+      WHERE review_id = mv_review_id AND approved_by = sy-uname.
+    IF sy-subrc = 0.
+      RETURN.
+    ENDIF.
+
+    rv_result = abap_true.
+
+  ENDMETHOD.
+
+
+  METHOD check_open.
+
+    IF get_status( ) = zif_aor_constants=>c_status-closed.
       RAISE EXCEPTION TYPE zcx_aor_error
         EXPORTING
           textid = zcx_aor_error=>review_closed.
@@ -102,7 +142,17 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
   METHOD close.
 
-    comments( )->check_all_closed( ).
+    SELECT COUNT(*) FROM zaor_config
+      WHERE approve_before_transport_req = abap_true.
+    IF sy-subrc = 0.
+      SELECT COUNT(*) FROM zaor_review
+        WHERE review_id = mv_review_id AND status = zif_aor_constants=>c_status-approved.
+      IF sy-subrc <> 0.
+        RAISE EXCEPTION TYPE zcx_aor_error
+          EXPORTING
+            textid = zcx_aor_error=>approve_before.
+      ENDIF.
+    ENDIF.
 
     UPDATE zaor_review
       SET status = zif_aor_constants=>c_status-closed
@@ -234,6 +284,14 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_approvals.
+
+    SELECT * FROM zaor_approvals INTO TABLE rt_approvals
+      WHERE review_id = mv_review_id.
+
+  ENDMETHOD.
+
+
   METHOD get_description.
 
     DATA: lv_trkorr TYPE trkorr.
@@ -242,6 +300,16 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
     lv_trkorr = mv_review_id(10).
 
     rv_text = zcl_aor_transport=>get_description( lv_trkorr ).
+
+  ENDMETHOD.
+
+
+  METHOD get_status.
+
+    SELECT SINGLE status
+      FROM zaor_review INTO rv_status
+      WHERE review_id = mv_review_id.                     "#EC CI_SUBRC
+    ASSERT sy-subrc = 0.
 
   ENDMETHOD.
 
@@ -460,6 +528,13 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
     iv_position-review_id = mv_review_id.
 
     INSERT iv_position INTO TABLE mv_pos_new_code_comments.
+
+  ENDMETHOD.
+
+
+  METHOD remove_approval.
+
+    DELETE FROM zaor_approvals WHERE review_id = mv_review_id AND approved_by = sy-uname.
 
   ENDMETHOD.
 ENDCLASS.
