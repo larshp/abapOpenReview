@@ -153,6 +153,12 @@
     <TYPENAME>ZIF_AOR_TYPES=&gt;TY_DIFF_LIST_TT</TYPENAME>
    </item>
    <item>
+    <IOTYPE>I</IOTYPE>
+    <NAME>IT_APPROVALS</NAME>
+    <TYPING>TYPE</TYPING>
+    <TYPENAME>ZIF_AOR_TYPES=&gt;TY_APPROVALS_TT</TYPENAME>
+   </item>
+   <item>
     <IOTYPE>X</IOTYPE>
     <NAME>FORMATTING_ERROR</NAME>
     <STANDARD>X</STANDARD>
@@ -215,6 +221,13 @@
     <TYPENAME>ZIF_AOR_TYPES=&gt;TY_ENH_DIFF_ST</TYPENAME>
    </item>
   </GDATA>
+  <FSYMBOLS>
+   <item>
+    <NAME>&lt;LS_APPROVAL&gt;</NAME>
+    <TYPING>TYPE</TYPING>
+    <TYPENAME>ZIF_AOR_TYPES=&gt;TY_APPROVAL_ST</TYPENAME>
+   </item>
+  </FSYMBOLS>
   <sf:VARHEADER>
    <sf:item>
     <PAGEFORMAT>DINA4</PAGEFORMAT>
@@ -511,6 +524,7 @@
                            <NAME>
                             <INAME>%EVENT1</INAME>
                            </NAME>
+                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -518,6 +532,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT1</INAME>
+                             <CAPTION>Header</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -911,6 +926,7 @@
                            <NAME>
                             <INAME>%EVENT2</INAME>
                            </NAME>
+                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -918,6 +934,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT2</INAME>
+                             <CAPTION>Main Area</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1323,6 +1340,7 @@
                            <NAME>
                             <INAME>%EVENT3</INAME>
                            </NAME>
+                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1330,6 +1348,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT3</INAME>
+                             <CAPTION>Footer</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1710,6 +1729,7 @@
                            <NAME>
                             <INAME>%EVENT4</INAME>
                            </NAME>
+                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1717,6 +1737,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT4</INAME>
+                             <CAPTION>Header</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -1732,6 +1753,7 @@
                            <NAME>
                             <INAME>%EVENT5</INAME>
                            </NAME>
+                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -1739,6 +1761,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT5</INAME>
+                             <CAPTION>Main Area</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -3538,6 +3561,7 @@
                            <NAME>
                             <INAME>%EVENT6</INAME>
                            </NAME>
+                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -3545,6 +3569,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT6</INAME>
+                             <CAPTION>Footer</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -4470,6 +4495,7 @@
                               <NAME>
                                <INAME>%EVENT11</INAME>
                               </NAME>
+                              <CAPTION>Header</CAPTION>
                               <EVTYPE>H</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -4477,6 +4503,7 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT11</INAME>
+                                <CAPTION>Header</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -4492,6 +4519,7 @@
                               <NAME>
                                <INAME>%EVENT12</INAME>
                               </NAME>
+                              <CAPTION>Main Area</CAPTION>
                               <EVTYPE>B</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -4499,6 +4527,7 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT12</INAME>
+                                <CAPTION>Main Area</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -6632,6 +6661,7 @@
                               <NAME>
                                <INAME>%EVENT13</INAME>
                               </NAME>
+                              <CAPTION>Footer</CAPTION>
                               <EVTYPE>F</EVTYPE>
                               <T_CAPTION>
                                <item>
@@ -6639,6 +6669,7 @@
                                 <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                 <OBJTYPE>EV</OBJTYPE>
                                 <INAME>%EVENT13</INAME>
+                                <CAPTION>Footer</CAPTION>
                                </item>
                               </T_CAPTION>
                              </sf:EVENT>
@@ -7341,6 +7372,7 @@
                                  <NAME>
                                   <INAME>%EVENT16</INAME>
                                  </NAME>
+                                 <CAPTION>Header</CAPTION>
                                  <EVTYPE>H</EVTYPE>
                                  <T_CAPTION>
                                   <item>
@@ -7348,6 +7380,7 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT16</INAME>
+                                   <CAPTION>Header</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -7363,6 +7396,7 @@
                                  <NAME>
                                   <INAME>%EVENT17</INAME>
                                  </NAME>
+                                 <CAPTION>Main Area</CAPTION>
                                  <EVTYPE>B</EVTYPE>
                                  <T_CAPTION>
                                   <item>
@@ -7370,6 +7404,7 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT17</INAME>
+                                   <CAPTION>Main Area</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -9503,6 +9538,7 @@
                                  <NAME>
                                   <INAME>%EVENT18</INAME>
                                  </NAME>
+                                 <CAPTION>Footer</CAPTION>
                                  <EVTYPE>F</EVTYPE>
                                  <T_CAPTION>
                                   <item>
@@ -9510,6 +9546,7 @@
                                    <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                    <OBJTYPE>EV</OBJTYPE>
                                    <INAME>%EVENT18</INAME>
+                                   <CAPTION>Footer</CAPTION>
                                   </item>
                                  </T_CAPTION>
                                 </sf:EVENT>
@@ -9570,6 +9607,11 @@
                         </NAME>
                         <NOLANGUAGE>X</NOLANGUAGE>
                         <APPMODE>P</APPMODE>
+                        <TEXT>
+                         <item>
+                          <TDFORMAT>*</TDFORMAT>
+                         </item>
+                        </TEXT>
                         <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                         <TEXT_AREA>
                          <ENABLED>F</ENABLED>
@@ -9705,6 +9747,7 @@
                            <NAME>
                             <INAME>%EVENT7</INAME>
                            </NAME>
+                           <CAPTION>Header</CAPTION>
                            <EVTYPE>H</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -9712,6 +9755,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT7</INAME>
+                             <CAPTION>Header</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -9957,6 +10001,11 @@
                                     </NAME>
                                     <NOLANGUAGE>X</NOLANGUAGE>
                                     <APPMODE>P</APPMODE>
+                                    <TEXT>
+                                     <item>
+                                      <TDFORMAT>*</TDFORMAT>
+                                     </item>
+                                    </TEXT>
                                     <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
                                     <TEXT_AREA>
                                      <ENABLED>F</ENABLED>
@@ -9993,6 +10042,7 @@
                            <NAME>
                             <INAME>%EVENT8</INAME>
                            </NAME>
+                           <CAPTION>Main Area</CAPTION>
                            <EVTYPE>B</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -10000,6 +10050,7 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT8</INAME>
+                             <CAPTION>Main Area</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>
@@ -10247,6 +10298,7 @@
                                        <NAME>
                                         <INAME>%EVENT14</INAME>
                                        </NAME>
+                                       <CAPTION>TRUE</CAPTION>
                                        <EVTYPE>+</EVTYPE>
                                        <T_CAPTION>
                                         <item>
@@ -10254,6 +10306,7 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>EV</OBJTYPE>
                                          <INAME>%EVENT14</INAME>
+                                         <CAPTION>TRUE</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:EVENT>
@@ -10305,6 +10358,7 @@
                                        <NAME>
                                         <INAME>%EVENT15</INAME>
                                        </NAME>
+                                       <CAPTION>FALSE</CAPTION>
                                        <EVTYPE>-</EVTYPE>
                                        <T_CAPTION>
                                         <item>
@@ -10312,6 +10366,7 @@
                                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
                                          <OBJTYPE>EV</OBJTYPE>
                                          <INAME>%EVENT15</INAME>
+                                         <CAPTION>FALSE</CAPTION>
                                         </item>
                                        </T_CAPTION>
                                       </sf:EVENT>
@@ -10375,6 +10430,7 @@
                            <NAME>
                             <INAME>%EVENT9</INAME>
                            </NAME>
+                           <CAPTION>Footer</CAPTION>
                            <EVTYPE>F</EVTYPE>
                            <T_CAPTION>
                             <item>
@@ -10382,6 +10438,1113 @@
                              <FORMNAME>ZAOR_REVIEW</FORMNAME>
                              <OBJTYPE>EV</OBJTYPE>
                              <INAME>%EVENT9</INAME>
+                             <CAPTION>Footer</CAPTION>
+                            </item>
+                           </T_CAPTION>
+                          </sf:EVENT>
+                         </sf:OBJ>
+                         <sf:SUCC/>
+                        </sf:NODE>
+                       </sf:item>
+                      </sf:SUCC>
+                     </sf:NODE>
+                    </sf:item>
+                   </sf:SUCC>
+                  </sf:NODE>
+                 </sf:item>
+                 <sf:item>
+                  <sf:NODE>
+                   <NODETYPE>SE</NODETYPE>
+                   <sf:OBJ>
+                    <sf:SECTION>
+                     <NAME>
+                      <INAME>APPROVALS_FOLDER</INAME>
+                     </NAME>
+                     <SECTTYPE>F</SECTTYPE>
+                     <U_FHEIGHT>CM</U_FHEIGHT>
+                     <PATTERN>
+                      <PATTNUM>0000</PATTNUM>
+                      <FRAME>0.00</FRAME>
+                      <U_FRAME>PT</U_FRAME>
+                     </PATTERN>
+                     <U_WIDTH>CM</U_WIDTH>
+                     <U_LEFT>CM</U_LEFT>
+                     <U_TOP>CM</U_TOP>
+                     <U_SB>CM</U_SB>
+                     <U_SA>CM</U_SA>
+                     <T_CAPTION>
+                      <item>
+                       <LANGU>E</LANGU>
+                       <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                       <OBJTYPE>SE</OBJTYPE>
+                       <INAME>APPROVALS_FOLDER</INAME>
+                      </item>
+                     </T_CAPTION>
+                    </sf:SECTION>
+                   </sf:OBJ>
+                   <sf:SUCC>
+                    <sf:item>
+                     <sf:NODE>
+                      <NODETYPE>TI</NODETYPE>
+                      <sf:OBJ>
+                       <sf:TEXT>
+                        <NAME>
+                         <INAME>APPROVALS</INAME>
+                        </NAME>
+                        <NOLANGUAGE>X</NOLANGUAGE>
+                        <APPMODE>P</APPMODE>
+                        <TEXT>
+                         <item>
+                          <TDFORMAT>*</TDFORMAT>
+                         </item>
+                        </TEXT>
+                        <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
+                        <TEXT_AREA>
+                         <ENABLED>F</ENABLED>
+                         <NCOLS>0</NCOLS>
+                         <NROWS>0</NROWS>
+                        </TEXT_AREA>
+                        <T_CAPTION>
+                         <item>
+                          <LANGU>E</LANGU>
+                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                          <OBJTYPE>TI</OBJTYPE>
+                          <INAME>APPROVALS</INAME>
+                         </item>
+                        </T_CAPTION>
+                       </sf:TEXT>
+                      </sf:OBJ>
+                      <sf:SUCC/>
+                     </sf:NODE>
+                    </sf:item>
+                    <sf:item>
+                     <sf:NODE>
+                      <NODETYPE>SE</NODETYPE>
+                      <sf:OBJ>
+                       <sf:SECTION>
+                        <NAME>
+                         <INAME>APPROVALS</INAME>
+                        </NAME>
+                        <SECTTYPE>C</SECTTYPE>
+                        <DATATYPE>L</DATATYPE>
+                        <TABNAME>IT_APPROVALS</TABNAME>
+                        <TABHTYPE>A</TABHTYPE>
+                        <TABHEADER>&lt;LS_APPROVAL&gt;</TABHEADER>
+                        <OTABTYPE>D</OTABTYPE>
+                        <OTABHEADER>A</OTABHEADER>
+                        <OTABFOOTER>A</OTABFOOTER>
+                        <FHEIGHT>1.00</FHEIGHT>
+                        <U_FHEIGHT>CM</U_FHEIGHT>
+                        <PATTERN>
+                         <PATTNUM>0000</PATTNUM>
+                         <FRAME>0.00</FRAME>
+                         <U_FRAME>PT</U_FRAME>
+                        </PATTERN>
+                        <USEBORDER>X</USEBORDER>
+                        <WIDTH>18.00</WIDTH>
+                        <U_WIDTH>CM</U_WIDTH>
+                        <APPMODE>L</APPMODE>
+                        <U_LEFT>CM</U_LEFT>
+                        <U_TOP>CM</U_TOP>
+                        <U_SB>CM</U_SB>
+                        <U_SA>CM</U_SA>
+                        <DYNLINES>
+                         <item>
+                          <NAME>LINE</NAME>
+                          <DEFAULTVAL>X</DEFAULTVAL>
+                          <SHADING>000</SHADING>
+                         </item>
+                        </DYNLINES>
+                        <CELLS>
+                         <item>
+                          <NAME>LINE</NAME>
+                          <COLUMNNR>001</COLUMNNR>
+                          <CWIDTH>4.00</CWIDTH>
+                          <U_CWIDTH>CM</U_CWIDTH>
+                          <SHADING>000</SHADING>
+                          <BORDERS>
+                           <item>
+                            <IDX>001</IDX>
+                            <INTENSITY>000</INTENSITY>
+                            <LLEFT>0.00</LLEFT>
+                            <LLEFT_U>MM</LLEFT_U>
+                            <LTOP>0.00</LTOP>
+                            <LTOP_U>MM</LTOP_U>
+                            <LRIGHT>0.00</LRIGHT>
+                            <LRIGHT_U>MM</LRIGHT_U>
+                            <LBOTTOM>0.00</LBOTTOM>
+                            <LBOTTOM_U>MM</LBOTTOM_U>
+                            <FILLCOLOR>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </FILLCOLOR>
+                            <CLEFT>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CLEFT>
+                            <CTOP>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CTOP>
+                            <CRIGHT>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CRIGHT>
+                            <CBOTTOM>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CBOTTOM>
+                           </item>
+                          </BORDERS>
+                         </item>
+                         <item>
+                          <NAME>LINE</NAME>
+                          <COLUMNNR>002</COLUMNNR>
+                          <CWIDTH>14.00</CWIDTH>
+                          <U_CWIDTH>CM</U_CWIDTH>
+                          <SHADING>000</SHADING>
+                          <BORDERS>
+                           <item>
+                            <IDX>001</IDX>
+                            <INTENSITY>000</INTENSITY>
+                            <LLEFT>0.00</LLEFT>
+                            <LLEFT_U>MM</LLEFT_U>
+                            <LTOP>0.00</LTOP>
+                            <LTOP_U>MM</LTOP_U>
+                            <LRIGHT>0.00</LRIGHT>
+                            <LRIGHT_U>MM</LRIGHT_U>
+                            <LBOTTOM>0.00</LBOTTOM>
+                            <LBOTTOM_U>MM</LBOTTOM_U>
+                            <FILLCOLOR>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </FILLCOLOR>
+                            <CLEFT>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CLEFT>
+                            <CTOP>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CTOP>
+                            <CRIGHT>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CRIGHT>
+                            <CBOTTOM>
+                             <RED>000</RED>
+                             <GREEN>000</GREEN>
+                             <BLUE>000</BLUE>
+                            </CBOTTOM>
+                           </item>
+                          </BORDERS>
+                         </item>
+                        </CELLS>
+                        <T_CAPTION>
+                         <item>
+                          <LANGU>E</LANGU>
+                          <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                          <OBJTYPE>SE</OBJTYPE>
+                          <INAME>APPROVALS</INAME>
+                         </item>
+                        </T_CAPTION>
+                       </sf:SECTION>
+                      </sf:OBJ>
+                      <sf:SUCC>
+                       <sf:item>
+                        <sf:NODE>
+                         <NODETYPE>EV</NODETYPE>
+                         <sf:OBJ>
+                          <sf:EVENT>
+                           <NAME>
+                            <INAME>%EVENT19</INAME>
+                           </NAME>
+                           <CAPTION>Header</CAPTION>
+                           <EVTYPE>H</EVTYPE>
+                           <T_CAPTION>
+                            <item>
+                             <LANGU>E</LANGU>
+                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                             <OBJTYPE>EV</OBJTYPE>
+                             <INAME>%EVENT19</INAME>
+                             <CAPTION>Header</CAPTION>
+                            </item>
+                           </T_CAPTION>
+                          </sf:EVENT>
+                         </sf:OBJ>
+                         <sf:SUCC>
+                          <sf:item>
+                           <sf:NODE>
+                            <NODETYPE>SE</NODETYPE>
+                            <sf:OBJ>
+                             <sf:SECTION>
+                              <NAME>
+                               <INAME>%ROW8</INAME>
+                              </NAME>
+                              <CAPTION>New Line 8</CAPTION>
+                              <SECTTYPE>R</SECTTYPE>
+                              <U_FHEIGHT>CM</U_FHEIGHT>
+                              <PATTERN>
+                               <PATTNUM>0000</PATTNUM>
+                               <FRAME>0.00</FRAME>
+                               <U_FRAME>PT</U_FRAME>
+                              </PATTERN>
+                              <U_WIDTH>CM</U_WIDTH>
+                              <U_LEFT>CM</U_LEFT>
+                              <U_TOP>CM</U_TOP>
+                              <U_SB>CM</U_SB>
+                              <U_SA>CM</U_SA>
+                              <T_CAPTION>
+                               <item>
+                                <LANGU>E</LANGU>
+                                <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                <OBJTYPE>SE</OBJTYPE>
+                                <INAME>%ROW8</INAME>
+                                <CAPTION>New Line 8</CAPTION>
+                               </item>
+                              </T_CAPTION>
+                             </sf:SECTION>
+                            </sf:OBJ>
+                            <sf:OUTATTR>
+                             <sf:OUTATTR>
+                              <NAME>
+                               <INAME>%OUTATTRIB61</INAME>
+                              </NAME>
+                              <T_LINETYPE>LINE</T_LINETYPE>
+                              <U_WFRAME>PT</U_WFRAME>
+                              <U_WBOXV>CM</U_WBOXV>
+                              <U_WBOXH>CM</U_WBOXH>
+                              <U_WLEFT>CM</U_WLEFT>
+                              <U_WWIDTH>CM</U_WWIDTH>
+                              <U_WTOP>CM</U_WTOP>
+                              <U_WHEIGHT>CM</U_WHEIGHT>
+                              <BORDER>
+                               <LEFTATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </LEFTATTR>
+                               <TOPATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </TOPATTR>
+                               <RIGHTATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </RIGHTATTR>
+                               <BOTTOMATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </BOTTOMATTR>
+                              </BORDER>
+                              <T_CAPTION>
+                               <item>
+                                <LANGU>E</LANGU>
+                                <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                <OBJTYPE>OA</OBJTYPE>
+                                <INAME>%OUTATTRIB61</INAME>
+                               </item>
+                              </T_CAPTION>
+                             </sf:OUTATTR>
+                            </sf:OUTATTR>
+                            <sf:SUCC>
+                             <sf:item>
+                              <sf:NODE>
+                               <NODETYPE>SE</NODETYPE>
+                               <sf:OBJ>
+                                <sf:SECTION>
+                                 <NAME>
+                                  <INAME>%CELL38</INAME>
+                                 </NAME>
+                                 <CAPTION>New Column 38</CAPTION>
+                                 <SECTTYPE>E</SECTTYPE>
+                                 <U_FHEIGHT>CM</U_FHEIGHT>
+                                 <PATTERN>
+                                  <PATTNUM>0000</PATTNUM>
+                                  <FRAME>0.00</FRAME>
+                                  <U_FRAME>PT</U_FRAME>
+                                 </PATTERN>
+                                 <U_WIDTH>CM</U_WIDTH>
+                                 <U_LEFT>CM</U_LEFT>
+                                 <U_TOP>CM</U_TOP>
+                                 <U_SB>CM</U_SB>
+                                 <U_SA>CM</U_SA>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>SE</OBJTYPE>
+                                   <INAME>%CELL38</INAME>
+                                   <CAPTION>New Column 38</CAPTION>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:SECTION>
+                               </sf:OBJ>
+                               <sf:OUTATTR>
+                                <sf:OUTATTR>
+                                 <NAME>
+                                  <INAME>%OUTATTRIB62</INAME>
+                                 </NAME>
+                                 <U_WFRAME>PT</U_WFRAME>
+                                 <U_WBOXV>CM</U_WBOXV>
+                                 <U_WBOXH>CM</U_WBOXH>
+                                 <U_WLEFT>CM</U_WLEFT>
+                                 <U_WWIDTH>CM</U_WWIDTH>
+                                 <U_WTOP>CM</U_WTOP>
+                                 <U_WHEIGHT>CM</U_WHEIGHT>
+                                 <BORDER>
+                                  <LEFTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </LEFTATTR>
+                                  <TOPATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </TOPATTR>
+                                  <RIGHTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </RIGHTATTR>
+                                  <BOTTOMATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </BOTTOMATTR>
+                                 </BORDER>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>OA</OBJTYPE>
+                                   <INAME>%OUTATTRIB62</INAME>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:OUTATTR>
+                               </sf:OUTATTR>
+                               <sf:SUCC>
+                                <sf:item>
+                                 <sf:NODE>
+                                  <NODETYPE>TI</NODETYPE>
+                                  <sf:OBJ>
+                                   <sf:TEXT>
+                                    <NAME>
+                                     <INAME>%TEXT33</INAME>
+                                    </NAME>
+                                    <CAPTION>New Text 33</CAPTION>
+                                    <APPMODE>P</APPMODE>
+                                    <TEXT>
+                                     <item>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>Approved by</TDLINE>
+                                     </item>
+                                    </TEXT>
+                                    <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
+                                    <TEXT_AREA>
+                                     <ENABLED>F</ENABLED>
+                                     <NCOLS>0</NCOLS>
+                                     <NROWS>0</NROWS>
+                                    </TEXT_AREA>
+                                    <T_CAPTION>
+                                     <item>
+                                      <LANGU>E</LANGU>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <OBJTYPE>TI</OBJTYPE>
+                                      <INAME>%TEXT33</INAME>
+                                      <CAPTION>New Text 33</CAPTION>
+                                     </item>
+                                    </T_CAPTION>
+                                    <T_TEXT>
+                                     <item>
+                                      <SPRAS>E</SPRAS>
+                                      <TXTYPE>F</TXTYPE>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <INAME>%TEXT33</INAME>
+                                      <LINENR>000001</LINENR>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>Approved by</TDLINE>
+                                     </item>
+                                    </T_TEXT>
+                                   </sf:TEXT>
+                                  </sf:OBJ>
+                                  <sf:SUCC/>
+                                 </sf:NODE>
+                                </sf:item>
+                               </sf:SUCC>
+                              </sf:NODE>
+                             </sf:item>
+                             <sf:item>
+                              <sf:NODE>
+                               <NODETYPE>SE</NODETYPE>
+                               <sf:OBJ>
+                                <sf:SECTION>
+                                 <NAME>
+                                  <INAME>%CELL39</INAME>
+                                 </NAME>
+                                 <CAPTION>New Column 39</CAPTION>
+                                 <SECTTYPE>E</SECTTYPE>
+                                 <U_FHEIGHT>CM</U_FHEIGHT>
+                                 <PATTERN>
+                                  <PATTNUM>0000</PATTNUM>
+                                  <FRAME>0.00</FRAME>
+                                  <U_FRAME>PT</U_FRAME>
+                                 </PATTERN>
+                                 <U_WIDTH>CM</U_WIDTH>
+                                 <U_LEFT>CM</U_LEFT>
+                                 <U_TOP>CM</U_TOP>
+                                 <U_SB>CM</U_SB>
+                                 <U_SA>CM</U_SA>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>SE</OBJTYPE>
+                                   <INAME>%CELL39</INAME>
+                                   <CAPTION>New Column 39</CAPTION>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:SECTION>
+                               </sf:OBJ>
+                               <sf:OUTATTR>
+                                <sf:OUTATTR>
+                                 <NAME>
+                                  <INAME>%OUTATTRIB63</INAME>
+                                 </NAME>
+                                 <U_WFRAME>PT</U_WFRAME>
+                                 <U_WBOXV>CM</U_WBOXV>
+                                 <U_WBOXH>CM</U_WBOXH>
+                                 <U_WLEFT>CM</U_WLEFT>
+                                 <U_WWIDTH>CM</U_WWIDTH>
+                                 <U_WTOP>CM</U_WTOP>
+                                 <U_WHEIGHT>CM</U_WHEIGHT>
+                                 <BORDER>
+                                  <LEFTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </LEFTATTR>
+                                  <TOPATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </TOPATTR>
+                                  <RIGHTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </RIGHTATTR>
+                                  <BOTTOMATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </BOTTOMATTR>
+                                 </BORDER>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>OA</OBJTYPE>
+                                   <INAME>%OUTATTRIB63</INAME>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:OUTATTR>
+                               </sf:OUTATTR>
+                               <sf:SUCC>
+                                <sf:item>
+                                 <sf:NODE>
+                                  <NODETYPE>TI</NODETYPE>
+                                  <sf:OBJ>
+                                   <sf:TEXT>
+                                    <NAME>
+                                     <INAME>%TEXT34</INAME>
+                                    </NAME>
+                                    <CAPTION>New Text 34</CAPTION>
+                                    <APPMODE>P</APPMODE>
+                                    <TEXT>
+                                     <item>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>Timestamp</TDLINE>
+                                     </item>
+                                    </TEXT>
+                                    <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
+                                    <TEXT_AREA>
+                                     <ENABLED>F</ENABLED>
+                                     <NCOLS>0</NCOLS>
+                                     <NROWS>0</NROWS>
+                                    </TEXT_AREA>
+                                    <T_CAPTION>
+                                     <item>
+                                      <LANGU>E</LANGU>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <OBJTYPE>TI</OBJTYPE>
+                                      <INAME>%TEXT34</INAME>
+                                      <CAPTION>New Text 34</CAPTION>
+                                     </item>
+                                    </T_CAPTION>
+                                    <T_TEXT>
+                                     <item>
+                                      <SPRAS>E</SPRAS>
+                                      <TXTYPE>F</TXTYPE>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <INAME>%TEXT34</INAME>
+                                      <LINENR>000001</LINENR>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>Timestamp</TDLINE>
+                                     </item>
+                                    </T_TEXT>
+                                   </sf:TEXT>
+                                  </sf:OBJ>
+                                  <sf:SUCC/>
+                                 </sf:NODE>
+                                </sf:item>
+                               </sf:SUCC>
+                              </sf:NODE>
+                             </sf:item>
+                            </sf:SUCC>
+                           </sf:NODE>
+                          </sf:item>
+                         </sf:SUCC>
+                        </sf:NODE>
+                       </sf:item>
+                       <sf:item>
+                        <sf:NODE>
+                         <NODETYPE>EV</NODETYPE>
+                         <sf:OBJ>
+                          <sf:EVENT>
+                           <NAME>
+                            <INAME>%EVENT20</INAME>
+                           </NAME>
+                           <CAPTION>Main Area</CAPTION>
+                           <EVTYPE>B</EVTYPE>
+                           <T_CAPTION>
+                            <item>
+                             <LANGU>E</LANGU>
+                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                             <OBJTYPE>EV</OBJTYPE>
+                             <INAME>%EVENT20</INAME>
+                             <CAPTION>Main Area</CAPTION>
+                            </item>
+                           </T_CAPTION>
+                          </sf:EVENT>
+                         </sf:OBJ>
+                         <sf:SUCC>
+                          <sf:item>
+                           <sf:NODE>
+                            <NODETYPE>SE</NODETYPE>
+                            <sf:OBJ>
+                             <sf:SECTION>
+                              <NAME>
+                               <INAME>%ROW9</INAME>
+                              </NAME>
+                              <CAPTION>New Line 9</CAPTION>
+                              <SECTTYPE>R</SECTTYPE>
+                              <U_FHEIGHT>CM</U_FHEIGHT>
+                              <PATTERN>
+                               <PATTNUM>0000</PATTNUM>
+                               <FRAME>0.00</FRAME>
+                               <U_FRAME>PT</U_FRAME>
+                              </PATTERN>
+                              <U_WIDTH>CM</U_WIDTH>
+                              <U_LEFT>CM</U_LEFT>
+                              <U_TOP>CM</U_TOP>
+                              <U_SB>CM</U_SB>
+                              <U_SA>CM</U_SA>
+                              <T_CAPTION>
+                               <item>
+                                <LANGU>E</LANGU>
+                                <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                <OBJTYPE>SE</OBJTYPE>
+                                <INAME>%ROW9</INAME>
+                                <CAPTION>New Line 9</CAPTION>
+                               </item>
+                              </T_CAPTION>
+                             </sf:SECTION>
+                            </sf:OBJ>
+                            <sf:OUTATTR>
+                             <sf:OUTATTR>
+                              <NAME>
+                               <INAME>%OUTATTRIB64</INAME>
+                              </NAME>
+                              <T_LINETYPE>LINE</T_LINETYPE>
+                              <U_WFRAME>PT</U_WFRAME>
+                              <U_WBOXV>CM</U_WBOXV>
+                              <U_WBOXH>CM</U_WBOXH>
+                              <U_WLEFT>CM</U_WLEFT>
+                              <U_WWIDTH>CM</U_WWIDTH>
+                              <U_WTOP>CM</U_WTOP>
+                              <U_WHEIGHT>CM</U_WHEIGHT>
+                              <BORDER>
+                               <LEFTATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </LEFTATTR>
+                               <TOPATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </TOPATTR>
+                               <RIGHTATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </RIGHTATTR>
+                               <BOTTOMATTR>
+                                <THICKNESS>0.00</THICKNESS>
+                                <THICKNESSU>PT</THICKNESSU>
+                                <DISTANCE>0.00</DISTANCE>
+                                <DISTANCEU>CM</DISTANCEU>
+                                <COLOR>
+                                 <RED>000</RED>
+                                 <GREEN>000</GREEN>
+                                 <BLUE>000</BLUE>
+                                 <TRANS>000</TRANS>
+                                </COLOR>
+                               </BOTTOMATTR>
+                              </BORDER>
+                              <T_CAPTION>
+                               <item>
+                                <LANGU>E</LANGU>
+                                <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                <OBJTYPE>OA</OBJTYPE>
+                                <INAME>%OUTATTRIB64</INAME>
+                               </item>
+                              </T_CAPTION>
+                             </sf:OUTATTR>
+                            </sf:OUTATTR>
+                            <sf:SUCC>
+                             <sf:item>
+                              <sf:NODE>
+                               <NODETYPE>SE</NODETYPE>
+                               <sf:OBJ>
+                                <sf:SECTION>
+                                 <NAME>
+                                  <INAME>%CELL40</INAME>
+                                 </NAME>
+                                 <CAPTION>New Column 40</CAPTION>
+                                 <SECTTYPE>E</SECTTYPE>
+                                 <U_FHEIGHT>CM</U_FHEIGHT>
+                                 <PATTERN>
+                                  <PATTNUM>0000</PATTNUM>
+                                  <FRAME>0.00</FRAME>
+                                  <U_FRAME>PT</U_FRAME>
+                                 </PATTERN>
+                                 <U_WIDTH>CM</U_WIDTH>
+                                 <U_LEFT>CM</U_LEFT>
+                                 <U_TOP>CM</U_TOP>
+                                 <U_SB>CM</U_SB>
+                                 <U_SA>CM</U_SA>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>SE</OBJTYPE>
+                                   <INAME>%CELL40</INAME>
+                                   <CAPTION>New Column 40</CAPTION>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:SECTION>
+                               </sf:OBJ>
+                               <sf:OUTATTR>
+                                <sf:OUTATTR>
+                                 <NAME>
+                                  <INAME>%OUTATTRIB65</INAME>
+                                 </NAME>
+                                 <U_WFRAME>PT</U_WFRAME>
+                                 <U_WBOXV>CM</U_WBOXV>
+                                 <U_WBOXH>CM</U_WBOXH>
+                                 <U_WLEFT>CM</U_WLEFT>
+                                 <U_WWIDTH>CM</U_WWIDTH>
+                                 <U_WTOP>CM</U_WTOP>
+                                 <U_WHEIGHT>CM</U_WHEIGHT>
+                                 <BORDER>
+                                  <LEFTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </LEFTATTR>
+                                  <TOPATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </TOPATTR>
+                                  <RIGHTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </RIGHTATTR>
+                                  <BOTTOMATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </BOTTOMATTR>
+                                 </BORDER>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>OA</OBJTYPE>
+                                   <INAME>%OUTATTRIB65</INAME>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:OUTATTR>
+                               </sf:OUTATTR>
+                               <sf:SUCC>
+                                <sf:item>
+                                 <sf:NODE>
+                                  <NODETYPE>TI</NODETYPE>
+                                  <sf:OBJ>
+                                   <sf:TEXT>
+                                    <NAME>
+                                     <INAME>%TEXT35</INAME>
+                                    </NAME>
+                                    <CAPTION>New Text 35</CAPTION>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
+                                    <APPMODE>P</APPMODE>
+                                    <TEXT>
+                                     <item>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>&amp;&lt;LS_APPROVAL&gt;-APPROVED_BY&amp;</TDLINE>
+                                     </item>
+                                    </TEXT>
+                                    <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
+                                    <TEXT_AREA>
+                                     <ENABLED>F</ENABLED>
+                                     <NCOLS>0</NCOLS>
+                                     <NROWS>0</NROWS>
+                                    </TEXT_AREA>
+                                    <T_CAPTION>
+                                     <item>
+                                      <LANGU>E</LANGU>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <OBJTYPE>TI</OBJTYPE>
+                                      <INAME>%TEXT35</INAME>
+                                      <CAPTION>New Text 35</CAPTION>
+                                     </item>
+                                    </T_CAPTION>
+                                   </sf:TEXT>
+                                  </sf:OBJ>
+                                  <sf:SUCC/>
+                                 </sf:NODE>
+                                </sf:item>
+                               </sf:SUCC>
+                              </sf:NODE>
+                             </sf:item>
+                             <sf:item>
+                              <sf:NODE>
+                               <NODETYPE>SE</NODETYPE>
+                               <sf:OBJ>
+                                <sf:SECTION>
+                                 <NAME>
+                                  <INAME>%CELL41</INAME>
+                                 </NAME>
+                                 <CAPTION>New Column 41</CAPTION>
+                                 <SECTTYPE>E</SECTTYPE>
+                                 <U_FHEIGHT>CM</U_FHEIGHT>
+                                 <PATTERN>
+                                  <PATTNUM>0000</PATTNUM>
+                                  <FRAME>0.00</FRAME>
+                                  <U_FRAME>PT</U_FRAME>
+                                 </PATTERN>
+                                 <U_WIDTH>CM</U_WIDTH>
+                                 <U_LEFT>CM</U_LEFT>
+                                 <U_TOP>CM</U_TOP>
+                                 <U_SB>CM</U_SB>
+                                 <U_SA>CM</U_SA>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>SE</OBJTYPE>
+                                   <INAME>%CELL41</INAME>
+                                   <CAPTION>New Column 41</CAPTION>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:SECTION>
+                               </sf:OBJ>
+                               <sf:OUTATTR>
+                                <sf:OUTATTR>
+                                 <NAME>
+                                  <INAME>%OUTATTRIB66</INAME>
+                                 </NAME>
+                                 <U_WFRAME>PT</U_WFRAME>
+                                 <U_WBOXV>CM</U_WBOXV>
+                                 <U_WBOXH>CM</U_WBOXH>
+                                 <U_WLEFT>CM</U_WLEFT>
+                                 <U_WWIDTH>CM</U_WWIDTH>
+                                 <U_WTOP>CM</U_WTOP>
+                                 <U_WHEIGHT>CM</U_WHEIGHT>
+                                 <BORDER>
+                                  <LEFTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </LEFTATTR>
+                                  <TOPATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </TOPATTR>
+                                  <RIGHTATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </RIGHTATTR>
+                                  <BOTTOMATTR>
+                                   <THICKNESS>0.00</THICKNESS>
+                                   <THICKNESSU>PT</THICKNESSU>
+                                   <DISTANCE>0.00</DISTANCE>
+                                   <DISTANCEU>CM</DISTANCEU>
+                                   <COLOR>
+                                    <RED>000</RED>
+                                    <GREEN>000</GREEN>
+                                    <BLUE>000</BLUE>
+                                    <TRANS>000</TRANS>
+                                   </COLOR>
+                                  </BOTTOMATTR>
+                                 </BORDER>
+                                 <T_CAPTION>
+                                  <item>
+                                   <LANGU>E</LANGU>
+                                   <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                   <OBJTYPE>OA</OBJTYPE>
+                                   <INAME>%OUTATTRIB66</INAME>
+                                  </item>
+                                 </T_CAPTION>
+                                </sf:OUTATTR>
+                               </sf:OUTATTR>
+                               <sf:SUCC>
+                                <sf:item>
+                                 <sf:NODE>
+                                  <NODETYPE>TI</NODETYPE>
+                                  <sf:OBJ>
+                                   <sf:TEXT>
+                                    <NAME>
+                                     <INAME>%TEXT36</INAME>
+                                    </NAME>
+                                    <CAPTION>New Text 36</CAPTION>
+                                    <NOLANGUAGE>X</NOLANGUAGE>
+                                    <APPMODE>P</APPMODE>
+                                    <TEXT>
+                                     <item>
+                                      <TDFORMAT>*</TDFORMAT>
+                                      <TDLINE>&amp;&lt;LS_APPROVAL&gt;-TIME_FORMATTED&amp;</TDLINE>
+                                     </item>
+                                    </TEXT>
+                                    <STYLE_NAME>ZAOR_REVIEW</STYLE_NAME>
+                                    <TEXT_AREA>
+                                     <ENABLED>F</ENABLED>
+                                     <NCOLS>0</NCOLS>
+                                     <NROWS>0</NROWS>
+                                    </TEXT_AREA>
+                                    <T_CAPTION>
+                                     <item>
+                                      <LANGU>E</LANGU>
+                                      <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                                      <OBJTYPE>TI</OBJTYPE>
+                                      <INAME>%TEXT36</INAME>
+                                      <CAPTION>New Text 36</CAPTION>
+                                     </item>
+                                    </T_CAPTION>
+                                   </sf:TEXT>
+                                  </sf:OBJ>
+                                  <sf:SUCC/>
+                                 </sf:NODE>
+                                </sf:item>
+                               </sf:SUCC>
+                              </sf:NODE>
+                             </sf:item>
+                            </sf:SUCC>
+                           </sf:NODE>
+                          </sf:item>
+                         </sf:SUCC>
+                        </sf:NODE>
+                       </sf:item>
+                       <sf:item>
+                        <sf:NODE>
+                         <NODETYPE>EV</NODETYPE>
+                         <sf:OBJ>
+                          <sf:EVENT>
+                           <NAME>
+                            <INAME>%EVENT21</INAME>
+                           </NAME>
+                           <CAPTION>Footer</CAPTION>
+                           <EVTYPE>F</EVTYPE>
+                           <T_CAPTION>
+                            <item>
+                             <LANGU>E</LANGU>
+                             <FORMNAME>ZAOR_REVIEW</FORMNAME>
+                             <OBJTYPE>EV</OBJTYPE>
+                             <INAME>%EVENT21</INAME>
+                             <CAPTION>Footer</CAPTION>
                             </item>
                            </T_CAPTION>
                           </sf:EVENT>

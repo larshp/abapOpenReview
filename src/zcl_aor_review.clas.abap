@@ -285,9 +285,16 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
 
   METHOD get_approvals.
+    FIELD-SYMBOLS: <ls_approval> TYPE zif_aor_types=>ty_approval_st.
 
-    SELECT * FROM zaor_approvals INTO TABLE rt_approvals
+    SELECT * FROM zaor_approvals
+      INTO CORRESPONDING FIELDS OF TABLE rt_approvals
       WHERE review_id = mv_review_id.
+
+    LOOP AT rt_approvals ASSIGNING <ls_approval>.
+      <ls_approval>-time_formatted =
+        zcl_aor_time=>format_timestamp( <ls_approval>-timestamp ).
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -390,16 +397,17 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
 
   METHOD pdf.
 
-    DATA: ls_control  TYPE ssfctrlop,
-          ls_info     TYPE ssfcrescl,
-          lv_size     TYPE i,
-          lt_pdf      TYPE STANDARD TABLE OF tline,
-          lv_name     TYPE rs38l_fnam,
-          ls_header   TYPE zif_aor_types=>ty_header,
-          lt_objects  TYPE e071_t,
-          lt_comments TYPE zif_aor_types=>ty_comment_tt,
-          ls_ci       TYPE zif_aor_types=>ty_ci_st,
-          lt_diff     TYPE zif_aor_types=>ty_diff_list_tt.
+    DATA: ls_control   TYPE ssfctrlop,
+          ls_info      TYPE ssfcrescl,
+          lv_size      TYPE i,
+          lt_pdf       TYPE STANDARD TABLE OF tline,
+          lv_name      TYPE rs38l_fnam,
+          ls_header    TYPE zif_aor_types=>ty_header,
+          lt_objects   TYPE e071_t,
+          lt_comments  TYPE zif_aor_types=>ty_comment_tt,
+          ls_ci        TYPE zif_aor_types=>ty_ci_st,
+          lt_diff      TYPE zif_aor_types=>ty_diff_list_tt,
+          lt_approvals TYPE zif_aor_types=>ty_approvals_tt.
 
 
     CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
@@ -416,11 +424,12 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
     ls_control-no_dialog = abap_true.
     ls_control-getotf    = abap_true.
 
-    ls_header   = header( ).
-    lt_objects  = objects_list( ).
-    lt_comments = fix_newlines( comments( )->list( ) ).
-    ls_ci       = ci( )->results( ).
-    lt_diff     = diff( ).
+    ls_header    = header( ).
+    lt_objects   = objects_list( ).
+    lt_comments  = fix_newlines( comments( )->list( ) ).
+    ls_ci        = ci( )->results( ).
+    lt_diff      = diff( ).
+    lt_approvals = get_approvals( ).
 
     CALL FUNCTION lv_name
       EXPORTING
@@ -430,6 +439,7 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
         it_comments        = lt_comments
         is_ci              = ls_ci
         it_diff            = lt_diff
+        it_approvals       = lt_approvals
       IMPORTING
         job_output_info    = ls_info
       EXCEPTIONS

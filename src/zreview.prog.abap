@@ -247,6 +247,22 @@ CLASS lcl_gui_review DEFINITION FINAL.
 
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
+CLASS lcl_gui_config DEFINITION FINAL.
+
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_form,
+      approve TYPE string,
+    END OF ty_form.
+
+    CLASS-METHODS render
+      RETURNING VALUE(rv_html) TYPE string.
+
+    CLASS-METHODS save
+      IMPORTING
+        is_form TYPE ty_form.
+
+ENDCLASS.
+
 *----------------------------------------------------------------------*
 *       CLASS lcl_gui_review IMPLEMENTATION
 *----------------------------------------------------------------------*
@@ -763,7 +779,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
   ENDMETHOD.                    "close_review
 
   METHOD approval.
-    DATA approval TYPE REF TO zaor_approvals.
+    DATA approval TYPE REF TO zif_aor_types=>ty_approval_st.
 
     rv_html = '<div name="approval">'.
     DATA(approvals) = go_review->get_approvals( ).
@@ -771,7 +787,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
       rv_html = rv_html && 'Approved by:<br><table>'.
       LOOP AT approvals REFERENCE INTO approval.
         rv_html = rv_html && |<tr><td>{ approval->*-approved_by }</td>|.
-        rv_html = rv_html && |<td>{ zcl_aor_time=>format_timestamp( approval->*-timestamp ) }</td></tr>|.
+        rv_html = rv_html && |<td>{ approval->*-time_formatted }</td></tr>|.
       ENDLOOP.
       rv_html = rv_html && '</table><br>'.
     ENDIF.
@@ -860,6 +876,9 @@ CLASS lcl_gui_start IMPLEMENTATION.
       '<br><br>'                && gc_newline &&
       '<h2>All Reviews</h2>'    && gc_newline &&
       render_reviews( )         && gc_newline.
+
+   rv_html = rv_html &&
+      '<hr><h3><center><a href="sapevent:config">Configuration</a></center></h3>'.
 
     rv_html = rv_html &&
               lcl_gui=>render_footer( ).
@@ -1184,6 +1203,7 @@ CLASS lcl_gui IMPLEMENTATION.
           lv_obj_name              TYPE e071-obj_name,
           ls_position_code_comment TYPE zaor_code_com,
           lv_is_code_comment       TYPE sap_bool,
+          ls_config                TYPE lcl_gui_config=>ty_form,
           lx_error                 TYPE REF TO zcx_aor_error.
 
 
@@ -1277,6 +1297,13 @@ CLASS lcl_gui IMPLEMENTATION.
           WHEN 'show_code_comments'.
             lcl_gui_review=>gv_code_comments_hidden = abap_false.
             view( lcl_gui_review=>render( 'location.href="#diff";' ) ) ##no_text.
+          WHEN 'config'.
+            view( lcl_gui_config=>render( ) ).
+          WHEN 'submit_config'.
+            parse_query_table( EXPORTING query = query_table
+              IMPORTING result = ls_config ).
+            lcl_gui_config=>save( ls_config ).
+            view( lcl_gui_start=>render( ) ).
           WHEN OTHERS.
             RAISE EXCEPTION TYPE zcx_aor_error
               EXPORTING
@@ -1308,6 +1335,42 @@ CLASS lcl_gui IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.                    "lcl_gui IMPLEMENTATION
+
+CLASS lcl_gui_config IMPLEMENTATION.
+
+  METHOD render.
+    DATA: ls_config TYPE zaor_config.
+
+    SELECT SINGLE * FROM zaor_config INTO ls_config.
+
+    rv_html = lcl_gui=>render_header( ) &&
+      '<a href="sapevent:back">Back</a><br><hr>'                          && gc_newline &&
+      '<form method="post" action="sapevent:submit_config">'              && gc_newline &&
+      '<label for="APPROVE">'                                             && gc_newline &&
+      'Review must be approved before transport can be released:</label>' && gc_newline.
+    IF ls_config-approve_before_transport_req = abap_true.
+      rv_html = rv_html && '<input type="checkbox" name="APPROVE" checked="true">'.
+    ELSE.
+      rv_html = rv_html && '<input type="checkbox" name="APPROVE">'.
+    ENDIF.
+    rv_html = rv_html && '<br><input type="submit" value="Save"></form>' && gc_newline &&
+      lcl_gui=>render_footer( ).
+
+
+  ENDMETHOD.
+
+  METHOD save.
+    DATA: ls_config TYPE zaor_config.
+
+    IF is_form-approve = 'on'.
+      ls_config-approve_before_transport_req = abap_true.
+    ENDIF.
+
+    MODIFY zaor_config FROM ls_config.
+
+  ENDMETHOD.
+
+ENDCLASS.
 
 *&---------------------------------------------------------------------*
 *&      Form  run
