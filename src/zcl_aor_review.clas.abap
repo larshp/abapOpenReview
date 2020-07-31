@@ -56,27 +56,23 @@ CLASS zcl_aor_review DEFINITION
     METHODS remove_approval.
     METHODS get_status
       RETURNING VALUE(rv_status) TYPE zaor_status.
-protected section.
-*"* protected components of class ZCL_AOR_REVIEW
-*"* do not include other source files here!!!
-PRIVATE SECTION.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 
-  DATA mv_review_id TYPE zaor_review-review_id .
-  CLASS-DATA gv_folder TYPE string .
+    DATA mv_review_id TYPE zaor_review-review_id .
+    CLASS-DATA gv_folder TYPE string .
 
-  METHODS fix_newlines
-    IMPORTING
-      !it_comments       TYPE zif_aor_types=>ty_comment_tt
-    RETURNING
-      VALUE(rt_comments) TYPE zif_aor_types=>ty_comment_tt .
-  METHODS get_description
-    RETURNING
-      VALUE(rv_text) TYPE as4text .
-  METHODS objects_list_limu
-    RETURNING
-      VALUE(rt_objects) TYPE zaor_object_tt .
-*"* private components of class ZCL_AOR_REVIEW
-*"* do not include other source files here!!!
+    METHODS fix_newlines
+      IMPORTING
+        !it_comments       TYPE zif_aor_types=>ty_comment_tt
+      RETURNING
+        VALUE(rt_comments) TYPE zif_aor_types=>ty_comment_tt .
+    METHODS get_description
+      RETURNING
+        VALUE(rv_text) TYPE as4text .
+    METHODS objects_list_limu
+      RETURNING
+        VALUE(rt_objects) TYPE zaor_object_tt .
 ENDCLASS.
 
 
