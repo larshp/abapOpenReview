@@ -74,6 +74,18 @@
      <MSGNR>010</MSGNR>
      <TEXT>Review must be approved before it can be closed.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>Review must be approved before the transport request can be released.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <MSGNR>012</MSGNR>
+     <TEXT>Failed to check code diff. Reason: &amp;1.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>
