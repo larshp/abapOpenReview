@@ -773,21 +773,23 @@ CLASS lcl_gui_review IMPLEMENTATION.
   METHOD close_review.
 
     IF go_review->get_status( ) <> zif_aor_constants=>c_status-closed.
-      rv_html = '<a href="sapevent:closereview">Close review</a> (Review is automatically closed after transport release)<br><br>'.
+      rv_html = '<a href="sapevent:closereview">Close review</a>' &&
+        '(Review is automatically closed after transport release)<br><br>'.
     ENDIF.
 
   ENDMETHOD.                    "close_review
 
   METHOD approval.
-    DATA approval TYPE REF TO zif_aor_types=>ty_approval_st.
+    DATA: lt_approvals TYPE zif_aor_types=>ty_approvals_tt,
+          ls_approval TYPE REF TO zif_aor_types=>ty_approval_st.
 
     rv_html = '<div name="approval">'.
-    DATA(approvals) = go_review->get_approvals( ).
-    IF lines( approvals ) > 0.
+    lt_approvals = go_review->get_approvals( ).
+    IF lines( lt_approvals ) > 0.
       rv_html = rv_html && 'Approved by:<br><table>'.
-      LOOP AT approvals REFERENCE INTO approval.
-        rv_html = rv_html && |<tr><td>{ approval->*-approved_by }</td>|.
-        rv_html = rv_html && |<td>{ approval->*-time_formatted }</td></tr>|.
+      LOOP AT lt_approvals REFERENCE INTO ls_approval.
+        rv_html = rv_html && |<tr><td>{ ls_approval->*-approved_by }</td>|.
+        rv_html = rv_html && |<td>{ ls_approval->*-time_formatted }</td></tr>|.
       ENDLOOP.
       rv_html = rv_html && '</table><br>'.
     ENDIF.
@@ -877,7 +879,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
       '<h2>All Reviews</h2>'    && gc_newline &&
       render_reviews( )         && gc_newline.
 
-   rv_html = rv_html &&
+    rv_html = rv_html &&
       '<hr><h3><center><a href="sapevent:config">Configuration</a></center></h3>'.
 
     rv_html = rv_html &&

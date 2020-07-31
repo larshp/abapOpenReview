@@ -1,13 +1,13 @@
-class ZCL_IM_REVIEW_APPROVED definition
-  public
-  final
-  create public .
+CLASS zcl_im_review_approved DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces IF_EX_CTS_REQUEST_CHECK .
-protected section.
-private section.
+    INTERFACES if_ex_cts_request_check .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -15,16 +15,16 @@ ENDCLASS.
 CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
 
 
-  method IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_ADD_OBJECTS.
-  endmethod.
+  METHOD if_ex_cts_request_check~check_before_add_objects.
+  ENDMETHOD.
 
 
-  method IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_CHANGING_OWNER.
-  endmethod.
+  METHOD if_ex_cts_request_check~check_before_changing_owner.
+  ENDMETHOD.
 
 
-  method IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_CREATION.
-  endmethod.
+  METHOD if_ex_cts_request_check~check_before_creation.
+  ENDMETHOD.
 
 
   METHOD if_ex_cts_request_check~check_before_release.
@@ -44,11 +44,9 @@ CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
 
     TRY.
 
-        SELECT review_id status UP TO 1 ROWS FROM zaor_review
+        SELECT SINGLE review_id status FROM zaor_review
           INTO (lv_review_id, lv_status)
-          WHERE trkorr = request.
-
-        ENDSELECT.
+          WHERE review_id = request.
         IF sy-subrc <> 0.
           zcl_aor_service=>open( iv_trkorr = request
             iv_base = zif_aor_constants=>c_base-transport
@@ -72,6 +70,6 @@ CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_RELEASE_SLIN.
-  endmethod.
+  METHOD if_ex_cts_request_check~check_before_release_slin.
+  ENDMETHOD.
 ENDCLASS.

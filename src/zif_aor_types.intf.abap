@@ -32,11 +32,11 @@ INTERFACE zif_aor_types
          END OF ty_diff_st.
   TYPES: ty_diff_tt TYPE STANDARD TABLE OF ty_diff_st WITH DEFAULT KEY.
   TYPES: BEGIN OF ty_enh_diff_st,
-    type TYPE enhtooltype,
-    id TYPE i,
-    full_name TYPE string,
-    diff TYPE ty_diff_tt,
-  END OF ty_enh_diff_st.
+           type      TYPE enhtooltype,
+           id        TYPE i,
+           full_name TYPE string,
+           diff      TYPE ty_diff_tt,
+         END OF ty_enh_diff_st.
   TYPES: ty_enh_diff_tt TYPE STANDARD TABLE OF ty_enh_diff_st
     WITH NON-UNIQUE KEY id.
 
@@ -62,10 +62,10 @@ INTERFACE zif_aor_types
   TYPES: as4text TYPE e07t-as4text,
          END OF ty_header.
 
-   TYPES BEGIN OF ty_approval_st.
-     INCLUDE TYPE zaor_approvals.
-     TYPES time_formatted TYPE string.
-   TYPES END OF ty_approval_st.
-   TYPES: ty_approvals_tt TYPE STANDARD TABLE OF ty_approval_st WITH DEFAULT KEY.
+  TYPES BEGIN OF ty_approval_st.
+    INCLUDE TYPE zaor_approvals.
+  TYPES time_formatted TYPE string.
+  TYPES END OF ty_approval_st.
+  TYPES: ty_approvals_tt TYPE STANDARD TABLE OF ty_approval_st WITH DEFAULT KEY.
 
 ENDINTERFACE.
