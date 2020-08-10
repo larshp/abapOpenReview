@@ -15,6 +15,11 @@
       "url": "https://github.com/epeterson320/ABAP-Logger",
       "folder": "/deps2",
       "files": "/**/*.*"
+    },
+    {
+      "url": "https://github.com/germanysources/abapOpenReviewDeps",
+      "folder": "/deps3",
+      "files": "/src/**/*.*"
     }
   ],
   "syntax": {
