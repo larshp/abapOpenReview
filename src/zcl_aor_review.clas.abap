@@ -6,7 +6,6 @@ CLASS zcl_aor_review DEFINITION
   PUBLIC SECTION.
 
     DATA mv_pos_new_code_comments TYPE zif_aor_types=>ty_code_comment_tt READ-ONLY .
-    DATA mv_logger TYPE REF TO zif_logger READ-ONLY .
 
     METHODS ci
       RETURNING
@@ -178,8 +177,6 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
           textid = zcx_aor_error=>not_found.
     ENDIF.
 
-    mv_logger = zcl_logger_factory=>create_log( ).
-
   ENDMETHOD.
 
 
@@ -209,8 +206,9 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
           ls_new_version      TYPE vrsd,
           lr_failure          TYPE REF TO cx_enh_root.
 
-    FIELD-SYMBOLS: <ls_diff>   LIKE LINE OF rt_diff,
-                   <ls_object> LIKE LINE OF lt_objects.
+    FIELD-SYMBOLS: <ls_diff>        LIKE LINE OF rt_diff,
+                   <ls_enh_failure> LIKE LINE OF lt_diff,
+                   <ls_object>      LIKE LINE OF lt_objects.
 
 
     lt_objects = objects_list_limu( ).
@@ -232,7 +230,10 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
               IMPORTING et_diff = lt_diff es_new_version = ls_new_version ).
           ENDIF.
         CATCH cx_enh_root INTO lr_failure.
-          mv_logger->e( obj_to_log = lr_failure ).
+          APPEND INITIAL LINE TO lt_diff ASSIGNING <ls_enh_failure>.
+          <ls_enh_failure>-code = text-001.
+          APPEND INITIAL LINE TO lt_diff ASSIGNING <ls_enh_failure>.
+          <ls_enh_failure>-code = lr_failure->get_text( ).
       ENDTRY.
       IF lines( lt_diff ) = 0 AND lines( lt_enhancement_diff ) = 0.
         CONTINUE.
