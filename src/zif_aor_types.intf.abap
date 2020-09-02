@@ -61,11 +61,16 @@ INTERFACE zif_aor_types
           INCLUDE TYPE zaor_review.
   TYPES: as4text TYPE e07t-as4text,
          END OF ty_header.
+  TYPES: BEGIN OF ty_boundary_line,
+    start TYPE i,
+    end TYPE i,
+  END OF ty_boundary_line.
 
   TYPES BEGIN OF ty_approval_st.
     INCLUDE TYPE zaor_approvals.
   TYPES time_formatted TYPE string.
   TYPES END OF ty_approval_st.
   TYPES: ty_approvals_tt TYPE STANDARD TABLE OF ty_approval_st WITH DEFAULT KEY.
+  TYPES: ty_boundary_lines_tt TYPE STANDARD TABLE OF ty_boundary_line.
 
 ENDINTERFACE.

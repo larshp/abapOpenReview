@@ -13,7 +13,8 @@ CLASS ltcl_test DEFINITION FOR TESTING
   PRIVATE SECTION.
     DATA: mt_old  TYPE abaptxt255_tab,
           mt_new  TYPE abaptxt255_tab,
-          mt_diff TYPE zif_aor_types=>ty_diff_tt.
+          mt_diff TYPE zif_aor_types=>ty_diff_tt,
+          mt_boundary_lines TYPE zif_aor_types=>ty_boundary_lines_tt.
 
     METHODS: setup.
     METHODS: run.
@@ -27,7 +28,8 @@ CLASS ltcl_test DEFINITION FOR TESTING
              render_006 FOR TESTING,
              render_007 FOR TESTING,
              render_008 FOR TESTING,
-             render_009 FOR TESTING.
+             render_009 FOR TESTING,
+             render_010 FOR TESTING.
 
 ENDCLASS.       "ltcl_Test
 
@@ -50,6 +52,7 @@ CLASS ltcl_test IMPLEMENTATION.
     CLEAR mt_old.
     CLEAR mt_new.
     CLEAR mt_diff.
+    CLEAR mt_boundary_lines.
   ENDMETHOD.                    "setup
 
   METHOD run.
@@ -58,7 +61,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
 
     lt_delta = zcl_aor_diff=>delta( it_old = mt_old
-                                    it_new = mt_new ).
+                                    it_new = mt_new
+                                    it_boundary_lines = mt_boundary_lines ).
 
     mt_diff = zcl_aor_diff=>render( it_old   = mt_old
                                     it_new   = mt_new
@@ -137,7 +141,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_004.
 
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt,
+          ls_boundary TYPE zif_aor_types=>ty_boundary_line.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
@@ -146,6 +151,10 @@ CLASS ltcl_test IMPLEMENTATION.
     _old 'bar'.
 
     _new 'foo'.
+
+    ls_boundary-start = 2.
+    ls_boundary-end = 2.
+    APPEND ls_boundary TO mt_boundary_lines.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-old = 2.
@@ -158,7 +167,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD render_005.
 
-    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt.
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt,
+          ls_boundary TYPE zif_aor_types=>ty_boundary_line.
 
     FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
 
@@ -168,6 +178,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
     _new 'foo'.
     _new 'bar moo'.
+
+    ls_boundary-start = 2.
+    ls_boundary-end = 2.
+    APPEND ls_boundary TO mt_boundary_lines.
 
     APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
     <ls_expected>-new = 2.
@@ -301,5 +315,49 @@ CLASS ltcl_test IMPLEMENTATION.
     check( lt_expected ).
 
   ENDMETHOD.                    "render_009
+
+  METHOD render_010.
+
+    DATA: lt_expected TYPE zif_aor_types=>ty_diff_tt,
+          ls_boundary TYPE zif_aor_types=>ty_boundary_line.
+
+    FIELD-SYMBOLS: <ls_expected> LIKE LINE OF lt_expected.
+
+    _old '1'.
+    _old '2'.
+    _old '3'.
+    _old 'method a'.
+    _old 'endmethod'.
+
+    _new '1'.
+    _new '3'.
+    _new 'method a'.
+    _new 'endmethod'.
+
+    ls_boundary-start = 1.
+    ls_boundary-end = 3.
+    APPEND ls_boundary TO mt_boundary_lines.
+    ls_boundary-start = 4.
+    ls_boundary-end = 5.
+    APPEND ls_boundary TO mt_boundary_lines.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 1.
+    <ls_expected>-new = 1.
+    <ls_expected>-code = '1'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 2.
+    <ls_expected>-code = '2'.
+    <ls_expected>-updkz = 'D'.
+
+    APPEND INITIAL LINE TO lt_expected ASSIGNING <ls_expected>.
+    <ls_expected>-old = 3.
+    <ls_expected>-new = 3.
+    <ls_expected>-code = '3'.
+
+    check( lt_expected ).
+
+  ENDMETHOD.
 
 ENDCLASS.                    "ltcl_test IMPLEMENTATION

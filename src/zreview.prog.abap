@@ -206,6 +206,10 @@ CLASS lcl_gui_review DEFINITION FINAL.
                 comments       TYPE zif_aor_types=>ty_comment_tt
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS get_line_style
+      IMPORTING diff            TYPE zif_aor_types=>ty_diff_st
+      RETURNING VALUE(rv_style) TYPE string.
+
     CLASS-METHODS render_pure_diff
       IMPORTING
                 diff           TYPE zif_aor_types=>ty_diff_st
@@ -359,18 +363,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
   ENDMETHOD.                    "diff
 
   METHOD render_diff_with_comments.
-    DATA: lv_style             TYPE string,
-          lt_comments_on_topic TYPE zif_aor_types=>ty_comment_tt,
+    DATA: lt_comments_on_topic TYPE zif_aor_types=>ty_comment_tt,
           lv_topic             TYPE zaor_topic,
           lv_has_comment       TYPE sap_bool.
 
-    IF diff IS INITIAL.
-      CLEAR lv_style.
-    ELSEIF diff-new <> ''.
-      lv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
-    ELSE.
-      lv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
-    ENDIF.
     rv_html = rv_html &&
       '<tr>' &&
       '<td><a href="sapevent:add_comment_on_code?' &&
@@ -379,7 +375,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
         && diff-new && '&nbsp;</a></td>' &&
       '<td>' && diff-old && '&nbsp;</td>' &&
       '<td>' && diff-updkz && '&nbsp;</td>' &&
-      '<td' && lv_style && '><pre>' && diff-code && '</pre></td>' &&
+      '<td' && get_line_style( diff ) && '><pre>' && diff-code && '</pre></td>' &&
       '</tr>'.
     lt_comments_on_topic = get_comments_for_line( object = object
       comments = comments line = diff ).
@@ -398,22 +394,30 @@ CLASS lcl_gui_review IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD render_pure_diff.
-    DATA: lv_style TYPE string.
 
-    IF diff IS INITIAL.
-      CLEAR lv_style.
-    ELSEIF diff-new <> ''.
-      lv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
-    ELSE.
-      lv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
-    ENDIF.
     rv_html = rv_html &&
       '<tr>' &&
       '<td>' && diff-new && '&nbsp;</a></td>' &&
       '<td>' && diff-old && '&nbsp;</td>' &&
       '<td>' && diff-updkz && '&nbsp;</td>' &&
-      '<td' && lv_style && '><pre>' && diff-code && '</pre></td>' &&
+      '<td' && get_line_style( diff ) && '><pre>' && diff-code && '</pre></td>' &&
       '</tr>'.
+
+  ENDMETHOD.
+
+  METHOD get_line_style.
+
+    IF diff-updkz = 'I'.
+      rv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
+    ELSEIF diff-updkz = 'U'.
+      IF diff-new <> space.
+        rv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
+      ELSE.
+        rv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
+      ENDIF.
+    ELSEIF diff-updkz = 'D'.
+      rv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
+    ENDIF.
 
   ENDMETHOD.
 

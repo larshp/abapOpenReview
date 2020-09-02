@@ -24,6 +24,13 @@ CLASS zcl_aor_diff DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
 
+    TYPES: BEGIN OF ty_search_result,
+      tabix_start TYPE i,
+      found_start TYPE sap_bool,
+      tabix_end TYPE i,
+      found_end TYPE sap_bool,
+    END OF ty_search_result.
+
     CLASS-METHODS filter_versions
       IMPORTING
         !iv_trkorr TYPE trkorr
@@ -34,10 +41,11 @@ CLASS zcl_aor_diff DEFINITION
         !ct_diff TYPE zif_aor_types=>ty_diff_tt .
     CLASS-METHODS delta
       IMPORTING
-        !it_old         TYPE STANDARD TABLE
-        !it_new         TYPE STANDARD TABLE
+        !it_old           TYPE STANDARD TABLE
+        !it_new           TYPE STANDARD TABLE
+        it_boundary_lines TYPE zif_aor_types=>ty_boundary_lines_tt OPTIONAL
       RETURNING
-        VALUE(rt_delta) TYPE vxabapt255_tab .
+        VALUE(rt_delta)   TYPE vxabapt255_tab .
     CLASS-METHODS get_meth
       IMPORTING
         !iv_object_name  TYPE versobjnam
@@ -56,6 +64,13 @@ CLASS zcl_aor_diff DEFINITION
         !iv_versno       TYPE versno
       RETURNING
         VALUE(rt_source) TYPE abaptxt255_tab .
+    CLASS-METHODS get_wdyc_implementation
+      IMPORTING
+        !iv_object_name   TYPE versobjnam
+        !iv_versno        TYPE versno
+      EXPORTING
+        et_source         TYPE abaptxt255_tab
+        et_boundary_lines TYPE zif_aor_types=>ty_boundary_lines_tt.
     CLASS-METHODS render
       IMPORTING
         !it_old        TYPE abaptxt255_tab
@@ -130,10 +145,13 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
 
   METHOD delta.
 
-    DATA: lt_trdirtab_old TYPE TABLE OF trdir,
-          lt_trdirtab_new TYPE TABLE OF trdir,
-          lt_trdir_delta  TYPE TABLE OF xtrdir.
-
+    DATA: lt_trdirtab_old  TYPE TABLE OF trdir,
+          lt_trdirtab_new  TYPE TABLE OF trdir,
+          lt_trdir_delta   TYPE TABLE OF xtrdir,
+          ls_line          TYPE vxabapt255,
+          ls_boundary_line TYPE REF TO zif_aor_types=>ty_boundary_line,
+          ls_search_result TYPE ty_search_result,
+          lr_delta         TYPE REF TO vxabapt255.
 
     CALL FUNCTION 'SVRS_COMPUTE_DELTA_REPS'
       EXPORTING
@@ -145,6 +163,42 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
         trdirtab_new            = lt_trdirtab_new
         trdir_delta             = lt_trdir_delta
         text_delta              = rt_delta.
+
+    LOOP AT it_boundary_lines REFERENCE INTO ls_boundary_line.
+      LOOP AT rt_delta TRANSPORTING NO FIELDS
+        WHERE number BETWEEN ls_boundary_line->*-start AND ls_boundary_line->*-end.
+      ENDLOOP.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+
+      READ TABLE rt_delta REFERENCE INTO lr_delta
+        WITH KEY number = ls_boundary_line->*-start BINARY SEARCH.
+      ls_search_result-tabix_start = sy-tabix.
+      IF sy-subrc = 0 AND lr_delta->*-vrsflag <> 'I'.
+        ls_search_result-found_start = abap_true.
+      ENDIF.
+
+      READ TABLE rt_delta REFERENCE INTO lr_delta
+        WITH KEY number = ls_boundary_line->*-end BINARY SEARCH.
+      ls_search_result-tabix_end = sy-tabix.
+      IF sy-subrc = 0 AND lr_delta->*-vrsflag <> 'I'.
+        ls_search_result-found_end = abap_true.
+      ENDIF.
+
+      IF ls_search_result-found_start = abap_false.
+        READ TABLE it_old INTO ls_line-line INDEX ls_boundary_line->*-start.
+        ls_line-number = sy-tabix.
+        INSERT ls_line INTO rt_delta INDEX ls_search_result-tabix_start.
+        ls_search_result-tabix_end = ls_search_result-tabix_end + 1.
+      ENDIF.
+      IF ls_search_result-found_end = abap_false.
+        READ TABLE it_old INTO ls_line-line INDEX ls_boundary_line->*-end.
+        ls_line-number = sy-tabix.
+        INSERT ls_line INTO rt_delta INDEX ls_search_result-tabix_end.
+      ENDIF.
+    ENDLOOP.
+
 
   ENDMETHOD.
 
@@ -158,7 +212,8 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
           lt_delta        TYPE vxabapt255_tab,
           ls_old          LIKE LINE OF lt_version_list,
           lt_vrso         TYPE zif_aor_types=>ty_vrso_tt,
-          ls_vrso         LIKE LINE OF lt_vrso.
+          ls_vrso         LIKE LINE OF lt_vrso,
+          lt_boundary_lines TYPE zif_aor_types=>ty_boundary_lines_tt.
 
 
     ASSERT NOT is_object IS INITIAL.
@@ -210,13 +265,23 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
           lt_old = get_func( iv_object_name = ls_vrso-objname
                              iv_versno      = ls_old-versno ).
         ENDIF.
+      WHEN 'WDYC'.
+        get_wdyc_implementation( EXPORTING iv_object_name = ls_vrso-objname
+          iv_versno = es_new_version-versno
+          IMPORTING et_source = lt_new ).
+        IF NOT ls_old IS INITIAL.
+          get_wdyc_implementation( EXPORTING
+            iv_object_name = ls_vrso-objname iv_versno = ls_old-versno
+            IMPORTING et_source = lt_old et_boundary_lines = lt_boundary_lines ).
+        ENDIF.
       WHEN OTHERS.
 * todo
         RETURN.
     ENDCASE.
 
     lt_delta = delta( it_old = lt_old
-                      it_new = lt_new ).
+                      it_new = lt_new
+                      it_boundary_lines = lt_boundary_lines ).
 
     et_diff = render( it_old   = lt_old
                       it_new   = lt_new
@@ -381,6 +446,47 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_wdyc_implementation.
+    DATA: lt_components        TYPE STANDARD TABLE OF wdy_ctlr_compo_vrs,
+          lt_components_source TYPE STANDARD TABLE OF wdy_ctlr_compo_source_vrs,
+          lr_component         TYPE REF TO wdy_ctlr_compo_vrs,
+          lr_component_source     TYPE REF TO wdy_ctlr_compo_source_vrs,
+          ls_boundary_line        TYPE zif_aor_types=>ty_boundary_line.
+
+    CALL FUNCTION 'SVRS_GET_VERSION_WDYC_40'
+      EXPORTING
+        object_name = iv_object_name
+        versno      = iv_versno
+      TABLES
+        ccomp_tab   = lt_components
+        ccoms_tab   = lt_components_source.
+
+    LOOP AT lt_components REFERENCE INTO lr_component
+      WHERE cmptype = 'CL_WDY_MD_CONTROLLER_METHOD' OR
+            cmptype = 'CL_WDY_MD_SUPPLY_FUNCTION'   OR
+            cmptype = 'CL_WDY_MD_CTLR_EVENT_HANDLER'.
+
+      CLEAR ls_boundary_line.
+      LOOP AT lt_components_source REFERENCE INTO lr_component_source
+        WHERE component_name = lr_component->*-component_name
+        AND controller_name = lr_component->*-controller_name AND cmpname = lr_component->*-cmpname.
+
+        APPEND lr_component_source->*-source_line TO et_source.
+        ls_boundary_line-end = sy-tabix.
+        IF lr_component_source->*-line_number = 1.
+          ls_boundary_line-start = ls_boundary_line-end.
+        ENDIF.
+
+      ENDLOOP.
+      IF sy-subrc = 0.
+        INSERT ls_boundary_line INTO TABLE et_boundary_lines.
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
   METHOD render.
 
     DATA: lv_diff TYPE i.
@@ -425,6 +531,11 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
           <ls_diff>-old   = <ls_delta>-number.
           <ls_diff>-updkz = 'U'.
           <ls_diff>-code  = <ls_code>-line.
+        WHEN space.
+          APPEND INITIAL LINE TO rt_diff ASSIGNING <ls_diff>.
+          <ls_diff>-new   = <ls_delta>-number.
+          <ls_diff>-old   = <ls_delta>-number.
+          <ls_diff>-code  = <ls_delta>-line.
       ENDCASE.
 
     ENDLOOP.
