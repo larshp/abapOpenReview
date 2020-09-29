@@ -722,7 +722,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
         '<u>' &&
         ls_list-bname && '&nbsp;' &&
         ls_list-time_formatted && '</u>:&nbsp;' &&
-        ls_list-text &&
+        escape( val = ls_list-text format = cl_abap_format=>e_html_text ) &&
         '<br><br>'.
 
       " Buffer it: in the AT-block "closed" just contains a star
