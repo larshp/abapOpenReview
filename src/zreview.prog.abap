@@ -716,13 +716,14 @@ CLASS lcl_gui_review IMPLEMENTATION.
             |<a href="sapevent:delete_comment?topic={ ls_list-topic }">Delete</a>&nbsp;|.
         ENDIF.
       ENDAT.
+      ls_list-text = escape( val = ls_list-text format = cl_abap_format=>e_html_text ).
       REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf
         IN ls_list-text WITH '<br>'.
       rv_html = rv_html &&
         '<u>' &&
         ls_list-bname && '&nbsp;' &&
         ls_list-time_formatted && '</u>:&nbsp;' &&
-        escape( val = ls_list-text format = cl_abap_format=>e_html_text ) &&
+        ls_list-text &&
         '<br><br>'.
 
       " Buffer it: in the AT-block "closed" just contains a star
