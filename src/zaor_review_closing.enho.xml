@@ -18,24 +18,43 @@
      <ENHMODE>D</ENHMODE>
      <FULL_NAME>\FU:TR_RELEASE_REQUEST\SE:END\EI</FULL_NAME>
      <SOURCE>
-      <item>IF lv_subrc = 0.</item>
-      <item>UPDATE zaor_review SET status = zif_aor_constants=&gt;c_status-closed</item>
-      <item>WHERE trkorr = iv_trkorr.</item>
-      <item>ENDIF.</item>
+      <item>  IF lv_subrc = 0.</item>
+      <item>    UPDATE zaor_review SET status = zif_aor_constants=&gt;c_status-closed</item>
+      <item>      WHERE trkorr = iv_trkorr.</item>
+      <item>  ENDIF.</item>
      </SOURCE>
     </ENH_HOOK_IMPL>
    </ENHANCEMENTS>
-   <SPACES>
+   <SOTR>
     <item>
-     <FULL_NAME>\FU:TR_RELEASE_REQUEST\SE:END\EI</FULL_NAME>
-     <SPACES>
-      <item>2</item>
-      <item>4</item>
-      <item>6</item>
-      <item>2</item>
-     </SPACES>
+     <HEADER>
+      <CONCEPT>0050569AC5931EDAB4E09C939BCAE0DA</CONCEPT>
+      <CREA_LAN>E</CREA_LAN>
+      <TRALA_TYPE>1</TRALA_TYPE>
+      <OBJID_VEC>AAI=</OBJID_VEC>
+     </HEADER>
+     <ENTRIES>
+      <SOTR_TEXT>
+       <CONCEPT>0050569AC5931EDAB4E09C939BCAE0DA</CONCEPT>
+       <LANGU>E</LANGU>
+       <LFD_NUM>0001</LFD_NUM>
+       <FLAG_CNTXT>X</FLAG_CNTXT>
+       <STATUS>R</STATUS>
+       <LENGTH>057</LENGTH>
+       <TEXT>Review closing while transport release</TEXT>
+      </SOTR_TEXT>
+     </ENTRIES>
     </item>
-   </SPACES>
+   </SOTR>
+   <SOTR_USE>
+    <SOTR_USE>
+     <PGMID>R3TR</PGMID>
+     <OBJECT>ENHO</OBJECT>
+     <OBJ_NAME>ZAOR_REVIEW_CLOSING</OBJ_NAME>
+     <CONCEPT>0050569AC5931EDAB4E09C939BCAE0DA</CONCEPT>
+     <LFD_NUM>0001</LFD_NUM>
+    </SOTR_USE>
+   </SOTR_USE>
   </asx:values>
  </asx:abap>
 </abapGit>
