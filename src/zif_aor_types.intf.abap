@@ -72,5 +72,6 @@ INTERFACE zif_aor_types
   TYPES END OF ty_approval_st.
   TYPES: ty_approvals_tt TYPE STANDARD TABLE OF ty_approval_st WITH DEFAULT KEY.
   TYPES: ty_boundary_lines_tt TYPE STANDARD TABLE OF ty_boundary_line.
+  TYPES: ty_r_status TYPE RANGE OF zaor_status.
 
 ENDINTERFACE.

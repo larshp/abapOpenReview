@@ -8,6 +8,8 @@ CLASS zcl_aor_service DEFINITION
       RAISING
         zcx_aor_error .
     CLASS-METHODS list
+      IMPORTING
+        ir_status      TYPE zif_aor_types=>ty_r_status OPTIONAL
       RETURNING
         VALUE(rt_data) TYPE zif_aor_types=>ty_review_tt .
     CLASS-METHODS open
@@ -129,6 +131,7 @@ CLASS ZCL_AOR_SERVICE IMPLEMENTATION.
 
     SELECT * FROM zaor_review
       INTO TABLE rt_data
+      WHERE status IN ir_status
       ORDER BY review_id.                 "#EC CI_NOWHERE "#EC CI_SUBRC
 
   ENDMETHOD.

@@ -825,10 +825,22 @@ CLASS lcl_gui_start DEFINITION FINAL.
       RAISING   zcx_aor_error.
 
   PRIVATE SECTION.
+    CONSTANTS: gc_status_closed TYPE zaor_status VALUE 'C'.
+
     CLASS-METHODS render_transports
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS render_open_reviews
+      RETURNING VALUE(rv_html) TYPE string
+      RAISING   zcx_aor_error.
+
+    CLASS-METHODS render_closed_reviews
+      RETURNING VALUE(rv_html) TYPE string
+      RAISING   zcx_aor_error.
+
     CLASS-METHODS render_reviews
+      IMPORTING
+        ir_status              TYPE zif_aor_types=>ty_r_status
       RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
@@ -881,8 +893,11 @@ CLASS lcl_gui_start IMPLEMENTATION.
       '<h2>My Stuff</h2>'       && gc_newline &&
       render_transports( )      && gc_newline &&
       '<br><br>'                && gc_newline &&
-      '<h2>All Reviews</h2>'    && gc_newline &&
-      render_reviews( )         && gc_newline.
+      '<h2>Open Reviews</h2>'   && gc_newline &&
+      render_open_reviews( )    && gc_newline &&
+      '<br><br>'                && gc_newline &&
+      '<h2>Closed Reviews</h2>' && gc_newline &&
+      render_closed_reviews( )  && gc_newline.
 
     rv_html = rv_html &&
       '<hr><h3><center><a href="sapevent:config">Configuration</a></center></h3>'.
@@ -892,6 +907,30 @@ CLASS lcl_gui_start IMPLEMENTATION.
 
   ENDMETHOD.                    "render
 
+  METHOD render_open_reviews.
+    DATA lr_status TYPE zif_aor_types=>ty_r_status.
+    FIELD-SYMBOLS <ls_status> LIKE LINE OF lr_status.
+
+    APPEND INITIAL LINE TO lr_status ASSIGNING <ls_status>.
+    <ls_status>-sign = 'E'.
+    <ls_status>-option = 'EQ'.
+    <ls_status>-low = gc_status_closed.
+    rv_html = render_reviews( lr_status ).
+
+  ENDMETHOD.
+
+  METHOD render_closed_reviews.
+    DATA lr_status TYPE zif_aor_types=>ty_r_status.
+    FIELD-SYMBOLS <ls_status> LIKE LINE OF lr_status.
+
+    APPEND INITIAL LINE TO lr_status ASSIGNING <ls_status>.
+    <ls_status>-sign = 'I'.
+    <ls_status>-option = 'EQ'.
+    <ls_status>-low = gc_status_closed.
+    rv_html = render_reviews( lr_status ).
+
+  ENDMETHOD.
+
   METHOD render_reviews.
 
     DATA: lt_list   TYPE zif_aor_types=>ty_review_tt,
@@ -900,7 +939,7 @@ CLASS lcl_gui_start IMPLEMENTATION.
     FIELD-SYMBOLS: <ls_list> LIKE LINE OF lt_list.
 
 
-    lt_list = zcl_aor_service=>list( ).
+    lt_list = zcl_aor_service=>list( ir_status ).
 
     rv_html = '<table border="0">' && gc_newline.
     LOOP AT lt_list ASSIGNING <ls_list>.
