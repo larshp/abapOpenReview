@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
+CLASS zcl_im_review_approved IMPLEMENTATION.
 
 
   METHOD if_ex_cts_request_check~check_before_add_objects.
@@ -31,7 +31,8 @@ CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
     DATA: lv_review_id TYPE zaor_review-review_id,
           lv_status    TYPE zaor_status,
           lo_review    TYPE REF TO zcl_aor_review,
-          lo_error     TYPE REF TO zcx_aor_error.
+          lo_error     TYPE REF TO zcx_aor_error,
+          lv_msg       TYPE string.
 
     IF type <> 'K'.
       RETURN.
@@ -63,7 +64,8 @@ CLASS ZCL_IM_REVIEW_APPROVED IMPLEMENTATION.
           MESSAGE s011(zabapopenreview) RAISING cancel.
         ENDIF.
       CATCH zcx_aor_error INTO lo_error.
-        MESSAGE s012(zabapopenreview) WITH lo_error->get_text( ) RAISING cancel.
+        lv_msg = lo_error->get_text( ).
+        MESSAGE s012(zabapopenreview) WITH lv_msg RAISING cancel.
     ENDTRY.
 
 

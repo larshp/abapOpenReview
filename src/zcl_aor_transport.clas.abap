@@ -46,7 +46,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_AOR_TRANSPORT IMPLEMENTATION.
+CLASS zcl_aor_transport IMPLEMENTATION.
 
 
   METHOD get_description.
@@ -77,7 +77,7 @@ CLASS ZCL_AOR_TRANSPORT IMPLEMENTATION.
 
   METHOD list_developers.
 
-* select * from e070 where strkorr = iv_trkorr.
+* select * from e070 where strkorr = iv_trkorr
 
 * delete adjacent duplicates
 * todo
