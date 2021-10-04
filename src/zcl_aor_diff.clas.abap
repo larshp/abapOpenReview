@@ -111,7 +111,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_AOR_DIFF IMPLEMENTATION.
+CLASS zcl_aor_diff IMPLEMENTATION.
 
 
   METHOD add_newlines.
@@ -624,6 +624,7 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
           lt_hook_implementations TYPE enh_hook_impl_it,
           lr_hook_impl_new        TYPE REF TO enh_hook_impl,
           ls_hook_impl_old        TYPE enh_hook_impl,
+          lt_hook_impl_old        TYPE enh_hook_impl_it,
           lt_source_new           TYPE STANDARD TABLE OF abaptxt255,
           lt_source_old           LIKE lt_source_new,
           lt_delta                TYPE vxabapt255_tab,
@@ -647,7 +648,8 @@ CLASS ZCL_AOR_DIFF IMPLEMENTATION.
 
       APPEND LINES OF lr_hook_impl_new->*-source TO lt_source_new.
       IF ir_version_manager_old IS BOUND.
-        READ TABLE lr_version_manager_old->get_hook_impls( ) INTO ls_hook_impl_old
+        lt_hook_impl_old = lr_version_manager_old->get_hook_impls( ).
+        READ TABLE lt_hook_impl_old INTO ls_hook_impl_old
           WITH KEY id = lr_hook_impl_new->*-id.
         IF sy-subrc = 0.
           APPEND LINES OF ls_hook_impl_old-source TO lt_source_old.

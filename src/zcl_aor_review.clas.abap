@@ -76,7 +76,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
+CLASS zcl_aor_review IMPLEMENTATION.
 
 
   METHOD approve.
@@ -231,7 +231,7 @@ CLASS ZCL_AOR_REVIEW IMPLEMENTATION.
           ENDIF.
         CATCH cx_enh_root INTO lr_failure.
           APPEND INITIAL LINE TO lt_diff ASSIGNING <ls_enh_failure>.
-          <ls_enh_failure>-code = text-001.
+          <ls_enh_failure>-code = TEXT-001.
           APPEND INITIAL LINE TO lt_diff ASSIGNING <ls_enh_failure>.
           <ls_enh_failure>-code = lr_failure->get_text( ).
       ENDTRY.
