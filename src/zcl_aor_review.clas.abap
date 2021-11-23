@@ -57,7 +57,9 @@ CLASS zcl_aor_review DEFINITION
       RETURNING VALUE(rv_status) TYPE zaor_status.
     METHODS get_merge_requests
       RETURNING VALUE(rt_result) TYPE zaor_merge_req_url_tt
-      RAISING cx_static_check.
+      RAISING
+        cx_static_check
+        cx_sy_dyn_call_illegal_func.
   PROTECTED SECTION.
   PRIVATE SECTION.
 

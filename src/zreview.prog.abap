@@ -817,7 +817,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD merge_requests.
-    DATA: lr_merge_request TYPE REF TO zaor_merge_req_url_s.
+    DATA: lr_merge_request  TYPE REF TO zaor_merge_req_url_s,
+          lt_merge_requests TYPE zaor_merge_req_url_tt,
+          lo_fault          TYPE REF TO cx_static_check,
+          lo_previous       TYPE REF TO cx_root.
 
     SELECT COUNT(*) FROM zaor_config
       WHERE merge_request_search_active = abap_true.
@@ -825,27 +828,28 @@ CLASS lcl_gui_review IMPLEMENTATION.
       RETURN.
     ENDIF.
     rv_html = '<div name="merge_req">'.
+    rv_html = rv_html && '<h2>Merge/Pull requests</h2><br>'.
 
     TRY.
-        DATA(lt_merge_requests) = go_review->get_merge_requests( ).
+        lt_merge_requests = go_review->get_merge_requests( ).
         IF lt_merge_requests IS INITIAL.
           rv_html = rv_html && 'No associated merge requests found.'.
         ELSE.
-          rv_html = rv_html && '<h2>Merge/Pull requests</h2>'.
           rv_html = rv_html && '<table>'.
           rv_html = rv_html && '<tr><th>Package</th><th>Merge request</th></tr>'.
           LOOP AT lt_merge_requests REFERENCE INTO lr_merge_request.
-            rv_html = rv_html && |<tr><td>{ lr_merge_request->*-package }</td><td><a href="{ lr_merge_request->*-url }">{ lr_merge_request->*-url }</a></td></tr>|.
+            rv_html = rv_html && |<tr><td>{ lr_merge_request->*-package }</td>| &&
+              |<td><a href="{ lr_merge_request->*-url }">{ lr_merge_request->*-url }</a></td></tr>|.
           ENDLOOP.
           rv_html = rv_html && '</table>'.
         ENDIF.
-      CATCH cx_static_check INTO DATA(lo_fault).
+      CATCH cx_static_check INTO lo_fault.
         rv_html = rv_html && 'Failed to read merge requests. Reason:<br>'.
         rv_html = rv_html && lo_fault->get_text( ) && '<br>'.
-        DATA(previous) = lo_fault->previous.
-        WHILE previous IS BOUND.
-          rv_html = rv_html && previous->get_text( ) && '<br>'.
-          previous = previous->previous.
+        lo_previous = lo_fault->previous.
+        WHILE lo_previous IS BOUND.
+          rv_html = rv_html && lo_previous->get_text( ) && '<br>'.
+          lo_previous = lo_previous->previous.
         ENDWHILE.
       CATCH cx_sy_dyn_call_illegal_func.
         rv_html = rv_html && 'Plugin not installed. Please install the repositories:'.
