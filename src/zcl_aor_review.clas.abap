@@ -55,6 +55,9 @@ CLASS zcl_aor_review DEFINITION
     METHODS remove_approval.
     METHODS get_status
       RETURNING VALUE(rv_status) TYPE zaor_status.
+    METHODS get_merge_requests
+      RETURNING VALUE(rt_result) TYPE zaor_merge_req_url_tt
+      RAISING cx_static_check.
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -304,6 +307,17 @@ CLASS zcl_aor_review IMPLEMENTATION.
     lv_trkorr = mv_review_id(10).
 
     rv_text = zcl_aor_transport=>get_description( lv_trkorr ).
+
+  ENDMETHOD.
+
+
+  METHOD get_merge_requests.
+
+    CALL FUNCTION 'ZAG_REVIEW_READ_MERGE_REQUESTS'
+      EXPORTING
+        iv_trkorr = mv_review_id
+      IMPORTING
+        et_merge_requests = rt_result.
 
   ENDMETHOD.
 

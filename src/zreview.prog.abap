@@ -249,6 +249,9 @@ CLASS lcl_gui_review DEFINITION FINAL.
     CLASS-METHODS approval
       RETURNING VALUE(rv_html) TYPE string.
 
+    CLASS-METHODS merge_requests
+      RETURNING VALUE(rv_html) TYPE string.
+
 ENDCLASS.                    "lcl_gui_start DEFINITION
 
 CLASS lcl_gui_config DEFINITION FINAL.
@@ -256,6 +259,7 @@ CLASS lcl_gui_config DEFINITION FINAL.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_form,
       approve TYPE string,
+      merge_request_search TYPE string,
     END OF ty_form.
 
     CLASS-METHODS render
@@ -473,6 +477,8 @@ CLASS lcl_gui_review IMPLEMENTATION.
       info( )                               && gc_newline &&
       '<br>'                                && gc_newline &&
       objects( )                            && gc_newline &&
+      '<br>'                                && gc_newline &&
+      merge_requests( )                     && gc_newline &&
       '<br>'                                && gc_newline &&
       checklist( )                          && gc_newline &&
       '<br>'                                && gc_newline &&
@@ -806,6 +812,50 @@ CLASS lcl_gui_review IMPLEMENTATION.
         rv_html = rv_html && '<a href="sapevent:remove_approval">Reject approval</a><br><br>'.
       ENDIF.
     ENDIF.
+    rv_html = rv_html && '</div>'.
+
+  ENDMETHOD.
+
+  METHOD merge_requests.
+    DATA: lr_merge_request TYPE REF TO zaor_merge_req_url_s.
+
+    SELECT COUNT(*) FROM zaor_config
+      WHERE merge_request_search_active = abap_true.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+    rv_html = '<div name="merge_req">'.
+
+    TRY.
+        DATA(lt_merge_requests) = go_review->get_merge_requests( ).
+        IF lt_merge_requests IS INITIAL.
+          rv_html = rv_html && 'No associated merge requests found.'.
+        ELSE.
+          rv_html = rv_html && '<h2>Merge/Pull requests</h2>'.
+          rv_html = rv_html && '<table>'.
+          rv_html = rv_html && '<tr><th>Package</th><th>Merge request</th></tr>'.
+          LOOP AT lt_merge_requests REFERENCE INTO lr_merge_request.
+            rv_html = rv_html && |<tr><td>{ lr_merge_request->*-package }</td><td><a href="{ lr_merge_request->*-url }">{ lr_merge_request->*-url }</a></td></tr>|.
+          ENDLOOP.
+          rv_html = rv_html && '</table>'.
+        ENDIF.
+      CATCH cx_static_check INTO DATA(lo_fault).
+        rv_html = rv_html && 'Failed to read merge requests. Reason:<br>'.
+        rv_html = rv_html && lo_fault->get_text( ) && '<br>'.
+        DATA(previous) = lo_fault->previous.
+        WHILE previous IS BOUND.
+          rv_html = rv_html && previous->get_text( ) && '<br>'.
+          previous = previous->previous.
+        ENDWHILE.
+      CATCH cx_sy_dyn_call_illegal_func.
+        rv_html = rv_html && 'Plugin not installed. Please install the repositories:'.
+        rv_html = rv_html && '<ol>'.
+        rv_html = rv_html && '<li>https://github.com/abap-openapi/abap-openapi-client</li>'.
+        rv_html = rv_html && '<li>https://github.com/larshp/abapgit-review-example</li>'.
+        rv_html = rv_html && '<li>https://github.com/germanysources/abapgit-review-plugin</li>'.
+        rv_html = rv_html && '</ol>'.
+    ENDTRY.
+
     rv_html = rv_html && '</div>'.
 
   ENDMETHOD.
@@ -1399,6 +1449,12 @@ CLASS lcl_gui_config IMPLEMENTATION.
     ELSE.
       rv_html = rv_html && '<input type="checkbox" name="APPROVE">'.
     ENDIF.
+    rv_html = rv_html && '<br><label for="MERGE_REQUEST_SEARCH">Search for pull/merge requests:</label>'.
+    IF ls_config-merge_request_search_active = abap_true.
+      rv_html = rv_html && '<input type="checkbox" name="MERGE_REQUEST_SEARCH" checked="true">'.
+    ELSE.
+      rv_html = rv_html && '<input type="checkbox" name="MERGE_REQUEST_SEARCH">'.
+    ENDIF.
     rv_html = rv_html && '<br><input type="submit" value="Save"></form>' && gc_newline &&
       lcl_gui=>render_footer( ).
 
@@ -1410,6 +1466,9 @@ CLASS lcl_gui_config IMPLEMENTATION.
 
     IF is_form-approve = 'on'.
       ls_config-approve_before_transport_req = abap_true.
+    ENDIF.
+    IF is_form-merge_request_search = 'on'.
+      ls_config-merge_request_search_active = abap_true.
     ENDIF.
 
     MODIFY zaor_config FROM ls_config.
