@@ -255,8 +255,9 @@ CLASS lcl_gui_config DEFINITION FINAL.
 
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_form,
-      approve TYPE string,
-    END OF ty_form.
+             approve          TYPE string,
+             ci_use_cross_ref TYPE string,
+           END OF ty_form.
 
     CLASS-METHODS render
       RETURNING VALUE(rv_html) TYPE string.
@@ -276,10 +277,10 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD diff.
 
-    DATA: lv_style             TYPE string,
-          lt_diff_list         TYPE zif_aor_types=>ty_diff_list_tt,
-          lt_diff              TYPE zif_aor_types=>ty_diff_tt,
-          lt_comments          TYPE zif_aor_types=>ty_comment_tt.
+    DATA: lv_style     TYPE string,
+          lt_diff_list TYPE zif_aor_types=>ty_diff_list_tt,
+          lt_diff      TYPE zif_aor_types=>ty_diff_tt,
+          lt_comments  TYPE zif_aor_types=>ty_comment_tt.
 
     FIELD-SYMBOLS: <ls_diff>      LIKE LINE OF lt_diff,
                    <ls_diff_list> LIKE LINE OF lt_diff_list,
@@ -411,9 +412,9 @@ CLASS lcl_gui_review IMPLEMENTATION.
       rv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
     ELSEIF diff-updkz = 'U'.
       IF diff-new <> space.
-        rv_style = ' style="background:lightgreen;"'.         "#EC NOTEXT
+        rv_style = ' style="background:lightgreen;"'.       "#EC NOTEXT
       ELSE.
-        rv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
+        rv_style = ' style="background:lightpink;"'.        "#EC NOTEXT
       ENDIF.
     ELSEIF diff-updkz = 'D'.
       rv_style = ' style="background:lightpink;"'.          "#EC NOTEXT
@@ -786,7 +787,7 @@ CLASS lcl_gui_review IMPLEMENTATION.
 
   METHOD approval.
     DATA: lt_approvals TYPE zif_aor_types=>ty_approvals_tt,
-          ls_approval TYPE REF TO zif_aor_types=>ty_approval_st.
+          ls_approval  TYPE REF TO zif_aor_types=>ty_approval_st.
 
     rv_html = '<div name="approval">'.
     lt_approvals = go_review->get_approvals( ).
@@ -840,7 +841,7 @@ CLASS lcl_gui_start DEFINITION FINAL.
 
     CLASS-METHODS render_reviews
       IMPORTING
-        ir_status              TYPE zif_aor_types=>ty_r_status
+                ir_status      TYPE zif_aor_types=>ty_r_status
       RETURNING VALUE(rv_html) TYPE string
       RAISING   zcx_aor_error.
 
@@ -1399,6 +1400,13 @@ CLASS lcl_gui_config IMPLEMENTATION.
     ELSE.
       rv_html = rv_html && '<input type="checkbox" name="APPROVE">'.
     ENDIF.
+    rv_html = rv_html && '<br><label for="CI_USE_CROSS_REF">Use where-used list in code inspector objectset' &&
+      ' instead of object set from transport request:</label>'.
+    IF ls_config-ci_use_cross_ref = abap_true.
+      rv_html = rv_html && '<input type="checkbox" name="CI_USE_CROSS_REF" checked="true">'.
+    ELSE.
+      rv_html = rv_html && '<input type="checkbox" name="CI_USE_CROSS_REF">'.
+    ENDIF.
     rv_html = rv_html && '<br><input type="submit" value="Save"></form>' && gc_newline &&
       lcl_gui=>render_footer( ).
 
@@ -1410,6 +1418,9 @@ CLASS lcl_gui_config IMPLEMENTATION.
 
     IF is_form-approve = 'on'.
       ls_config-approve_before_transport_req = abap_true.
+    ENDIF.
+    IF is_form-ci_use_cross_ref = 'on'.
+      ls_config-ci_use_cross_ref = abap_true.
     ENDIF.
 
     MODIFY zaor_config FROM ls_config.

@@ -3,9 +3,9 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <DD04V>
-    <ROLLNAME>ZAOR_CI_FILTER</ROLLNAME>
-    <DOMNAME>ZAOR_CI_FILTER</DOMNAME>
-    <HEADLEN>09</HEADLEN>
+    <ROLLNAME>ZAOR_CI_USE_CROSS_REF</ROLLNAME>
+    <DOMNAME>SAP_BOOL</DOMNAME>
+    <HEADLEN>55</HEADLEN>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -18,11 +18,11 @@
    <DD04_TEXTS>
     <item>
      <DDLANGUAGE>E</DDLANGUAGE>
-     <DDTEXT>CI Filter</DDTEXT>
-     <REPTEXT>CI Filter</REPTEXT>
-     <SCRTEXT_S>CI Filter</SCRTEXT_S>
-     <SCRTEXT_M>CI Filter</SCRTEXT_M>
-     <SCRTEXT_L>CI Filter</SCRTEXT_L>
+     <DDTEXT>Use Where-Used list for Code inspector</DDTEXT>
+     <REPTEXT>Use Where-Used list for Code inspector</REPTEXT>
+     <SCRTEXT_S>Where-Used</SCRTEXT_S>
+     <SCRTEXT_M>Use Where-Used list</SCRTEXT_M>
+     <SCRTEXT_L>Use Where-Used list for Code inspector</SCRTEXT_L>
     </item>
    </DD04_TEXTS>
   </asx:values>

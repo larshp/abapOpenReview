@@ -29,7 +29,9 @@ CLASS zcl_aor_ci DEFINITION
         VALUE(rv_program) TYPE programm .
     METHODS objectset
       RETURNING
-        VALUE(ro_objectset) TYPE REF TO cl_ci_objectset .
+        VALUE(ro_objectset) TYPE REF TO cl_ci_objectset
+      RAISING
+        zcx_aor_error .
     METHODS filter
       IMPORTING
         !iv_filter TYPE zaor_review-ci_filter OPTIONAL
@@ -148,16 +150,25 @@ CLASS ZCL_AOR_CI IMPLEMENTATION.
 
   METHOD objectset.
 
-    DATA: lt_objects TYPE scit_objs,
-          ls_e071    TYPE e071,
-          lv_objsnam TYPE sci_objs,
-          lv_name    TYPE sci_objs,
-          lt_list    TYPE e071_t,
-          ls_tadir   TYPE tadir.
+    DATA: lt_objects      TYPE scit_objs,
+          ls_e071         TYPE e071,
+          lv_objsnam      TYPE sci_objs,
+          lv_name         TYPE sci_objs,
+          lt_list         TYPE e071_t,
+          ls_tadir        TYPE tadir,
+          lv_use_crossref TYPE zaor_ci_use_cross_ref,
+          lo_crossref     TYPE REF TO zcl_aor_crossref.
 
     FIELD-SYMBOLS: <ls_object> LIKE LINE OF lt_objects,
                    <ls_review> LIKE LINE OF lt_list.
 
+    SELECT SINGLE ci_use_cross_ref FROM zaor_config
+      INTO lv_use_crossref.
+    IF lv_use_crossref = abap_true.
+      CREATE OBJECT lo_crossref.
+      ro_objectset = lo_crossref->build_objectset( mo_review ).
+      RETURN.
+    ENDIF.
 
     CASE mo_review->header( )-base.
       WHEN zif_aor_constants=>c_base-transport.
