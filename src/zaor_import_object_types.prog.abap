@@ -61,6 +61,12 @@ FORM fill_tadir_crossref.
   CLEAR ls_tadir_crossref.
   ls_tadir_crossref-pgmid = 'LIMU'.
   ls_tadir_crossref-obj_class = 'OC'.
+  ls_tadir_crossref-object = 'CINC'.
+  ls_tadir_crossref-is_primary = abap_true.
+  INSERT ls_tadir_crossref INTO TABLE lt_tadir_crossref.
+  CLEAR ls_tadir_crossref.
+  ls_tadir_crossref-pgmid = 'LIMU'.
+  ls_tadir_crossref-obj_class = 'OC'.
   ls_tadir_crossref-object = 'CPRI'.
   ls_tadir_crossref-is_primary = abap_true.
   INSERT ls_tadir_crossref INTO TABLE lt_tadir_crossref.

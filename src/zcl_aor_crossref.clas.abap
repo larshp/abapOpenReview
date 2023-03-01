@@ -164,6 +164,8 @@ CLASS ZCL_AOR_CROSSREF IMPLEMENTATION.
     IF is_entity-pgmid = 'LIMU' AND is_entity-object = 'METH'.
       SPLIT is_entity-obj_name AT space
         INTO ls_to_search-object lv_method_name.
+    ELSEIF is_entity-pgmid = 'LIMU' AND is_entity-object = 'CINC'.
+      ls_to_search-object = get_r3tr_entity( is_entity )-objname.
     ELSE.
       ls_to_search-object = is_entity-obj_name.
     ENDIF.
