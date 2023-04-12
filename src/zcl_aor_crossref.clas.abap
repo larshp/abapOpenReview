@@ -83,6 +83,7 @@ CLASS ZCL_AOR_CROSSREF IMPLEMENTATION.
     ro_result = cl_ci_objectset=>save_from_list(
       p_objects = lt_dependencies
       p_name = io_review->header( )-review_id ).
+    ro_result->leave_change( ).
 
   ENDMETHOD.
 
