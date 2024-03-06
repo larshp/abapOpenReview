@@ -4,20 +4,27 @@
   <asx:values>
    <DD04V>
     <ROLLNAME>ZAOR_REVIEW_ID</ROLLNAME>
-    <DDLANGUAGE>E</DDLANGUAGE>
     <DOMNAME>TRKORR</DOMNAME>
     <HEADLEN>20</HEADLEN>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
-    <DDTEXT>Review</DDTEXT>
-    <REPTEXT>Review</REPTEXT>
-    <SCRTEXT_S>Review</SCRTEXT_S>
-    <SCRTEXT_M>Review</SCRTEXT_M>
-    <SCRTEXT_L>Review</SCRTEXT_L>
     <DTELMASTER>E</DTELMASTER>
     <REFKIND>D</REFKIND>
    </DD04V>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>Review</DDTEXT>
+     <REPTEXT>Review</REPTEXT>
+     <SCRTEXT_S>Review</SCRTEXT_S>
+     <SCRTEXT_M>Review</SCRTEXT_M>
+     <SCRTEXT_L>Review</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
   </asx:values>
  </asx:abap>
 </abapGit>

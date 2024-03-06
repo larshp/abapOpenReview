@@ -7,86 +7,83 @@
     <MASTERLANG>E</MASTERLANG>
     <STEXT>abapOpenReview</STEXT>
    </T100A>
-   <T100>
-    <T100>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <T100T>
+    <T100T>
      <SPRSL>E</SPRSL>
      <ARBGB>ZABAPOPENREVIEW</ARBGB>
+     <STEXT>abapOpenReview</STEXT>
+    </T100T>
+   </T100T>
+   <T100_TEXTS>
+    <item>
+     <SPRSL>E</SPRSL>
      <MSGNR>000</MSGNR>
      <TEXT>Some comments still pending</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>001</MSGNR>
      <TEXT>Review closed</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>002</MSGNR>
      <TEXT>Not found</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>003</MSGNR>
      <TEXT>Unknown action</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>004</MSGNR>
      <TEXT>Transport released</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>005</MSGNR>
      <TEXT>Navigation not possible for object type</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>006</MSGNR>
      <TEXT>Downloaded to &amp;1</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>007</MSGNR>
      <TEXT>No comments</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>008</MSGNR>
      <TEXT>Topic is new. Can&apos;t be closed.</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>009</MSGNR>
      <TEXT>You already approved this review.</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>010</MSGNR>
      <TEXT>Review must be approved before it can be closed.</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>011</MSGNR>
      <TEXT>Review must be approved before the transport request can be released.</TEXT>
-    </T100>
-    <T100>
+    </item>
+    <item>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZABAPOPENREVIEW</ARBGB>
      <MSGNR>012</MSGNR>
      <TEXT>Failed to check code diff. Reason: &amp;1.</TEXT>
-    </T100>
-   </T100>
+    </item>
+   </T100_TEXTS>
   </asx:values>
  </asx:abap>
 </abapGit>

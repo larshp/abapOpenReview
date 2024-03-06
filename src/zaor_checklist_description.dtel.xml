@@ -4,20 +4,27 @@
   <asx:values>
    <DD04V>
     <ROLLNAME>ZAOR_CHECKLIST_DESCRIPTION</ROLLNAME>
-    <DDLANGUAGE>E</DDLANGUAGE>
     <DOMNAME>TEXT300</DOMNAME>
     <HEADLEN>55</HEADLEN>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
-    <DDTEXT>Description</DDTEXT>
-    <REPTEXT>Description</REPTEXT>
-    <SCRTEXT_S>Descriptio</SCRTEXT_S>
-    <SCRTEXT_M>Description</SCRTEXT_M>
-    <SCRTEXT_L>Description</SCRTEXT_L>
     <DTELMASTER>E</DTELMASTER>
     <REFKIND>D</REFKIND>
    </DD04V>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>Description</DDTEXT>
+     <REPTEXT>Description</REPTEXT>
+     <SCRTEXT_S>Descriptio</SCRTEXT_S>
+     <SCRTEXT_M>Description</SCRTEXT_M>
+     <SCRTEXT_L>Description</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
   </asx:values>
  </asx:abap>
 </abapGit>

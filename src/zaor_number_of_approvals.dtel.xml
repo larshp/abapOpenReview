@@ -4,21 +4,28 @@
   <asx:values>
    <DD04V>
     <ROLLNAME>ZAOR_NUMBER_OF_APPROVALS</ROLLNAME>
-    <DDLANGUAGE>E</DDLANGUAGE>
     <HEADLEN>26</HEADLEN>
     <SCRLEN1>07</SCRLEN1>
     <SCRLEN2>16</SCRLEN2>
     <SCRLEN3>26</SCRLEN3>
-    <DDTEXT>Number of review approvals</DDTEXT>
-    <REPTEXT>Number of review approvals</REPTEXT>
-    <SCRTEXT_S>N. app.</SCRTEXT_S>
-    <SCRTEXT_M>Number approvals</SCRTEXT_M>
-    <SCRTEXT_L>Number of review approvals</SCRTEXT_L>
     <DTELMASTER>E</DTELMASTER>
     <DATATYPE>NUMC</DATATYPE>
     <LENG>000002</LENG>
     <OUTPUTLEN>000002</OUTPUTLEN>
    </DD04V>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>Number of review approvals</DDTEXT>
+     <REPTEXT>Number of review approvals</REPTEXT>
+     <SCRTEXT_S>N. app.</SCRTEXT_S>
+     <SCRTEXT_M>Number approvals</SCRTEXT_M>
+     <SCRTEXT_L>Number of review approvals</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
   </asx:values>
  </asx:abap>
 </abapGit>

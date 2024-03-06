@@ -88,11 +88,20 @@ CLASS zcx_aor_error DEFINITION
         attr3 TYPE scx_attrname VALUE '',
         attr4 TYPE scx_attrname VALUE '',
       END OF approve_before .
+    DATA:
+      attr1 TYPE syst-msgv1,
+      attr2 TYPE syst-msgv2,
+      attr3 TYPE syst-msgv3,
+      attr4 TYPE syst-msgv4.
 
     METHODS constructor
       IMPORTING
         !textid   LIKE if_t100_message=>t100key OPTIONAL
-        !previous LIKE previous OPTIONAL .
+        !previous LIKE previous OPTIONAL
+        !attr1    TYPE syst-msgv1 OPTIONAL
+        !attr2    TYPE syst-msgv2 OPTIONAL
+        !attr3    TYPE syst-msgv3 OPTIONAL
+        !attr4    TYPE syst-msgv4 OPTIONAL.
 protected section.
 private section.
 ENDCLASS.
@@ -107,6 +116,10 @@ CALL METHOD SUPER->CONSTRUCTOR
 EXPORTING
 PREVIOUS = PREVIOUS
 .
+me->ATTR1 = ATTR1 .
+me->ATTR2 = ATTR2 .
+me->ATTR3 = ATTR3 .
+me->ATTR4 = ATTR4 .
 clear me->textid.
 if textid is initial.
   IF_T100_MESSAGE~T100KEY = IF_T100_MESSAGE=>DEFAULT_TEXTID.

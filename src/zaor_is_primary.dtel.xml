@@ -3,9 +3,9 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <DD04V>
-    <ROLLNAME>ZAOR_CI_FILTER</ROLLNAME>
-    <DOMNAME>ZAOR_CI_FILTER</DOMNAME>
-    <HEADLEN>09</HEADLEN>
+    <ROLLNAME>ZAOR_IS_PRIMARY</ROLLNAME>
+    <DOMNAME>SAP_BOOL</DOMNAME>
+    <HEADLEN>55</HEADLEN>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -18,11 +18,11 @@
    <DD04_TEXTS>
     <item>
      <DDLANGUAGE>E</DDLANGUAGE>
-     <DDTEXT>CI Filter</DDTEXT>
-     <REPTEXT>CI Filter</REPTEXT>
-     <SCRTEXT_S>CI Filter</SCRTEXT_S>
-     <SCRTEXT_M>CI Filter</SCRTEXT_M>
-     <SCRTEXT_L>CI Filter</SCRTEXT_L>
+     <DDTEXT>Is Primary object used in tables tadir/e071</DDTEXT>
+     <REPTEXT>Is Primary</REPTEXT>
+     <SCRTEXT_S>Is Primary</SCRTEXT_S>
+     <SCRTEXT_M>Is Primary</SCRTEXT_M>
+     <SCRTEXT_L>Is Primary</SCRTEXT_L>
     </item>
    </DD04_TEXTS>
   </asx:values>

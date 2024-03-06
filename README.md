@@ -18,3 +18,11 @@ The repository contains the program `zaor_import_default_checklist` to import a 
 - `Dependencies changed in other transport requests?` When yes, the code will proparly break in target system, when this transport request is transported before the transport requests with the dependencies.
 - `All associated Customizing-Settings contained in transport request or are already created manually /via ALE-transfer in target system (e.g. Characteristics in CT04, Classes in CL02)?`: Not all Customizing-Settings are transported automatically e.g. the characteristics in transaction CT04, the classes in transaction CL02 (both from the classification API) or z-tables not marked correctly as customizing-tables. In this point we should make sure, that the Customizing-Settings between source and target system don't differ.
 - `API-Major-Changes (class, function-module etc.) bumped to dependents?`: When your transport request introduces major-changes, the dependents, which uses the APIs, can break. In this point we should make sure, that the dependents are compatible with the new API.
+
+## Setup
+Run program `zaor_import_object_types` after installation. This program will generate the settings for resolving dependencies in the code inspection step.
+
+## Code inspector
+The code inspector can run on different object sets:
+- With all reviewed objects
+- With all reviewed and all dependent objects fetched by the where-used-list-function
