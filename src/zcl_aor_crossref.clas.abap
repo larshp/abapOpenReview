@@ -195,6 +195,9 @@ CLASS ZCL_AOR_CROSSREF IMPLEMENTATION.
               INTO ls_entity-objname lv_method_name.
           ELSEIF ls_entity-objtype = 'FUGR'.
             ls_entity-objname = lr_found->*-object+4. " remove SAPL prefix
+          ELSEIF ( ls_entity-objtype = 'TABL' OR ls_entity-objtype = 'VIEW' )
+              AND lr_found->*-encl_objec IS NOT INITIAL.
+            ls_entity-objname = lr_found->*-encl_objec.
           ELSE.
             ls_entity-objname = lr_found->*-object.
           ENDIF.
